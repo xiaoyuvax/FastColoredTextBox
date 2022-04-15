@@ -1218,10 +1218,10 @@ namespace FastColoredTextBoxNS {
 		}
 
 		[Browsable(false)]
-		public new FindForm FindForm { get; private set; }
+		public new FindForm FindForm { get; set; }
 
 		[Browsable(false)]
-		public ReplaceForm ReplaceForm { get; private set; }
+		public ReplaceForm ReplaceForm { get; set; }
 
 		/// <summary>
 		/// Do not change this property
@@ -6761,7 +6761,7 @@ window.status = ""#print"";
 		/// Open text file (with automatic encoding and language detector)
 		/// </summary>
 		public void OpenFile(string fileName) {
-			var extension = fileName.Remove(fileName.LastIndexOf('.'));
+			var extension = fileName.Substring(fileName.LastIndexOf('.'));
 			var language = LanguageDetector.StringToLanguage(extension);
 			OpenFile(fileName, language);
 		}
@@ -6782,10 +6782,13 @@ window.status = ""#print"";
 		/// <param name="fileName"></param>
 		/// <param name="enc"></param>
 		public void OpenBindingFile(string fileName, Encoding enc) {
+			var extension = fileName.Substring(fileName.LastIndexOf('.'));
+			var language = LanguageDetector.StringToLanguage(extension);
 			var fts = new FileTextSource(this);
 			try {
 				InitTextSource(fts);
 				fts.OpenFile(fileName, enc);
+				SetLanguage(language);
 				IsChanged = false;
 				OnVisibleRangeChanged();
 			} catch {
