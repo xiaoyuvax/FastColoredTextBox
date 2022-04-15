@@ -1217,7 +1217,6 @@ namespace FastColoredTextBoxNS {
 			}
 		}
 
-
 		[Browsable(false)]
 		public new FindForm FindForm { get; private set; }
 
@@ -1891,13 +1890,8 @@ namespace FastColoredTextBoxNS {
 			return result;
 		}
 
-		protected virtual TextSource CreateTextSource() {
-			return new TextSource(this);
-		}
-
-		private void SetAsCurrentTB() {
-			TextSource.CurrentTB = this;
-		}
+		protected virtual TextSource CreateTextSource() => new TextSource(this);
+		private void SetAsCurrentTB() => TextSource.CurrentTB = this;
 
 		protected virtual void InitTextSource(TextSource ts) {
 			if (lines != null) {
@@ -1934,40 +1928,36 @@ namespace FastColoredTextBoxNS {
 			needRecalc = true;
 		}
 
-		private void Ts_RecalcWordWrap(object sender, TextSource.TextChangedEventArgs e) {
-			RecalcWordWrap(e.iFromLine, e.iToLine);
-		}
+		private void Ts_RecalcWordWrap(object sender, TextSource.TextChangedEventArgs e) => RecalcWordWrap(e.iFromLine, e.iToLine);
 
 		private void Ts_TextChanging(object sender, TextChangingEventArgs e) {
-			if (TextSource.CurrentTB == this) {
-				string text = e.InsertingText;
-				OnTextChanging(ref text);
-				e.InsertingText = text;
+			if (TextSource.CurrentTB != this) {
+				return;
 			}
+
+			string text = e.InsertingText;
+			OnTextChanging(ref text);
+			e.InsertingText = text;
 		}
 
 		private void Ts_RecalcNeeded(object sender, TextSource.TextChangedEventArgs e) {
-			if (e.iFromLine == e.iToLine && !WordWrap && lines.Count > minLinesForAccuracy)
+			if (e.iFromLine == e.iToLine && !WordWrap && lines.Count > minLinesForAccuracy) {
 				RecalcScrollByOneLine(e.iFromLine);
-			else {
-				NeedRecalc(false, WordWrap);
-				//needRecalc = true;
+				return;
 			}
+
+			NeedRecalc(false, WordWrap);
 		}
 
 		/// <summary>
 		/// Call this method if the recalc of the position of lines is needed.
 		/// </summary>
-		public void NeedRecalc() {
-			NeedRecalc(false);
-		}
+		public void NeedRecalc() => NeedRecalc(false);
 
 		/// <summary>
 		/// Call this method if the recalc of the position of lines is needed.
 		/// </summary>
-		public void NeedRecalc(bool forced) {
-			NeedRecalc(forced, false);
-		}
+		public void NeedRecalc(bool forced) => NeedRecalc(forced, false);
 
 		/// <summary>
 		/// Call this method if the recalc of the position of lines is needed.
@@ -2095,9 +2085,7 @@ namespace FastColoredTextBoxNS {
 			}
 		}
 
-		public void AddVisualMarker(VisualMarker marker) {
-			visibleMarkers.Add(marker);
-		}
+		public void AddVisualMarker(VisualMarker marker) => visibleMarkers.Add(marker);
 
 		private void Timer_Tick(object sender, EventArgs e) {
 			timer.Enabled = false;
@@ -2111,9 +2099,7 @@ namespace FastColoredTextBoxNS {
 			}
 		}
 
-		public virtual void OnTextChangedDelayed(Range changedRange) {
-			TextChangedDelayed?.Invoke(this, new TextChangedEventArgs(changedRange));
-		}
+		public virtual void OnTextChangedDelayed(Range changedRange) => TextChangedDelayed?.Invoke(this, new TextChangedEventArgs(changedRange));
 
 		public virtual void OnSelectionChangedDelayed() {
 			RecalcScrollByOneLine(Selection.Start.iLine);
@@ -2134,9 +2120,7 @@ namespace FastColoredTextBoxNS {
 			SelectionChangedDelayed?.Invoke(this, new EventArgs());
 		}
 
-		public virtual void OnVisibleRangeChangedDelayed() {
-			VisibleRangeChangedDelayed?.Invoke(this, new EventArgs());
-		}
+		public virtual void OnVisibleRangeChangedDelayed() => VisibleRangeChangedDelayed?.Invoke(this, new EventArgs());
 
 		readonly Dictionary<Timer, Timer> timersToReset = new Dictionary<Timer, Timer>();
 
@@ -2200,9 +2184,7 @@ namespace FastColoredTextBoxNS {
 		/// <summary>
 		/// Shows find dialog
 		/// </summary>
-		public virtual void ShowFindDialog() {
-			ShowFindDialog(null);
-		}
+		public virtual void ShowFindDialog() => ShowFindDialog(null);
 
 		/// <summary>
 		/// Shows find dialog
@@ -2224,9 +2206,7 @@ namespace FastColoredTextBoxNS {
 		/// <summary>
 		/// Shows replace dialog
 		/// </summary>
-		public virtual void ShowReplaceDialog() {
-			ShowReplaceDialog(null);
-		}
+		public virtual void ShowReplaceDialog() => ShowReplaceDialog(null);
 
 		/// <summary>
 		/// Shows replace dialog
@@ -2251,9 +2231,7 @@ namespace FastColoredTextBoxNS {
 		/// Gets the column of the caret
 		/// </summary>
 		/// <returns>Current column</returns>
-		public int GetColumn() {
-			return PositionToPlace(SelectionStart).iChar + 1;
-		}
+		public int GetColumn() => PositionToPlace(SelectionStart).iChar + 1;
 
 		/// <summary>
 		/// Gets length of given line
@@ -2399,10 +2377,12 @@ namespace FastColoredTextBoxNS {
 		/// </summary>
 		public virtual void Paste() {
 			string text = null;
+
 			var thread = new Thread(() => {
 				if (Clipboard.ContainsText())
 					text = Clipboard.GetText();
 			});
+
 			thread.SetApartmentState(ApartmentState.STA);
 			thread.Start();
 			thread.Join();
@@ -2421,16 +2401,16 @@ namespace FastColoredTextBoxNS {
 					text = args.InsertingText;
 			}
 
-			if (!string.IsNullOrEmpty(text))
-				InsertText(text);
+			if (string.IsNullOrEmpty(text))
+				return;
+			
+			InsertText(text);
 		}
 
 		/// <summary>
 		/// Select all chars of text
 		/// </summary>
-		public void SelectAll() {
-			Selection.SelectAll();
-		}
+		public void SelectAll() => Selection.SelectAll();
 
 		/// <summary>
 		/// Move caret to end of text
@@ -2495,16 +2475,12 @@ namespace FastColoredTextBoxNS {
 		/// <summary>
 		/// Clears undo and redo stacks
 		/// </summary>
-		public void ClearUndo() {
-			lines.Manager.ClearHistory();
-		}
+		public void ClearUndo() => lines.Manager.ClearHistory();
 
 		/// <summary>
 		/// Insert text into current selected position
 		/// </summary>
-		public virtual void InsertText(string text) {
-			InsertText(text, true);
-		}
+		public virtual void InsertText(string text) => InsertText(text, true);
 
 		/// <summary>
 		/// Insert text into current selected position
@@ -2540,9 +2516,7 @@ namespace FastColoredTextBoxNS {
 		/// Insert text into current selection position (with predefined style)
 		/// </summary>
 		/// <param name="text"></param>
-		public virtual Range InsertText(string text, Style style) {
-			return InsertText(text, style, true);
-		}
+		public virtual Range InsertText(string text, Style style) => InsertText(text, style, true);
 
 		/// <summary>
 		/// Insert text into current selection position (with predefined style)
@@ -2591,9 +2565,7 @@ namespace FastColoredTextBoxNS {
 		/// <summary>
 		/// Append string to end of the Text
 		/// </summary>
-		public virtual void AppendText(string text) {
-			AppendText(text, null);
-		}
+		public virtual void AppendText(string text) => AppendText(text, null);
 
 		/// <summary>
 		/// Append string to end of the Text
@@ -2638,9 +2610,7 @@ namespace FastColoredTextBoxNS {
 		/// </summary>
 		/// <param name="style"></param>
 		/// <returns>Index of the style in Styles</returns>
-		public int GetStyleIndex(Style style) {
-			return Array.IndexOf(Styles, style);
-		}
+		public int GetStyleIndex(Style style) => Array.IndexOf(Styles, style);
 
 		/// <summary>
 		/// Returns StyleIndex mask of given styles
@@ -2744,9 +2714,7 @@ namespace FastColoredTextBoxNS {
 			OnVisibleRangeChanged();
 		}
 
-		protected override void OnScroll(ScrollEventArgs se) {
-			OnScroll(se, true);
-		}
+		protected override void OnScroll(ScrollEventArgs se) => OnScroll(se, true);
 
 		protected virtual void InsertChar(char c) {
 			lines.Manager.BeginAutoUndoCommands();
@@ -3099,17 +3067,16 @@ namespace FastColoredTextBoxNS {
 		}
 
 		private void OnMagicUpdateScrollBars() {
-			if (this.InvokeRequired) {
+			if (InvokeRequired) {
 				Invoke(new MethodInvoker(OnMagicUpdateScrollBars));
-			} else {
-				base.AutoScrollMinSize -= new Size(1, 0);
-				base.AutoScrollMinSize += new Size(1, 0);
+				return;
 			}
+
+			base.AutoScrollMinSize -= new Size(1, 0);
+			base.AutoScrollMinSize += new Size(1, 0);
 		}
 
-		protected virtual void OnScrollbarsUpdated() {
-			ScrollbarsUpdated?.Invoke(this, EventArgs.Empty);
-		}
+		protected virtual void OnScrollbarsUpdated() => ScrollbarsUpdated?.Invoke(this, EventArgs.Empty);
 
 		/// <summary>
 		/// Scroll control for display caret
@@ -3158,9 +3125,7 @@ namespace FastColoredTextBoxNS {
 		/// <summary>
 		/// Scroll control for display given range
 		/// </summary>
-		public void DoRangeVisible(Range range) {
-			DoRangeVisible(range, false);
-		}
+		public void DoRangeVisible(Range range) => DoRangeVisible(range, false);
 
 		/// <summary>
 		/// Scroll control for display given range
@@ -3688,15 +3653,11 @@ namespace FastColoredTextBoxNS {
 			}
 		}
 
-		protected virtual void OnCustomAction(CustomActionEventArgs e) {
-			CustomAction?.Invoke(this, e);
-		}
+		protected virtual void OnCustomAction(CustomActionEventArgs e) => CustomAction?.Invoke(this, e);
 
 		Font originalFont;
 
-		private void RestoreFontSize() {
-			Zoom = 100;
-		}
+		private void RestoreFontSize() => Zoom = 100;
 
 		/// <summary>
 		/// Scrolls to nearest bookmark or to first bookmark
@@ -3722,7 +3683,9 @@ namespace FastColoredTextBoxNS {
 			if (nearestBookmark != null) {
 				nearestBookmark.DoVisible();
 				return true;
-			} else if (minBookmark != null) {
+			}
+			
+			if (minBookmark != null) {
 				minBookmark.DoVisible();
 				return true;
 			}
@@ -3754,7 +3717,9 @@ namespace FastColoredTextBoxNS {
 			if (nearestBookmark != null) {
 				nearestBookmark.DoVisible();
 				return true;
-			} else if (maxBookmark != null) {
+			} 
+			
+			if (maxBookmark != null) {
 				maxBookmark.DoVisible();
 				return true;
 			}
@@ -3773,9 +3738,7 @@ namespace FastColoredTextBoxNS {
 		/// <summary>
 		/// Unbookmarks current line
 		/// </summary>
-		public virtual void UnbookmarkLine(int iLine) {
-			bookmarks.Remove(iLine);
-		}
+		public virtual void UnbookmarkLine(int iLine) => bookmarks.Remove(iLine);
 
 		/// <summary>
 		/// Moves selected lines down
@@ -3889,9 +3852,7 @@ namespace FastColoredTextBoxNS {
 		/// <summary>
 		/// Insert/remove comment prefix into selected lines
 		/// </summary>
-		public void CommentSelected() {
-			CommentSelected(CommentPrefix);
-		}
+		public void CommentSelected() => CommentSelected(CommentPrefix);
 
 		/// <summary>
 		/// Insert/remove comment prefix into selected lines
@@ -3907,9 +3868,7 @@ namespace FastColoredTextBoxNS {
 				InsertLinePrefix(commentPrefix);
 		}
 
-		public void OnKeyPressing(KeyPressEventArgs args) {
-			KeyPressing?.Invoke(this, args);
-		}
+		public void OnKeyPressing(KeyPressEventArgs args) => KeyPressing?.Invoke(this, args);
 
 		private bool OnKeyPressing(char c) {
 			if (findCharMode) {
@@ -4465,10 +4424,12 @@ namespace FastColoredTextBoxNS {
 		private static extern bool HideCaret(IntPtr hWnd);
 
 		protected override void OnPaintBackground(PaintEventArgs e) {
-			if (BackBrush == null)
+			if (BackBrush == null) {
 				base.OnPaintBackground(e);
-			else
-				e.Graphics.FillRectangle(BackBrush, ClientRectangle);
+				return;
+			}
+
+			e.Graphics.FillRectangle(BackBrush, ClientRectangle);
 		}
 
 		/// <summary>
@@ -5198,9 +5159,7 @@ namespace FastColoredTextBoxNS {
 			}
 		}
 
-		protected virtual void OnZoomChanged() {
-			ZoomChanged?.Invoke(this, EventArgs.Empty);
-		}
+		protected virtual void OnZoomChanged() => ZoomChanged?.Invoke(this, EventArgs.Empty);
 
 		private void DoZoom(float koeff) {
 			//remember first displayed line
@@ -5228,7 +5187,6 @@ namespace FastColoredTextBoxNS {
 
 		protected override void OnMouseLeave(EventArgs e) {
 			base.OnMouseLeave(e);
-
 			CancelToolTip();
 		}
 
@@ -5278,7 +5236,10 @@ namespace FastColoredTextBoxNS {
 					HorizontalScroll.Value = 0;
 					UpdateScrollbars();
 					Invalidate();
-				} else if (place != Selection.Start) {
+					return;
+				}
+				
+				if (place != Selection.Start) {
 					Place oldEnd = Selection.End;
 					Selection.BeginUpdate();
 					if (Selection.ColumnSelectionMode) {
@@ -5474,9 +5435,7 @@ namespace FastColoredTextBoxNS {
 		/// <summary>
 		/// Fires TextChanged event
 		/// </summary>
-		public virtual void OnTextChanged(Range r) {
-			OnTextChanged(new TextChangedEventArgs(r));
-		}
+		public virtual void OnTextChanged(Range r) => OnTextChanged(new TextChangedEventArgs(r));
 
 		/// <summary>
 		/// Call this method before multiple text changing
@@ -5699,9 +5658,7 @@ namespace FastColoredTextBoxNS {
 		/// <summary>
 		/// Gets absolute char position from char position
 		/// </summary>
-		public Point PositionToPoint(int pos) {
-			return PlaceToPoint(PositionToPlace(pos));
-		}
+		public Point PositionToPoint(int pos) => PlaceToPoint(PositionToPlace(pos));
 
 		/// <summary>
 		/// Gets point for given line and char position
@@ -5745,9 +5702,7 @@ namespace FastColoredTextBoxNS {
 		/// <param name="fromPlace">Line and char position</param>
 		/// <param name="toPlace">Line and char position</param>
 		/// <returns>Range</returns>
-		public Range GetRange(Place fromPlace, Place toPlace) {
-			return new Range(this, fromPlace, toPlace);
-		}
+		public Range GetRange(Place fromPlace, Place toPlace) => new Range(this, fromPlace, toPlace);
 
 		/// <summary>
 		/// Finds ranges for given regex pattern
@@ -5913,9 +5868,7 @@ namespace FastColoredTextBoxNS {
 			}
 		}
 
-		private int FindEndOfFoldingBlock(int iStartLine) {
-			return FindEndOfFoldingBlock(iStartLine, int.MaxValue);
-		}
+		private int FindEndOfFoldingBlock(int iStartLine) => FindEndOfFoldingBlock(iStartLine, int.MaxValue);
 
 		protected virtual int FindEndOfFoldingBlock(int iStartLine, int maxLines) {
 			//find end of block
@@ -6364,17 +6317,13 @@ namespace FastColoredTextBoxNS {
 		/// Begins AutoUndo block.
 		/// All changes of text between BeginAutoUndo() and EndAutoUndo() will be canceled in one operation Undo.
 		/// </summary>
-		public void BeginAutoUndo() {
-			lines.Manager.BeginAutoUndoCommands();
-		}
+		public void BeginAutoUndo() => lines.Manager.BeginAutoUndoCommands();
 
 		/// <summary>
 		/// Ends AutoUndo block.
 		/// All changes of text between BeginAutoUndo() and EndAutoUndo() will be canceled in one operation Undo.
 		/// </summary>
-		public void EndAutoUndo() {
-			lines.Manager.EndAutoUndoCommands();
-		}
+		public void EndAutoUndo() => lines.Manager.EndAutoUndoCommands();
 
 		public virtual void OnVisualMarkerClick(MouseEventArgs args, StyleVisualMarker marker) {
 			VisualMarkerClick?.Invoke(this, new VisualMarkerEventArgs(marker.Style, marker, args));
@@ -6663,9 +6612,7 @@ namespace FastColoredTextBoxNS {
 			wb.Navigate(tempFile);
 		}
 
-		protected virtual string PrepareHtmlText(string s) {
-			return s.Replace("<", "&lt;").Replace(">", "&gt;").Replace("&", "&amp;");
-		}
+		protected virtual string PrepareHtmlText(string s) => s.Replace("<", "&lt;").Replace(">", "&gt;").Replace("&", "&amp;");
 
 		private void Wb_StatusTextChanged(object sender, EventArgs e) {
 			var wb = sender as WebBrowser;
@@ -6695,17 +6642,13 @@ namespace FastColoredTextBoxNS {
 		/// <summary>
 		/// Prints all text
 		/// </summary>
-		public void Print(PrintDialogSettings settings) {
-			Print(Range, settings);
-		}
+		public void Print(PrintDialogSettings settings) => Print(Range, settings);
 
 		/// <summary>
 		/// Prints all text, without any dialog windows
 		/// </summary>
-		public void Print() {
-			Print(Range,
+		public void Print() => Print(Range,
 				  new PrintDialogSettings { ShowPageSetupDialog = false, ShowPrintDialog = false, ShowPrintPreviewDialog = false });
-		}
 
 		private string SelectHTMLRangeScript() {
 			Range sel = Selection.Clone();
@@ -6895,9 +6838,7 @@ window.status = ""#print"";
 		/// <summary>
 		/// Returns VisibleState of the line
 		/// </summary>
-		public VisibleState GetVisibleState(int iLine) {
-			return LineInfos[iLine].VisibleState;
-		}
+		public VisibleState GetVisibleState(int iLine) => LineInfos[iLine].VisibleState;
 
 		/// <summary>
 		/// Shows Goto dialog form
@@ -6908,9 +6849,11 @@ window.status = ""#print"";
 				SelectedLineNumber = Selection.Start.iLine + 1
 			};
 
-			if (form.ShowDialog() == DialogResult.OK) {
-				SetSelectedLine(form.SelectedLineNumber);
+			if (form.ShowDialog() != DialogResult.OK) {
+				return;
 			}
+
+			SetSelectedLine(form.SelectedLineNumber);
 		}
 
 		/// <summary>
@@ -6926,9 +6869,7 @@ window.status = ""#print"";
 		/// <summary>
 		/// Occurs when undo/redo stack is changed
 		/// </summary>
-		public void OnUndoRedoStateChanged() {
-			UndoRedoStateChanged?.Invoke(this, EventArgs.Empty);
-		}
+		public void OnUndoRedoStateChanged() => UndoRedoStateChanged?.Invoke(this, EventArgs.Empty);
 
 		/// <summary>
 		/// Search lines by regex pattern
@@ -6954,9 +6895,8 @@ window.status = ""#print"";
 			Invalidate();
 		}
 
-		void ISupportInitialize.BeginInit() {
-			//
-		}
+		// Implemented from the interface, don't remove it
+		void ISupportInitialize.BeginInit() { }
 
 		void ISupportInitialize.EndInit() {
 			OnTextChanged();
@@ -7632,9 +7572,7 @@ window.status = ""#print"";
 	public class CustomActionEventArgs : EventArgs {
 		public FCTBAction Action { get; private set; }
 
-		public CustomActionEventArgs(FCTBAction action) {
-			Action = action;
-		}
+		public CustomActionEventArgs(FCTBAction action) => Action = action;
 	}
 
 	public enum TextAreaBorderType {
