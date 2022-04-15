@@ -1377,6 +1377,27 @@ namespace FastColoredTextBoxNS {
 		#endregion
 	}
 
+	public static class LanguageDetector {
+		/// <summary>
+		/// Converts a string like "lua" or "csharp" to a Language
+		/// </summary>
+		public static Language StringToLanguage(string language) {
+			switch (language.Trim().ToLower()) {
+				case "lua": return Language.Lua;
+				case "html": return Language.HTML;
+				case "xml": return Language.XML;
+				case "sql": return Language.SQL;
+				case "vb": return Language.VB;
+				case "cs": return Language.CSharp;
+				case "csharp": return Language.CSharp;
+				case "java": return Language.CSharp;
+				case "js": return Language.JS;
+				case "php": return Language.PHP;
+				default: return Language.Custom;
+			};
+		}
+	}
+
 	/// <summary>
 	/// Language
 	/// </summary>

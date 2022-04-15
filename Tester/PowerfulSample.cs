@@ -19,14 +19,10 @@ namespace Tester {
 		readonly TextStyle BrownStyle = new TextStyle(Brushes.Brown, null, FontStyle.Italic);
 		readonly MarkerStyle SameWordsStyle = new MarkerStyle(new SolidBrush(Color.FromArgb(40, Color.Gray)));
 
-		public PowerfulSample() {
-			InitializeComponent();
-		}
+		public PowerfulSample() => InitializeComponent();
 
-		private void InitStylesPriority() {
-			//add this style explicitly for drawing under other styles
-			fctb.AddStyle(SameWordsStyle);
-		}
+		//add this style explicitly for drawing under other styles
+		private void InitStylesPriority() => fctb.AddStyle(SameWordsStyle);
 
 		private void Fctb_TextChanged(object sender, TextChangedEventArgs e) {
 			switch (lang) {

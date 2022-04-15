@@ -6763,17 +6763,9 @@ window.status = ""#print"";
 			}
 		}
 
-		protected virtual void OnPaintLine(PaintLineEventArgs e) {
-			PaintLine?.Invoke(this, e);
-		}
-
-		internal void OnLineInserted(int index) {
-			OnLineInserted(index, 1);
-		}
-
-		internal void OnLineInserted(int index, int count) {
-			LineInserted?.Invoke(this, new LineInsertedEventArgs(index, count));
-		}
+		protected virtual void OnPaintLine(PaintLineEventArgs e) => PaintLine?.Invoke(this, e);
+		internal void OnLineInserted(int index) => OnLineInserted(index, 1);
+		internal void OnLineInserted(int index, int count) => LineInserted?.Invoke(this, new LineInsertedEventArgs(index, count));
 
 		internal void OnLineRemoved(int index, int count, List<int> removedLineIds) {
 			if (count > 0)
@@ -6783,12 +6775,14 @@ window.status = ""#print"";
 		/// <summary>
 		/// Open text file
 		/// </summary>
-		public void OpenFile(string fileName, Encoding enc) {
+		public void OpenFile(string fileName, Encoding enc, Language language) {
 			var ts = CreateTextSource();
+
 			try {
 				InitTextSource(ts);
 				Text = File.ReadAllText(fileName, enc);
 				ClearUndo();
+				SetLanguage(language);
 				IsChanged = false;
 				OnVisibleRangeChanged();
 			} catch {
@@ -6804,13 +6798,14 @@ window.status = ""#print"";
 		/// <summary>
 		/// Open text file (with automatic encoding detector)
 		/// </summary>
-		public void OpenFile(string fileName) {
+		public void OpenFile(string fileName, Language language) {
 			try {
 				var enc = EncodingDetector.DetectTextFileEncoding(fileName);
+
 				if (enc != null)
-					OpenFile(fileName, enc);
+					OpenFile(fileName, enc, language);
 				else
-					OpenFile(fileName, Encoding.Default);
+					OpenFile(fileName, Encoding.Default, language);
 			} catch {
 				InitTextSource(CreateTextSource());
 				lines.InsertLine(0, TextSource.CreateLine());
@@ -6820,14 +6815,22 @@ window.status = ""#print"";
 		}
 
 		/// <summary>
-		/// Reloads the text, in case the highlighting changed
+		/// Open text file (with automatic encoding and language detector)
 		/// </summary>
-		public void ReloadText() {
-			bool changedTmp = isChanged;
-			string tmp = Text;
-			Text = String.Empty;
-			Text = tmp;
-			isChanged = changedTmp;
+		public void OpenFile(string fileName) {
+			var extension = fileName.Remove(fileName.LastIndexOf('.'));
+			var language = LanguageDetector.StringToLanguage(extension);
+			OpenFile(fileName, language);
+		}
+
+		/// <summary>
+		/// Sets the language
+		/// </summary>
+		public void SetLanguage(Language language) {
+			Language = language;
+			ClearStylesBuffer();
+			Range.ClearStyle(StyleIndex.All);
+			OnSyntaxHighlight(new TextChangedEventArgs(Range));
 		}
 
 		/// <summary>
