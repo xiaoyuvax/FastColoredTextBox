@@ -1,101 +1,55 @@
-Imports System
 Imports System.ComponentModel
-Imports System.Drawing
-Imports System.Windows.Forms
 
 Namespace TesterVB
 
     Public Class MainForm
         Inherits Form
 
-        Private components As IContainer = Nothing
-
-        Private WithEvents button1 As Button
-
-        Private WithEvents label1 As Label
-
-        Private WithEvents label2 As Label
-
-        Private WithEvents button2 As Button
-
-        Private WithEvents label3 As Label
-
-        Private WithEvents button3 As Button
-
-        Private WithEvents label4 As Label
-
-        Private WithEvents button4 As Button
-
-        Private WithEvents label5 As Label
-
-        Private WithEvents button5 As Button
-
-        Private WithEvents label6 As Label
-
-        Private WithEvents button6 As Button
-
-        Private WithEvents label7 As Label
-
-        Private WithEvents button7 As Button
-
-        Private WithEvents label8 As Label
-
-        Private WithEvents button8 As Button
-
-        Private WithEvents label9 As Label
-
-        Private WithEvents button9 As Button
-
-        Private WithEvents label10 As Label
-
-        Private WithEvents button10 As Button
-
-        Private WithEvents label11 As Label
-
-        Private WithEvents button11 As Button
-
-        Private WithEvents label12 As Label
-
-        Private WithEvents button12 As Button
-
-        Private WithEvents label13 As Label
-
-        Private WithEvents button13 As Button
-
-        Private WithEvents label14 As Label
-
-        Private WithEvents button14 As Button
-
-        Private WithEvents label15 As Label
-
-        Private WithEvents button15 As Button
-
-        Private WithEvents button16 As Button
-        Private WithEvents label16 As Label
-
-        Private WithEvents label17 As Label
-
-        Private WithEvents button17 As Button
-
-        Private WithEvents label18 As Label
-
-        Private WithEvents button18 As Button
-
-        Private WithEvents label19 As Label
-
-        Private WithEvents button19 As Button
-
-        Private WithEvents label20 As Label
-
-        Private WithEvents button20 As Button
-
-        Private WithEvents label21 As Label
-
-        Private WithEvents button21 As Button
-
-        Private WithEvents label22 As Label
-
-        Private WithEvents button22 As Button
+        Private ReadOnly components As IContainer = Nothing
+        Private WithEvents Button1 As Button
+        Private WithEvents Label1 As Label
+        Private WithEvents Label2 As Label
+        Private WithEvents Button2 As Button
+        Private WithEvents Label3 As Label
+        Private WithEvents Button3 As Button
+        Private WithEvents Label4 As Label
+        Private WithEvents Button4 As Button
+        Private WithEvents Label5 As Label
+        Private WithEvents Button5 As Button
+        Private WithEvents Label6 As Label
+        Private WithEvents Button6 As Button
+        Private WithEvents Label7 As Label
+        Private WithEvents Button7 As Button
+        Private WithEvents Label8 As Label
+        Private WithEvents Button8 As Button
+        Private WithEvents Label9 As Label
+        Private WithEvents Button9 As Button
+        Private WithEvents Label10 As Label
+        Private WithEvents Button10 As Button
+        Private WithEvents Label11 As Label
+        Private WithEvents Button11 As Button
+        Private WithEvents Label12 As Label
+        Private WithEvents Button12 As Button
+        Private WithEvents Label13 As Label
+        Private WithEvents Button13 As Button
+        Private WithEvents Label14 As Label
+        Private WithEvents Button14 As Button
+        Private WithEvents Label15 As Label
+        Private WithEvents Button15 As Button
+        Private WithEvents Button16 As Button
+        Private WithEvents Label16 As Label
+        Private WithEvents Label17 As Label
+        Private WithEvents Button17 As Button
+        Private WithEvents Label18 As Label
+        Private WithEvents Button18 As Button
+        Private WithEvents Label19 As Label
+        Private WithEvents Button19 As Button
+        Private WithEvents Label20 As Label
+        Private WithEvents Button20 As Button
+        Private WithEvents Label21 As Label
+        Private WithEvents Button21 As Button
+        Private WithEvents Label22 As Label
+        Private WithEvents Button22 As Button
 
         Protected Overrides Sub Dispose(disposing As Boolean)
             If disposing AndAlso Me.components IsNot Nothing Then
@@ -105,455 +59,455 @@ Namespace TesterVB
         End Sub
 
         Private Sub InitializeComponent()
-            Me.button1 = New System.Windows.Forms.Button()
-            Me.label1 = New System.Windows.Forms.Label()
-            Me.label2 = New System.Windows.Forms.Label()
-            Me.button2 = New System.Windows.Forms.Button()
-            Me.label3 = New System.Windows.Forms.Label()
-            Me.button3 = New System.Windows.Forms.Button()
-            Me.label4 = New System.Windows.Forms.Label()
-            Me.button4 = New System.Windows.Forms.Button()
-            Me.label5 = New System.Windows.Forms.Label()
-            Me.button5 = New System.Windows.Forms.Button()
-            Me.label6 = New System.Windows.Forms.Label()
-            Me.button6 = New System.Windows.Forms.Button()
-            Me.label7 = New System.Windows.Forms.Label()
-            Me.button7 = New System.Windows.Forms.Button()
-            Me.label8 = New System.Windows.Forms.Label()
-            Me.button8 = New System.Windows.Forms.Button()
-            Me.label9 = New System.Windows.Forms.Label()
-            Me.button9 = New System.Windows.Forms.Button()
-            Me.label10 = New System.Windows.Forms.Label()
-            Me.button10 = New System.Windows.Forms.Button()
-            Me.label11 = New System.Windows.Forms.Label()
-            Me.button11 = New System.Windows.Forms.Button()
-            Me.label12 = New System.Windows.Forms.Label()
-            Me.button12 = New System.Windows.Forms.Button()
-            Me.label13 = New System.Windows.Forms.Label()
-            Me.button13 = New System.Windows.Forms.Button()
-            Me.label14 = New System.Windows.Forms.Label()
-            Me.button14 = New System.Windows.Forms.Button()
-            Me.label15 = New System.Windows.Forms.Label()
-            Me.button15 = New System.Windows.Forms.Button()
-            Me.button16 = New System.Windows.Forms.Button()
-            Me.label16 = New System.Windows.Forms.Label()
-            Me.label17 = New System.Windows.Forms.Label()
-            Me.button17 = New System.Windows.Forms.Button()
-            Me.label18 = New System.Windows.Forms.Label()
-            Me.button18 = New System.Windows.Forms.Button()
-            Me.label19 = New System.Windows.Forms.Label()
-            Me.button19 = New System.Windows.Forms.Button()
-            Me.label20 = New System.Windows.Forms.Label()
-            Me.button20 = New System.Windows.Forms.Button()
-            Me.label21 = New System.Windows.Forms.Label()
-            Me.button21 = New System.Windows.Forms.Button()
-            Me.label22 = New System.Windows.Forms.Label()
-            Me.button22 = New System.Windows.Forms.Button()
+            Me.Button1 = New System.Windows.Forms.Button()
+            Me.Label1 = New System.Windows.Forms.Label()
+            Me.Label2 = New System.Windows.Forms.Label()
+            Me.Button2 = New System.Windows.Forms.Button()
+            Me.Label3 = New System.Windows.Forms.Label()
+            Me.Button3 = New System.Windows.Forms.Button()
+            Me.Label4 = New System.Windows.Forms.Label()
+            Me.Button4 = New System.Windows.Forms.Button()
+            Me.Label5 = New System.Windows.Forms.Label()
+            Me.Button5 = New System.Windows.Forms.Button()
+            Me.Label6 = New System.Windows.Forms.Label()
+            Me.Button6 = New System.Windows.Forms.Button()
+            Me.Label7 = New System.Windows.Forms.Label()
+            Me.Button7 = New System.Windows.Forms.Button()
+            Me.Label8 = New System.Windows.Forms.Label()
+            Me.Button8 = New System.Windows.Forms.Button()
+            Me.Label9 = New System.Windows.Forms.Label()
+            Me.Button9 = New System.Windows.Forms.Button()
+            Me.Label10 = New System.Windows.Forms.Label()
+            Me.Button10 = New System.Windows.Forms.Button()
+            Me.Label11 = New System.Windows.Forms.Label()
+            Me.Button11 = New System.Windows.Forms.Button()
+            Me.Label12 = New System.Windows.Forms.Label()
+            Me.Button12 = New System.Windows.Forms.Button()
+            Me.Label13 = New System.Windows.Forms.Label()
+            Me.Button13 = New System.Windows.Forms.Button()
+            Me.Label14 = New System.Windows.Forms.Label()
+            Me.Button14 = New System.Windows.Forms.Button()
+            Me.Label15 = New System.Windows.Forms.Label()
+            Me.Button15 = New System.Windows.Forms.Button()
+            Me.Button16 = New System.Windows.Forms.Button()
+            Me.Label16 = New System.Windows.Forms.Label()
+            Me.Label17 = New System.Windows.Forms.Label()
+            Me.Button17 = New System.Windows.Forms.Button()
+            Me.Label18 = New System.Windows.Forms.Label()
+            Me.Button18 = New System.Windows.Forms.Button()
+            Me.Label19 = New System.Windows.Forms.Label()
+            Me.Button19 = New System.Windows.Forms.Button()
+            Me.Label20 = New System.Windows.Forms.Label()
+            Me.Button20 = New System.Windows.Forms.Button()
+            Me.Label21 = New System.Windows.Forms.Label()
+            Me.Button21 = New System.Windows.Forms.Button()
+            Me.Label22 = New System.Windows.Forms.Label()
+            Me.Button22 = New System.Windows.Forms.Button()
             Me.Label23 = New System.Windows.Forms.Label()
             Me.SuspendLayout()
             '
             'button1
             '
-            Me.button1.Location = New System.Drawing.Point(222, 3)
-            Me.button1.Name = "button1"
-            Me.button1.Size = New System.Drawing.Size(75, 23)
-            Me.button1.TabIndex = 0
-            Me.button1.Text = "Show"
-            Me.button1.UseVisualStyleBackColor = True
+            Me.Button1.Location = New System.Drawing.Point(222, 3)
+            Me.Button1.Name = "button1"
+            Me.Button1.Size = New System.Drawing.Size(75, 23)
+            Me.Button1.TabIndex = 0
+            Me.Button1.Text = "Show"
+            Me.Button1.UseVisualStyleBackColor = True
             '
             'label1
             '
-            Me.label1.Location = New System.Drawing.Point(8, 4)
-            Me.label1.Name = "label1"
-            Me.label1.Size = New System.Drawing.Size(208, 34)
-            Me.label1.TabIndex = 1
-            Me.label1.Text = "Powerful sample. It shows syntax highlighting and many features."
-            Me.label1.TextAlign = System.Drawing.ContentAlignment.TopRight
+            Me.Label1.Location = New System.Drawing.Point(8, 4)
+            Me.Label1.Name = "label1"
+            Me.Label1.Size = New System.Drawing.Size(208, 34)
+            Me.Label1.TabIndex = 1
+            Me.Label1.Text = "Powerful sample. It shows syntax highlighting and many features."
+            Me.Label1.TextAlign = System.Drawing.ContentAlignment.TopRight
             '
             'label2
             '
-            Me.label2.Location = New System.Drawing.Point(8, 82)
-            Me.label2.Name = "label2"
-            Me.label2.Size = New System.Drawing.Size(208, 30)
-            Me.label2.TabIndex = 3
-            Me.label2.Text = "Marker sample. It shows how to make marker tool."
-            Me.label2.TextAlign = System.Drawing.ContentAlignment.TopRight
+            Me.Label2.Location = New System.Drawing.Point(8, 82)
+            Me.Label2.Name = "label2"
+            Me.Label2.Size = New System.Drawing.Size(208, 30)
+            Me.Label2.TabIndex = 3
+            Me.Label2.Text = "Marker sample. It shows how to make marker tool."
+            Me.Label2.TextAlign = System.Drawing.ContentAlignment.TopRight
             '
             'button2
             '
-            Me.button2.Location = New System.Drawing.Point(222, 82)
-            Me.button2.Name = "button2"
-            Me.button2.Size = New System.Drawing.Size(75, 23)
-            Me.button2.TabIndex = 2
-            Me.button2.Text = "Show"
-            Me.button2.UseVisualStyleBackColor = True
+            Me.Button2.Location = New System.Drawing.Point(222, 82)
+            Me.Button2.Name = "button2"
+            Me.Button2.Size = New System.Drawing.Size(75, 23)
+            Me.Button2.TabIndex = 2
+            Me.Button2.Text = "Show"
+            Me.Button2.UseVisualStyleBackColor = True
             '
             'label3
             '
-            Me.label3.Location = New System.Drawing.Point(8, 122)
-            Me.label3.Name = "label3"
-            Me.label3.Size = New System.Drawing.Size(208, 30)
-            Me.label3.TabIndex = 5
-            Me.label3.Text = "Custom style sample. This example shows how to create own custom style."
-            Me.label3.TextAlign = System.Drawing.ContentAlignment.TopRight
+            Me.Label3.Location = New System.Drawing.Point(8, 122)
+            Me.Label3.Name = "label3"
+            Me.Label3.Size = New System.Drawing.Size(208, 30)
+            Me.Label3.TabIndex = 5
+            Me.Label3.Text = "Custom style sample. This example shows how to create own custom style."
+            Me.Label3.TextAlign = System.Drawing.ContentAlignment.TopRight
             '
             'button3
             '
-            Me.button3.Location = New System.Drawing.Point(222, 122)
-            Me.button3.Name = "button3"
-            Me.button3.Size = New System.Drawing.Size(75, 23)
-            Me.button3.TabIndex = 4
-            Me.button3.Text = "Show"
-            Me.button3.UseVisualStyleBackColor = True
+            Me.Button3.Location = New System.Drawing.Point(222, 122)
+            Me.Button3.Name = "button3"
+            Me.Button3.Size = New System.Drawing.Size(75, 23)
+            Me.Button3.TabIndex = 4
+            Me.Button3.Text = "Show"
+            Me.Button3.UseVisualStyleBackColor = True
             '
             'label4
             '
-            Me.label4.Location = New System.Drawing.Point(8, 159)
-            Me.label4.Name = "label4"
-            Me.label4.Size = New System.Drawing.Size(208, 56)
-            Me.label4.TabIndex = 7
-            Me.label4.Text = "VisibleRangeChangedDelayed usage sample. This example shows how to highlight synt" & _
+            Me.Label4.Location = New System.Drawing.Point(8, 159)
+            Me.Label4.Name = "label4"
+            Me.Label4.Size = New System.Drawing.Size(208, 56)
+            Me.Label4.TabIndex = 7
+            Me.Label4.Text = "VisibleRangeChangedDelayed usage sample. This example shows how to highlight synt" &
         "ax for extremally large text by VisibleRangeChangedDelayed event."
-            Me.label4.TextAlign = System.Drawing.ContentAlignment.TopRight
+            Me.Label4.TextAlign = System.Drawing.ContentAlignment.TopRight
             '
             'button4
             '
-            Me.button4.Location = New System.Drawing.Point(222, 173)
-            Me.button4.Name = "button4"
-            Me.button4.Size = New System.Drawing.Size(75, 23)
-            Me.button4.TabIndex = 6
-            Me.button4.Text = "Show"
-            Me.button4.UseVisualStyleBackColor = True
+            Me.Button4.Location = New System.Drawing.Point(222, 173)
+            Me.Button4.Name = "button4"
+            Me.Button4.Size = New System.Drawing.Size(75, 23)
+            Me.Button4.TabIndex = 6
+            Me.Button4.Text = "Show"
+            Me.Button4.UseVisualStyleBackColor = True
             '
             'label5
             '
-            Me.label5.Location = New System.Drawing.Point(11, 35)
-            Me.label5.Name = "label5"
-            Me.label5.Size = New System.Drawing.Size(205, 44)
-            Me.label5.TabIndex = 9
-            Me.label5.Text = "Simplest custom syntax highlighting sample. It shows how to make custom syntax hi" & _
+            Me.Label5.Location = New System.Drawing.Point(11, 35)
+            Me.Label5.Name = "label5"
+            Me.Label5.Size = New System.Drawing.Size(205, 44)
+            Me.Label5.TabIndex = 9
+            Me.Label5.Text = "Simplest custom syntax highlighting sample. It shows how to make custom syntax hi" &
         "ghlighting."
-            Me.label5.TextAlign = System.Drawing.ContentAlignment.TopRight
+            Me.Label5.TextAlign = System.Drawing.ContentAlignment.TopRight
             '
             'button5
             '
-            Me.button5.Location = New System.Drawing.Point(222, 40)
-            Me.button5.Name = "button5"
-            Me.button5.Size = New System.Drawing.Size(75, 23)
-            Me.button5.TabIndex = 8
-            Me.button5.Text = "Show"
-            Me.button5.UseVisualStyleBackColor = True
+            Me.Button5.Location = New System.Drawing.Point(222, 40)
+            Me.Button5.Name = "button5"
+            Me.Button5.Size = New System.Drawing.Size(75, 23)
+            Me.Button5.TabIndex = 8
+            Me.Button5.Text = "Show"
+            Me.Button5.UseVisualStyleBackColor = True
             '
             'label6
             '
-            Me.label6.Location = New System.Drawing.Point(8, 429)
-            Me.label6.Name = "label6"
-            Me.label6.Size = New System.Drawing.Size(208, 26)
-            Me.label6.TabIndex = 11
-            Me.label6.Text = "Joke sample :)"
-            Me.label6.TextAlign = System.Drawing.ContentAlignment.TopRight
+            Me.Label6.Location = New System.Drawing.Point(8, 429)
+            Me.Label6.Name = "label6"
+            Me.Label6.Size = New System.Drawing.Size(208, 26)
+            Me.Label6.TabIndex = 11
+            Me.Label6.Text = "Joke sample :)"
+            Me.Label6.TextAlign = System.Drawing.ContentAlignment.TopRight
             '
             'button6
             '
-            Me.button6.Location = New System.Drawing.Point(222, 424)
-            Me.button6.Name = "button6"
-            Me.button6.Size = New System.Drawing.Size(75, 23)
-            Me.button6.TabIndex = 10
-            Me.button6.Text = "Show"
-            Me.button6.UseVisualStyleBackColor = True
+            Me.Button6.Location = New System.Drawing.Point(222, 424)
+            Me.Button6.Name = "button6"
+            Me.Button6.Size = New System.Drawing.Size(75, 23)
+            Me.Button6.TabIndex = 10
+            Me.Button6.Text = "Show"
+            Me.Button6.UseVisualStyleBackColor = True
             '
             'label7
             '
-            Me.label7.Location = New System.Drawing.Point(315, 4)
-            Me.label7.Name = "label7"
-            Me.label7.Size = New System.Drawing.Size(208, 41)
-            Me.label7.TabIndex = 13
-            Me.label7.Text = "Simplest code folding sample. This example shows how to make simplest code foldin" & _
+            Me.Label7.Location = New System.Drawing.Point(315, 4)
+            Me.Label7.Name = "label7"
+            Me.Label7.Size = New System.Drawing.Size(208, 41)
+            Me.Label7.TabIndex = 13
+            Me.Label7.Text = "Simplest code folding sample. This example shows how to make simplest code foldin" &
         "g."
-            Me.label7.TextAlign = System.Drawing.ContentAlignment.TopRight
+            Me.Label7.TextAlign = System.Drawing.ContentAlignment.TopRight
             '
             'button7
             '
-            Me.button7.Location = New System.Drawing.Point(529, 4)
-            Me.button7.Name = "button7"
-            Me.button7.Size = New System.Drawing.Size(75, 23)
-            Me.button7.TabIndex = 12
-            Me.button7.Text = "Show"
-            Me.button7.UseVisualStyleBackColor = True
+            Me.Button7.Location = New System.Drawing.Point(529, 4)
+            Me.Button7.Name = "button7"
+            Me.Button7.Size = New System.Drawing.Size(75, 23)
+            Me.Button7.TabIndex = 12
+            Me.Button7.Text = "Show"
+            Me.Button7.UseVisualStyleBackColor = True
             '
             'label8
             '
-            Me.label8.Location = New System.Drawing.Point(315, 87)
-            Me.label8.Name = "label8"
-            Me.label8.Size = New System.Drawing.Size(208, 41)
-            Me.label8.TabIndex = 15
-            Me.label8.Text = "Autocomplete sample. This example shows simplest way to create autocomplete funct" & _
+            Me.Label8.Location = New System.Drawing.Point(315, 87)
+            Me.Label8.Name = "label8"
+            Me.Label8.Size = New System.Drawing.Size(208, 41)
+            Me.Label8.TabIndex = 15
+            Me.Label8.Text = "Autocomplete sample. This example shows simplest way to create autocomplete funct" &
         "ionality."
-            Me.label8.TextAlign = System.Drawing.ContentAlignment.TopRight
+            Me.Label8.TextAlign = System.Drawing.ContentAlignment.TopRight
             '
             'button8
             '
-            Me.button8.Location = New System.Drawing.Point(529, 98)
-            Me.button8.Name = "button8"
-            Me.button8.Size = New System.Drawing.Size(75, 23)
-            Me.button8.TabIndex = 14
-            Me.button8.Text = "Show"
-            Me.button8.UseVisualStyleBackColor = True
+            Me.Button8.Location = New System.Drawing.Point(529, 98)
+            Me.Button8.Name = "button8"
+            Me.Button8.Size = New System.Drawing.Size(75, 23)
+            Me.Button8.TabIndex = 14
+            Me.Button8.Text = "Show"
+            Me.Button8.UseVisualStyleBackColor = True
             '
             'label9
             '
-            Me.label9.Location = New System.Drawing.Point(315, 220)
-            Me.label9.Name = "label9"
-            Me.label9.Size = New System.Drawing.Size(208, 59)
-            Me.label9.TabIndex = 17
-            Me.label9.Text = "Dynamic syntax highlighting. This example finds the functions declared in the pro" & _
+            Me.Label9.Location = New System.Drawing.Point(315, 220)
+            Me.Label9.Name = "label9"
+            Me.Label9.Size = New System.Drawing.Size(208, 59)
+            Me.Label9.TabIndex = 17
+            Me.Label9.Text = "Dynamic syntax highlighting. This example finds the functions declared in the pro" &
         "gram and dynamically highlights all of their entry into the code of LISP."
-            Me.label9.TextAlign = System.Drawing.ContentAlignment.TopRight
+            Me.Label9.TextAlign = System.Drawing.ContentAlignment.TopRight
             '
             'button9
             '
-            Me.button9.Location = New System.Drawing.Point(529, 234)
-            Me.button9.Name = "button9"
-            Me.button9.Size = New System.Drawing.Size(75, 23)
-            Me.button9.TabIndex = 16
-            Me.button9.Text = "Show"
-            Me.button9.UseVisualStyleBackColor = True
+            Me.Button9.Location = New System.Drawing.Point(529, 234)
+            Me.Button9.Name = "button9"
+            Me.Button9.Size = New System.Drawing.Size(75, 23)
+            Me.Button9.TabIndex = 16
+            Me.Button9.Text = "Show"
+            Me.Button9.UseVisualStyleBackColor = True
             '
             'label10
             '
-            Me.label10.Location = New System.Drawing.Point(315, 285)
-            Me.label10.Name = "label10"
-            Me.label10.Size = New System.Drawing.Size(208, 45)
-            Me.label10.TabIndex = 19
-            Me.label10.Text = "Syntax highlighting by XML description file. This example shows how to use XML fi" & _
+            Me.Label10.Location = New System.Drawing.Point(315, 285)
+            Me.Label10.Name = "label10"
+            Me.Label10.Size = New System.Drawing.Size(208, 45)
+            Me.Label10.TabIndex = 19
+            Me.Label10.Text = "Syntax highlighting by XML description file. This example shows how to use XML fi" &
         "le for description of syntax highlighting."
-            Me.label10.TextAlign = System.Drawing.ContentAlignment.TopRight
+            Me.Label10.TextAlign = System.Drawing.ContentAlignment.TopRight
             '
             'button10
             '
-            Me.button10.Location = New System.Drawing.Point(529, 292)
-            Me.button10.Name = "button10"
-            Me.button10.Size = New System.Drawing.Size(75, 23)
-            Me.button10.TabIndex = 18
-            Me.button10.Text = "Show"
-            Me.button10.UseVisualStyleBackColor = True
+            Me.Button10.Location = New System.Drawing.Point(529, 292)
+            Me.Button10.Name = "button10"
+            Me.Button10.Size = New System.Drawing.Size(75, 23)
+            Me.Button10.TabIndex = 18
+            Me.Button10.Text = "Show"
+            Me.Button10.UseVisualStyleBackColor = True
             '
             'label11
             '
-            Me.label11.Location = New System.Drawing.Point(315, 339)
-            Me.label11.Name = "label11"
-            Me.label11.Size = New System.Drawing.Size(208, 37)
-            Me.label11.TabIndex = 21
-            Me.label11.Text = "This example supports IME entering mode and rendering of wide characters."
-            Me.label11.TextAlign = System.Drawing.ContentAlignment.TopRight
+            Me.Label11.Location = New System.Drawing.Point(315, 339)
+            Me.Label11.Name = "label11"
+            Me.Label11.Size = New System.Drawing.Size(208, 37)
+            Me.Label11.TabIndex = 21
+            Me.Label11.Text = "This example supports IME entering mode and rendering of wide characters."
+            Me.Label11.TextAlign = System.Drawing.ContentAlignment.TopRight
             '
             'button11
             '
-            Me.button11.Location = New System.Drawing.Point(529, 339)
-            Me.button11.Name = "button11"
-            Me.button11.Size = New System.Drawing.Size(75, 23)
-            Me.button11.TabIndex = 20
-            Me.button11.Text = "Show"
-            Me.button11.UseVisualStyleBackColor = True
+            Me.Button11.Location = New System.Drawing.Point(529, 339)
+            Me.Button11.Name = "button11"
+            Me.Button11.Size = New System.Drawing.Size(75, 23)
+            Me.Button11.TabIndex = 20
+            Me.Button11.Text = "Show"
+            Me.Button11.UseVisualStyleBackColor = True
             '
             'label12
             '
-            Me.label12.Location = New System.Drawing.Point(8, 228)
-            Me.label12.Name = "label12"
-            Me.label12.Size = New System.Drawing.Size(208, 26)
-            Me.label12.TabIndex = 23
-            Me.label12.Text = "Powerfull C# source file editor"
-            Me.label12.TextAlign = System.Drawing.ContentAlignment.TopRight
+            Me.Label12.Location = New System.Drawing.Point(8, 228)
+            Me.Label12.Name = "label12"
+            Me.Label12.Size = New System.Drawing.Size(208, 26)
+            Me.Label12.TabIndex = 23
+            Me.Label12.Text = "Powerfull C# source file editor"
+            Me.Label12.TextAlign = System.Drawing.ContentAlignment.TopRight
             '
             'button12
             '
-            Me.button12.Location = New System.Drawing.Point(222, 223)
-            Me.button12.Name = "button12"
-            Me.button12.Size = New System.Drawing.Size(75, 23)
-            Me.button12.TabIndex = 22
-            Me.button12.Text = "Show"
-            Me.button12.UseVisualStyleBackColor = True
+            Me.Button12.Location = New System.Drawing.Point(222, 223)
+            Me.Button12.Name = "button12"
+            Me.Button12.Size = New System.Drawing.Size(75, 23)
+            Me.Button12.TabIndex = 22
+            Me.Button12.Text = "Show"
+            Me.Button12.UseVisualStyleBackColor = True
             '
             'label13
             '
-            Me.label13.Location = New System.Drawing.Point(8, 265)
-            Me.label13.Name = "label13"
-            Me.label13.Size = New System.Drawing.Size(208, 26)
-            Me.label13.TabIndex = 25
-            Me.label13.Text = "Example of image drawing"
-            Me.label13.TextAlign = System.Drawing.ContentAlignment.TopRight
+            Me.Label13.Location = New System.Drawing.Point(8, 265)
+            Me.Label13.Name = "label13"
+            Me.Label13.Size = New System.Drawing.Size(208, 26)
+            Me.Label13.TabIndex = 25
+            Me.Label13.Text = "Example of image drawing"
+            Me.Label13.TextAlign = System.Drawing.ContentAlignment.TopRight
             '
             'button13
             '
-            Me.button13.Location = New System.Drawing.Point(222, 265)
-            Me.button13.Name = "button13"
-            Me.button13.Size = New System.Drawing.Size(75, 23)
-            Me.button13.TabIndex = 24
-            Me.button13.Text = "Show"
-            Me.button13.UseVisualStyleBackColor = True
+            Me.Button13.Location = New System.Drawing.Point(222, 265)
+            Me.Button13.Name = "button13"
+            Me.Button13.Size = New System.Drawing.Size(75, 23)
+            Me.Button13.TabIndex = 24
+            Me.Button13.Text = "Show"
+            Me.Button13.UseVisualStyleBackColor = True
             '
             'label14
             '
-            Me.label14.Location = New System.Drawing.Point(315, 135)
-            Me.label14.Name = "label14"
-            Me.label14.Size = New System.Drawing.Size(208, 41)
-            Me.label14.TabIndex = 27
-            Me.label14.Text = "Autocomplete sample 2." & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "This example demonstrates more flexible variant of Autoco" & _
+            Me.Label14.Location = New System.Drawing.Point(315, 135)
+            Me.Label14.Name = "label14"
+            Me.Label14.Size = New System.Drawing.Size(208, 41)
+            Me.Label14.TabIndex = 27
+            Me.Label14.Text = "Autocomplete sample 2." & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "This example demonstrates more flexible variant of Autoco" &
         "mpleteMenu using."
-            Me.label14.TextAlign = System.Drawing.ContentAlignment.TopRight
+            Me.Label14.TextAlign = System.Drawing.ContentAlignment.TopRight
             '
             'button14
             '
-            Me.button14.Location = New System.Drawing.Point(529, 141)
-            Me.button14.Name = "button14"
-            Me.button14.Size = New System.Drawing.Size(75, 23)
-            Me.button14.TabIndex = 26
-            Me.button14.Text = "Show"
-            Me.button14.UseVisualStyleBackColor = True
+            Me.Button14.Location = New System.Drawing.Point(529, 141)
+            Me.Button14.Name = "button14"
+            Me.Button14.Size = New System.Drawing.Size(75, 23)
+            Me.Button14.TabIndex = 26
+            Me.Button14.Text = "Show"
+            Me.Button14.UseVisualStyleBackColor = True
             '
             'label15
             '
-            Me.label15.Location = New System.Drawing.Point(315, 387)
-            Me.label15.Name = "label15"
-            Me.label15.Size = New System.Drawing.Size(208, 23)
-            Me.label15.TabIndex = 29
-            Me.label15.Text = "AutoIndent sample"
-            Me.label15.TextAlign = System.Drawing.ContentAlignment.TopRight
+            Me.Label15.Location = New System.Drawing.Point(315, 387)
+            Me.Label15.Name = "label15"
+            Me.Label15.Size = New System.Drawing.Size(208, 23)
+            Me.Label15.TabIndex = 29
+            Me.Label15.Text = "AutoIndent sample"
+            Me.Label15.TextAlign = System.Drawing.ContentAlignment.TopRight
             '
             'button15
             '
-            Me.button15.Location = New System.Drawing.Point(529, 382)
-            Me.button15.Name = "button15"
-            Me.button15.Size = New System.Drawing.Size(75, 23)
-            Me.button15.TabIndex = 28
-            Me.button15.Text = "Show"
-            Me.button15.UseVisualStyleBackColor = True
+            Me.Button15.Location = New System.Drawing.Point(529, 382)
+            Me.Button15.Name = "button15"
+            Me.Button15.Size = New System.Drawing.Size(75, 23)
+            Me.Button15.TabIndex = 28
+            Me.Button15.Text = "Show"
+            Me.Button15.UseVisualStyleBackColor = True
             '
             'button16
             '
-            Me.button16.Location = New System.Drawing.Point(529, 425)
-            Me.button16.Name = "button16"
-            Me.button16.Size = New System.Drawing.Size(75, 23)
-            Me.button16.TabIndex = 30
-            Me.button16.Text = "Show"
-            Me.button16.UseVisualStyleBackColor = True
+            Me.Button16.Location = New System.Drawing.Point(529, 425)
+            Me.Button16.Name = "button16"
+            Me.Button16.Size = New System.Drawing.Size(75, 23)
+            Me.Button16.TabIndex = 30
+            Me.Button16.Text = "Show"
+            Me.Button16.UseVisualStyleBackColor = True
             '
             'label16
             '
-            Me.label16.Location = New System.Drawing.Point(315, 430)
-            Me.label16.Name = "label16"
-            Me.label16.Size = New System.Drawing.Size(208, 23)
-            Me.label16.TabIndex = 31
-            Me.label16.Text = "Bookmarks sample"
-            Me.label16.TextAlign = System.Drawing.ContentAlignment.TopRight
+            Me.Label16.Location = New System.Drawing.Point(315, 430)
+            Me.Label16.Name = "label16"
+            Me.Label16.Size = New System.Drawing.Size(208, 23)
+            Me.Label16.TabIndex = 31
+            Me.Label16.Text = "Bookmarks sample"
+            Me.Label16.TextAlign = System.Drawing.ContentAlignment.TopRight
             '
             'label17
             '
-            Me.label17.Location = New System.Drawing.Point(8, 306)
-            Me.label17.Name = "label17"
-            Me.label17.Size = New System.Drawing.Size(208, 26)
-            Me.label17.TabIndex = 33
-            Me.label17.Text = "Logger sample. It shows how to add text with predefined style."
-            Me.label17.TextAlign = System.Drawing.ContentAlignment.TopRight
+            Me.Label17.Location = New System.Drawing.Point(8, 306)
+            Me.Label17.Name = "label17"
+            Me.Label17.Size = New System.Drawing.Size(208, 26)
+            Me.Label17.TabIndex = 33
+            Me.Label17.Text = "Logger sample. It shows how to add text with predefined style."
+            Me.Label17.TextAlign = System.Drawing.ContentAlignment.TopRight
             '
             'button17
             '
-            Me.button17.Location = New System.Drawing.Point(222, 306)
-            Me.button17.Name = "button17"
-            Me.button17.Size = New System.Drawing.Size(75, 23)
-            Me.button17.TabIndex = 32
-            Me.button17.Text = "Show"
-            Me.button17.UseVisualStyleBackColor = True
+            Me.Button17.Location = New System.Drawing.Point(222, 306)
+            Me.Button17.Name = "button17"
+            Me.Button17.Size = New System.Drawing.Size(75, 23)
+            Me.Button17.TabIndex = 32
+            Me.Button17.Text = "Show"
+            Me.Button17.UseVisualStyleBackColor = True
             '
             'label18
             '
-            Me.label18.Location = New System.Drawing.Point(315, 185)
-            Me.label18.Name = "label18"
-            Me.label18.Size = New System.Drawing.Size(208, 26)
-            Me.label18.TabIndex = 35
-            Me.label18.Text = "Tooltip sample. It shows tooltips for words under mouse."
-            Me.label18.TextAlign = System.Drawing.ContentAlignment.TopRight
+            Me.Label18.Location = New System.Drawing.Point(315, 185)
+            Me.Label18.Name = "label18"
+            Me.Label18.Size = New System.Drawing.Size(208, 26)
+            Me.Label18.TabIndex = 35
+            Me.Label18.Text = "Tooltip sample. It shows tooltips for words under mouse."
+            Me.Label18.TextAlign = System.Drawing.ContentAlignment.TopRight
             '
             'button18
             '
-            Me.button18.Location = New System.Drawing.Point(529, 185)
-            Me.button18.Name = "button18"
-            Me.button18.Size = New System.Drawing.Size(75, 23)
-            Me.button18.TabIndex = 34
-            Me.button18.Text = "Show"
-            Me.button18.UseVisualStyleBackColor = True
+            Me.Button18.Location = New System.Drawing.Point(529, 185)
+            Me.Button18.Name = "button18"
+            Me.Button18.Size = New System.Drawing.Size(75, 23)
+            Me.Button18.TabIndex = 34
+            Me.Button18.Text = "Show"
+            Me.Button18.UseVisualStyleBackColor = True
             '
             'label19
             '
-            Me.label19.Location = New System.Drawing.Point(8, 345)
-            Me.label19.Name = "label19"
-            Me.label19.Size = New System.Drawing.Size(208, 26)
-            Me.label19.TabIndex = 37
-            Me.label19.Text = "Split sample. This example shows how to make split-screen mode."
-            Me.label19.TextAlign = System.Drawing.ContentAlignment.TopRight
+            Me.Label19.Location = New System.Drawing.Point(8, 345)
+            Me.Label19.Name = "label19"
+            Me.Label19.Size = New System.Drawing.Size(208, 26)
+            Me.Label19.TabIndex = 37
+            Me.Label19.Text = "Split sample. This example shows how to make split-screen mode."
+            Me.Label19.TextAlign = System.Drawing.ContentAlignment.TopRight
             '
             'button19
             '
-            Me.button19.Location = New System.Drawing.Point(222, 345)
-            Me.button19.Name = "button19"
-            Me.button19.Size = New System.Drawing.Size(75, 23)
-            Me.button19.TabIndex = 36
-            Me.button19.Text = "Show"
-            Me.button19.UseVisualStyleBackColor = True
+            Me.Button19.Location = New System.Drawing.Point(222, 345)
+            Me.Button19.Name = "button19"
+            Me.Button19.Size = New System.Drawing.Size(75, 23)
+            Me.Button19.TabIndex = 36
+            Me.Button19.Text = "Show"
+            Me.Button19.UseVisualStyleBackColor = True
             '
             'label20
             '
-            Me.label20.Location = New System.Drawing.Point(8, 386)
-            Me.label20.Name = "label20"
-            Me.label20.Size = New System.Drawing.Size(208, 26)
-            Me.label20.TabIndex = 39
-            Me.label20.Text = "Lazy loading sample."
-            Me.label20.TextAlign = System.Drawing.ContentAlignment.TopRight
+            Me.Label20.Location = New System.Drawing.Point(8, 386)
+            Me.Label20.Name = "label20"
+            Me.Label20.Size = New System.Drawing.Size(208, 26)
+            Me.Label20.TabIndex = 39
+            Me.Label20.Text = "Lazy loading sample."
+            Me.Label20.TextAlign = System.Drawing.ContentAlignment.TopRight
             '
             'button20
             '
-            Me.button20.Location = New System.Drawing.Point(222, 386)
-            Me.button20.Name = "button20"
-            Me.button20.Size = New System.Drawing.Size(75, 23)
-            Me.button20.TabIndex = 38
-            Me.button20.Text = "Show"
-            Me.button20.UseVisualStyleBackColor = True
+            Me.Button20.Location = New System.Drawing.Point(222, 386)
+            Me.Button20.Name = "button20"
+            Me.Button20.Size = New System.Drawing.Size(75, 23)
+            Me.Button20.TabIndex = 38
+            Me.Button20.Text = "Show"
+            Me.Button20.UseVisualStyleBackColor = True
             '
             'label21
             '
-            Me.label21.Location = New System.Drawing.Point(315, 471)
-            Me.label21.Name = "label21"
-            Me.label21.Size = New System.Drawing.Size(208, 23)
-            Me.label21.TabIndex = 41
-            Me.label21.Text = "Console sample"
-            Me.label21.TextAlign = System.Drawing.ContentAlignment.TopRight
+            Me.Label21.Location = New System.Drawing.Point(315, 471)
+            Me.Label21.Name = "label21"
+            Me.Label21.Size = New System.Drawing.Size(208, 23)
+            Me.Label21.TabIndex = 41
+            Me.Label21.Text = "Console sample"
+            Me.Label21.TextAlign = System.Drawing.ContentAlignment.TopRight
             '
             'button21
             '
-            Me.button21.Location = New System.Drawing.Point(529, 466)
-            Me.button21.Name = "button21"
-            Me.button21.Size = New System.Drawing.Size(75, 23)
-            Me.button21.TabIndex = 40
-            Me.button21.Text = "Show"
-            Me.button21.UseVisualStyleBackColor = True
+            Me.Button21.Location = New System.Drawing.Point(529, 466)
+            Me.Button21.Name = "button21"
+            Me.Button21.Size = New System.Drawing.Size(75, 23)
+            Me.Button21.TabIndex = 40
+            Me.Button21.Text = "Show"
+            Me.Button21.UseVisualStyleBackColor = True
             '
             'label22
             '
-            Me.label22.Location = New System.Drawing.Point(315, 53)
-            Me.label22.Name = "label22"
-            Me.label22.Size = New System.Drawing.Size(208, 26)
-            Me.label22.TabIndex = 43
-            Me.label22.Text = "Custom code folding sample."
-            Me.label22.TextAlign = System.Drawing.ContentAlignment.TopRight
+            Me.Label22.Location = New System.Drawing.Point(315, 53)
+            Me.Label22.Name = "label22"
+            Me.Label22.Size = New System.Drawing.Size(208, 26)
+            Me.Label22.TabIndex = 43
+            Me.Label22.Text = "Custom code folding sample."
+            Me.Label22.TextAlign = System.Drawing.ContentAlignment.TopRight
             '
             'button22
             '
-            Me.button22.Location = New System.Drawing.Point(529, 48)
-            Me.button22.Name = "button22"
-            Me.button22.Size = New System.Drawing.Size(75, 23)
-            Me.button22.TabIndex = 42
-            Me.button22.Text = "Show"
-            Me.button22.UseVisualStyleBackColor = True
+            Me.Button22.Location = New System.Drawing.Point(529, 48)
+            Me.Button22.Name = "button22"
+            Me.Button22.Size = New System.Drawing.Size(75, 23)
+            Me.Button22.TabIndex = 42
+            Me.Button22.Text = "Show"
+            Me.Button22.UseVisualStyleBackColor = True
             '
             'Label23
             '
@@ -561,57 +515,57 @@ Namespace TesterVB
             Me.Label23.Name = "Label23"
             Me.Label23.Size = New System.Drawing.Size(550, 35)
             Me.Label23.TabIndex = 44
-            Me.Label23.Text = "Note: In this project some examples are deprecated and/or not implemented. Newer " & _
+            Me.Label23.Text = "Note: In this project some examples are deprecated and/or not implemented. Newer " &
         "and full code samples see in project Tester (C#)."
             '
             'MainForm
             '
             Me.ClientSize = New System.Drawing.Size(608, 537)
             Me.Controls.Add(Me.Label23)
-            Me.Controls.Add(Me.label22)
-            Me.Controls.Add(Me.button22)
-            Me.Controls.Add(Me.label21)
-            Me.Controls.Add(Me.button21)
-            Me.Controls.Add(Me.label20)
-            Me.Controls.Add(Me.button20)
-            Me.Controls.Add(Me.label19)
-            Me.Controls.Add(Me.button19)
-            Me.Controls.Add(Me.label18)
-            Me.Controls.Add(Me.button18)
-            Me.Controls.Add(Me.label17)
-            Me.Controls.Add(Me.button17)
-            Me.Controls.Add(Me.label16)
-            Me.Controls.Add(Me.button16)
-            Me.Controls.Add(Me.label15)
-            Me.Controls.Add(Me.button15)
-            Me.Controls.Add(Me.label14)
-            Me.Controls.Add(Me.button14)
-            Me.Controls.Add(Me.label13)
-            Me.Controls.Add(Me.button13)
-            Me.Controls.Add(Me.label12)
-            Me.Controls.Add(Me.button12)
-            Me.Controls.Add(Me.label11)
-            Me.Controls.Add(Me.button11)
-            Me.Controls.Add(Me.label10)
-            Me.Controls.Add(Me.button10)
-            Me.Controls.Add(Me.label9)
-            Me.Controls.Add(Me.button9)
-            Me.Controls.Add(Me.label8)
-            Me.Controls.Add(Me.button8)
-            Me.Controls.Add(Me.label7)
-            Me.Controls.Add(Me.button7)
-            Me.Controls.Add(Me.label6)
-            Me.Controls.Add(Me.button6)
-            Me.Controls.Add(Me.label5)
-            Me.Controls.Add(Me.button5)
-            Me.Controls.Add(Me.label4)
-            Me.Controls.Add(Me.button4)
-            Me.Controls.Add(Me.label3)
-            Me.Controls.Add(Me.button3)
-            Me.Controls.Add(Me.label2)
-            Me.Controls.Add(Me.button2)
-            Me.Controls.Add(Me.label1)
-            Me.Controls.Add(Me.button1)
+            Me.Controls.Add(Me.Label22)
+            Me.Controls.Add(Me.Button22)
+            Me.Controls.Add(Me.Label21)
+            Me.Controls.Add(Me.Button21)
+            Me.Controls.Add(Me.Label20)
+            Me.Controls.Add(Me.Button20)
+            Me.Controls.Add(Me.Label19)
+            Me.Controls.Add(Me.Button19)
+            Me.Controls.Add(Me.Label18)
+            Me.Controls.Add(Me.Button18)
+            Me.Controls.Add(Me.Label17)
+            Me.Controls.Add(Me.Button17)
+            Me.Controls.Add(Me.Label16)
+            Me.Controls.Add(Me.Button16)
+            Me.Controls.Add(Me.Label15)
+            Me.Controls.Add(Me.Button15)
+            Me.Controls.Add(Me.Label14)
+            Me.Controls.Add(Me.Button14)
+            Me.Controls.Add(Me.Label13)
+            Me.Controls.Add(Me.Button13)
+            Me.Controls.Add(Me.Label12)
+            Me.Controls.Add(Me.Button12)
+            Me.Controls.Add(Me.Label11)
+            Me.Controls.Add(Me.Button11)
+            Me.Controls.Add(Me.Label10)
+            Me.Controls.Add(Me.Button10)
+            Me.Controls.Add(Me.Label9)
+            Me.Controls.Add(Me.Button9)
+            Me.Controls.Add(Me.Label8)
+            Me.Controls.Add(Me.Button8)
+            Me.Controls.Add(Me.Label7)
+            Me.Controls.Add(Me.Button7)
+            Me.Controls.Add(Me.Label6)
+            Me.Controls.Add(Me.Button6)
+            Me.Controls.Add(Me.Label5)
+            Me.Controls.Add(Me.Button5)
+            Me.Controls.Add(Me.Label4)
+            Me.Controls.Add(Me.Button4)
+            Me.Controls.Add(Me.Label3)
+            Me.Controls.Add(Me.Button3)
+            Me.Controls.Add(Me.Label2)
+            Me.Controls.Add(Me.Button2)
+            Me.Controls.Add(Me.Label1)
+            Me.Controls.Add(Me.Button1)
             Me.Name = "MainForm"
             Me.Text = "MainForm"
             Me.ResumeLayout(False)
@@ -622,114 +576,114 @@ Namespace TesterVB
             Me.InitializeComponent()
         End Sub
 
-        Private Sub button1_Click(sender As Object, e As EventArgs) Handles button1.Click
+        Private Sub Button1_Click(sender As Object, e As EventArgs) Handles Button1.Click
             Dim x = New PowerfulSample
             x.Show()
         End Sub
 
-        Private Sub button2_Click(sender As Object, e As EventArgs) Handles button2.Click
+        Private Sub Button2_Click(sender As Object, e As EventArgs) Handles Button2.Click
             Dim x = New MarkerToolSample
             x.Show()
         End Sub
 
-        Private Sub button3_Click(sender As Object, e As EventArgs) Handles button3.Click
+        Private Sub Button3_Click(sender As Object, e As EventArgs) Handles Button3.Click
             Dim x = New CustomStyleSample
             x.Show()
         End Sub
 
-        Private Sub button4_Click(sender As Object, e As EventArgs) Handles button4.Click
+        Private Sub Button4_Click(sender As Object, e As EventArgs) Handles Button4.Click
             Me.Cursor = Cursors.WaitCursor
             Dim x = New VisibleRangeChangedDelayedSample
             x.Show()
             Me.Cursor = Cursors.[Default]
         End Sub
 
-        Private Sub button5_Click(sender As Object, e As EventArgs) Handles button5.Click
+        Private Sub Button5_Click(sender As Object, e As EventArgs) Handles Button5.Click
             Dim x = New SimplestSyntaxHighlightingSample
             x.Show()
         End Sub
 
-        Private Sub button6_Click(sender As Object, e As EventArgs) Handles button6.Click
+        Private Sub Button6_Click(sender As Object, e As EventArgs) Handles Button6.Click
             Dim x = New JokeSample
             x.Show()
         End Sub
 
-        Private Sub button7_Click(sender As Object, e As EventArgs) Handles button7.Click
+        Private Sub Button7_Click(sender As Object, e As EventArgs) Handles Button7.Click
             Dim x = New SimplestCodeFoldingSample
             x.Show()
         End Sub
 
-        Private Sub button8_Click(sender As Object, e As EventArgs) Handles button8.Click
+        Private Sub Button8_Click(sender As Object, e As EventArgs) Handles Button8.Click
             Dim x = New AutocompleteSample
             x.Show()
         End Sub
 
-        Private Sub button9_Click(sender As Object, e As EventArgs) Handles button9.Click
+        Private Sub Button9_Click(sender As Object, e As EventArgs) Handles Button9.Click
             Dim x = New DynamicSyntaxHighlighting
             x.Show()
         End Sub
 
-        Private Sub button10_Click(sender As Object, e As EventArgs) Handles button10.Click
+        Private Sub Button10_Click(sender As Object, e As EventArgs) Handles Button10.Click
             Dim x = New SyntaxHighlightingByXmlDescription
             x.Show()
         End Sub
 
-        Private Sub button11_Click(sender As Object, e As EventArgs) Handles button11.Click
+        Private Sub Button11_Click(sender As Object, e As EventArgs) Handles Button11.Click
             Dim x = New IMEsample
             x.Show()
         End Sub
 
-        Private Sub button12_Click(sender As Object, e As EventArgs) Handles button12.Click
+        Private Sub Button12_Click(sender As Object, e As EventArgs) Handles Button12.Click
             Dim x = New PowerfulCSharpEditor
             x.Show()
         End Sub
 
-        Private Sub button13_Click(sender As Object, e As EventArgs) Handles button13.Click
+        Private Sub Button13_Click(sender As Object, e As EventArgs) Handles Button13.Click
             Dim x = New GifImageDrawingSample
             x.Show()
         End Sub
 
-        Private Sub button14_Click(sender As Object, e As EventArgs) Handles button14.Click
+        Private Sub Button14_Click(sender As Object, e As EventArgs) Handles Button14.Click
             Dim x = New AutocompleteSample2
             x.Show()
         End Sub
 
-        Private Sub button15_Click(sender As Object, e As EventArgs) Handles button15.Click
+        Private Sub Button15_Click(sender As Object, e As EventArgs) Handles Button15.Click
             Dim x = New AutoIndentSample
             x.Show()
         End Sub
 
-        Private Sub button16_Click(sender As Object, e As EventArgs) Handles button16.Click
+        Private Sub Button16_Click(sender As Object, e As EventArgs) Handles Button16.Click
             Dim x = New BookmarksSample
             x.Show()
         End Sub
 
-        Private Sub button17_Click(sender As Object, e As EventArgs) Handles button17.Click
+        Private Sub Button17_Click(sender As Object, e As EventArgs) Handles Button17.Click
             Dim x = New LoggerSample
             x.Show()
         End Sub
 
-        Private Sub button18_Click(sender As Object, e As EventArgs) Handles button18.Click
+        Private Sub Button18_Click(sender As Object, e As EventArgs) Handles Button18.Click
             Dim x = New TooltipSample
             x.Show()
         End Sub
 
-        Private Sub button19_Click(sender As Object, e As EventArgs) Handles button19.Click
+        Private Sub Button19_Click(sender As Object, e As EventArgs) Handles Button19.Click
             Dim x = New SplitSample
             x.Show()
         End Sub
 
-        Private Sub button20_Click(sender As Object, e As EventArgs) Handles button20.Click
+        Private Sub Button20_Click(sender As Object, e As EventArgs) Handles Button20.Click
             Dim x = New LazyLoadingSample
             x.Show()
         End Sub
 
-        Private Sub button21_Click(sender As Object, e As EventArgs) Handles button21.Click
+        Private Sub Button21_Click(sender As Object, e As EventArgs) Handles Button21.Click
             Dim x = New ConsoleSample
             x.Show()
         End Sub
 
-        Private Sub button22_Click(sender As Object, e As EventArgs) Handles button22.Click
+        Private Sub Button22_Click(sender As Object, e As EventArgs) Handles Button22.Click
             Dim x = New CustomFoldingSample
             x.Show()
         End Sub

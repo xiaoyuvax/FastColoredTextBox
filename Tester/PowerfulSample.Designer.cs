@@ -140,14 +140,14 @@ namespace Tester
             this.findToolStripMenuItem.Name = "findToolStripMenuItem";
             this.findToolStripMenuItem.Size = new System.Drawing.Size(326, 26);
             this.findToolStripMenuItem.Text = "&Find [Ctrl+F]";
-            this.findToolStripMenuItem.Click += new System.EventHandler(this.findToolStripMenuItem_Click);
+            this.findToolStripMenuItem.Click += new System.EventHandler(this.FindToolStripMenuItem_Click);
             // 
             // replaceToolStripMenuItem
             // 
             this.replaceToolStripMenuItem.Name = "replaceToolStripMenuItem";
             this.replaceToolStripMenuItem.Size = new System.Drawing.Size(326, 26);
             this.replaceToolStripMenuItem.Text = "&Replace [Ctrl+H]";
-            this.replaceToolStripMenuItem.Click += new System.EventHandler(this.replaceToolStripMenuItem_Click);
+            this.replaceToolStripMenuItem.Click += new System.EventHandler(this.ReplaceToolStripMenuItem_Click);
             // 
             // toolStripMenuItem1
             // 
@@ -159,14 +159,14 @@ namespace Tester
             this.setSelectedAsReadonlyToolStripMenuItem.Name = "setSelectedAsReadonlyToolStripMenuItem";
             this.setSelectedAsReadonlyToolStripMenuItem.Size = new System.Drawing.Size(326, 26);
             this.setSelectedAsReadonlyToolStripMenuItem.Text = "Set selected as readonly";
-            this.setSelectedAsReadonlyToolStripMenuItem.Click += new System.EventHandler(this.setSelectedAsReadonlyToolStripMenuItem_Click);
+            this.setSelectedAsReadonlyToolStripMenuItem.Click += new System.EventHandler(this.SetSelectedAsReadonlyToolStripMenuItem_Click);
             // 
             // setSelectedAsWritableToolStripMenuItem
             // 
             this.setSelectedAsWritableToolStripMenuItem.Name = "setSelectedAsWritableToolStripMenuItem";
             this.setSelectedAsWritableToolStripMenuItem.Size = new System.Drawing.Size(326, 26);
             this.setSelectedAsWritableToolStripMenuItem.Text = "Set selected as writable";
-            this.setSelectedAsWritableToolStripMenuItem.Click += new System.EventHandler(this.setSelectedAsWritableToolStripMenuItem_Click);
+            this.setSelectedAsWritableToolStripMenuItem.Click += new System.EventHandler(this.SetSelectedAsWritableToolStripMenuItem_Click);
             // 
             // toolStripMenuItem8
             // 
@@ -178,7 +178,7 @@ namespace Tester
             this.collapseSelectedBlockToolStripMenuItem.Name = "collapseSelectedBlockToolStripMenuItem";
             this.collapseSelectedBlockToolStripMenuItem.Size = new System.Drawing.Size(326, 26);
             this.collapseSelectedBlockToolStripMenuItem.Text = "Collapse selected block";
-            this.collapseSelectedBlockToolStripMenuItem.Click += new System.EventHandler(this.collapseSelectedBlockToolStripMenuItem_Click);
+            this.collapseSelectedBlockToolStripMenuItem.Click += new System.EventHandler(this.CollapseSelectedBlockToolStripMenuItem_Click);
             // 
             // toolStripMenuItem3
             // 
@@ -190,14 +190,14 @@ namespace Tester
             this.collapseAllregionToolStripMenuItem.Name = "collapseAllregionToolStripMenuItem";
             this.collapseAllregionToolStripMenuItem.Size = new System.Drawing.Size(326, 26);
             this.collapseAllregionToolStripMenuItem.Text = "Collapse all #region";
-            this.collapseAllregionToolStripMenuItem.Click += new System.EventHandler(this.collapseAllregionToolStripMenuItem_Click);
+            this.collapseAllregionToolStripMenuItem.Click += new System.EventHandler(this.CollapseAllregionToolStripMenuItem_Click);
             // 
             // exapndAllregionToolStripMenuItem
             // 
             this.exapndAllregionToolStripMenuItem.Name = "exapndAllregionToolStripMenuItem";
             this.exapndAllregionToolStripMenuItem.Size = new System.Drawing.Size(326, 26);
             this.exapndAllregionToolStripMenuItem.Text = "Exapnd all #region";
-            this.exapndAllregionToolStripMenuItem.Click += new System.EventHandler(this.exapndAllregionToolStripMenuItem_Click);
+            this.exapndAllregionToolStripMenuItem.Click += new System.EventHandler(this.ExapndAllregionToolStripMenuItem_Click);
             // 
             // toolStripMenuItem2
             // 
@@ -209,14 +209,14 @@ namespace Tester
             this.increaseIndentSiftTabToolStripMenuItem.Name = "increaseIndentSiftTabToolStripMenuItem";
             this.increaseIndentSiftTabToolStripMenuItem.Size = new System.Drawing.Size(326, 26);
             this.increaseIndentSiftTabToolStripMenuItem.Text = "Increase Indent [Tab]";
-            this.increaseIndentSiftTabToolStripMenuItem.Click += new System.EventHandler(this.increaseIndentSiftTabToolStripMenuItem_Click);
+            this.increaseIndentSiftTabToolStripMenuItem.Click += new System.EventHandler(this.IncreaseIndentSiftTabToolStripMenuItem_Click);
             // 
             // decreaseIndentTabToolStripMenuItem
             // 
             this.decreaseIndentTabToolStripMenuItem.Name = "decreaseIndentTabToolStripMenuItem";
             this.decreaseIndentTabToolStripMenuItem.Size = new System.Drawing.Size(326, 26);
             this.decreaseIndentTabToolStripMenuItem.Text = "Decrease Indent [Shift + Tab]";
-            this.decreaseIndentTabToolStripMenuItem.Click += new System.EventHandler(this.decreaseIndentTabToolStripMenuItem_Click);
+            this.decreaseIndentTabToolStripMenuItem.Click += new System.EventHandler(this.DecreaseIndentTabToolStripMenuItem_Click);
             // 
             // toolStripMenuItem10
             // 
@@ -228,14 +228,14 @@ namespace Tester
             this.commentSelectedLinesToolStripMenuItem.Name = "commentSelectedLinesToolStripMenuItem";
             this.commentSelectedLinesToolStripMenuItem.Size = new System.Drawing.Size(326, 26);
             this.commentSelectedLinesToolStripMenuItem.Text = "Comment selected lines";
-            this.commentSelectedLinesToolStripMenuItem.Click += new System.EventHandler(this.commentSelectedLinesToolStripMenuItem_Click);
+            this.commentSelectedLinesToolStripMenuItem.Click += new System.EventHandler(this.CommentSelectedLinesToolStripMenuItem_Click);
             // 
             // uncommentSelectedLinesToolStripMenuItem
             // 
             this.uncommentSelectedLinesToolStripMenuItem.Name = "uncommentSelectedLinesToolStripMenuItem";
             this.uncommentSelectedLinesToolStripMenuItem.Size = new System.Drawing.Size(326, 26);
             this.uncommentSelectedLinesToolStripMenuItem.Text = "Uncomment selected lines";
-            this.uncommentSelectedLinesToolStripMenuItem.Click += new System.EventHandler(this.uncommentSelectedLinesToolStripMenuItem_Click);
+            this.uncommentSelectedLinesToolStripMenuItem.Click += new System.EventHandler(this.UncommentSelectedLinesToolStripMenuItem_Click);
             // 
             // toolStripMenuItem4
             // 
@@ -247,14 +247,14 @@ namespace Tester
             this.goBackwardCtrlToolStripMenuItem.Name = "goBackwardCtrlToolStripMenuItem";
             this.goBackwardCtrlToolStripMenuItem.Size = new System.Drawing.Size(326, 26);
             this.goBackwardCtrlToolStripMenuItem.Text = "Go Backward [Ctrl+ -]";
-            this.goBackwardCtrlToolStripMenuItem.Click += new System.EventHandler(this.goBackwardCtrlToolStripMenuItem_Click);
+            this.goBackwardCtrlToolStripMenuItem.Click += new System.EventHandler(this.GoBackwardCtrlToolStripMenuItem_Click);
             // 
             // goForwardCtrlShiftToolStripMenuItem
             // 
             this.goForwardCtrlShiftToolStripMenuItem.Name = "goForwardCtrlShiftToolStripMenuItem";
             this.goForwardCtrlShiftToolStripMenuItem.Size = new System.Drawing.Size(326, 26);
             this.goForwardCtrlShiftToolStripMenuItem.Text = "Go Forward [Ctrl+Shift+ -]";
-            this.goForwardCtrlShiftToolStripMenuItem.Click += new System.EventHandler(this.goForwardCtrlShiftToolStripMenuItem_Click);
+            this.goForwardCtrlShiftToolStripMenuItem.Click += new System.EventHandler(this.GoForwardCtrlShiftToolStripMenuItem_Click);
             // 
             // toolStripMenuItem5
             // 
@@ -266,7 +266,7 @@ namespace Tester
             this.autoIndentToolStripMenuItem.Name = "autoIndentToolStripMenuItem";
             this.autoIndentToolStripMenuItem.Size = new System.Drawing.Size(326, 26);
             this.autoIndentToolStripMenuItem.Text = "Auto Indent selected text";
-            this.autoIndentToolStripMenuItem.Click += new System.EventHandler(this.autoIndentToolStripMenuItem_Click);
+            this.autoIndentToolStripMenuItem.Click += new System.EventHandler(this.AutoIndentToolStripMenuItem_Click);
             // 
             // toolStripMenuItem6
             // 
@@ -278,14 +278,14 @@ namespace Tester
             this.goLeftBracketToolStripMenuItem.Name = "goLeftBracketToolStripMenuItem";
             this.goLeftBracketToolStripMenuItem.Size = new System.Drawing.Size(326, 26);
             this.goLeftBracketToolStripMenuItem.Text = "Go Left Bracket";
-            this.goLeftBracketToolStripMenuItem.Click += new System.EventHandler(this.goLeftBracketToolStripMenuItem_Click);
+            this.goLeftBracketToolStripMenuItem.Click += new System.EventHandler(this.GoLeftBracketToolStripMenuItem_Click);
             // 
             // goRightBracketToolStripMenuItem
             // 
             this.goRightBracketToolStripMenuItem.Name = "goRightBracketToolStripMenuItem";
             this.goRightBracketToolStripMenuItem.Size = new System.Drawing.Size(326, 26);
             this.goRightBracketToolStripMenuItem.Text = "Go Right Bracket";
-            this.goRightBracketToolStripMenuItem.Click += new System.EventHandler(this.goRightBracketToolStripMenuItem_Click);
+            this.goRightBracketToolStripMenuItem.Click += new System.EventHandler(this.GoRightBracketToolStripMenuItem_Click);
             // 
             // toolStripMenuItem7
             // 
@@ -297,7 +297,7 @@ namespace Tester
             this.miPrint.Name = "miPrint";
             this.miPrint.Size = new System.Drawing.Size(326, 26);
             this.miPrint.Text = "Print...";
-            this.miPrint.Click += new System.EventHandler(this.miPrint_Click);
+            this.miPrint.Click += new System.EventHandler(this.MiPrint_Click);
             // 
             // toolStripMenuItem9
             // 
@@ -309,14 +309,14 @@ namespace Tester
             this.startStopMacroRecordingToolStripMenuItem.Name = "startStopMacroRecordingToolStripMenuItem";
             this.startStopMacroRecordingToolStripMenuItem.Size = new System.Drawing.Size(326, 26);
             this.startStopMacroRecordingToolStripMenuItem.Text = "Start/Stop macro recording [Ctrl+M]";
-            this.startStopMacroRecordingToolStripMenuItem.Click += new System.EventHandler(this.startStopMacroRecordingToolStripMenuItem_Click);
+            this.startStopMacroRecordingToolStripMenuItem.Click += new System.EventHandler(this.StartStopMacroRecordingToolStripMenuItem_Click);
             // 
             // executeMacroToolStripMenuItem
             // 
             this.executeMacroToolStripMenuItem.Name = "executeMacroToolStripMenuItem";
             this.executeMacroToolStripMenuItem.Size = new System.Drawing.Size(326, 26);
             this.executeMacroToolStripMenuItem.Text = "Execute macro [Ctrl+E]";
-            this.executeMacroToolStripMenuItem.Click += new System.EventHandler(this.executeMacroToolStripMenuItem_Click);
+            this.executeMacroToolStripMenuItem.Click += new System.EventHandler(this.ExecuteMacroToolStripMenuItem_Click);
             // 
             // miLanguage
             // 
@@ -334,70 +334,70 @@ namespace Tester
             this.miLanguage.Name = "miLanguage";
             this.miLanguage.Size = new System.Drawing.Size(86, 24);
             this.miLanguage.Text = "Language";
-            this.miLanguage.DropDownOpening += new System.EventHandler(this.miLanguage_DropDownOpening);
+            this.miLanguage.DropDownOpening += new System.EventHandler(this.MiLanguage_DropDownOpening);
             // 
             // miCSharp
             // 
             this.miCSharp.Name = "miCSharp";
             this.miCSharp.Size = new System.Drawing.Size(269, 26);
             this.miCSharp.Text = "CSharp (custom highlighter)";
-            this.miCSharp.Click += new System.EventHandler(this.miCSharp_Click);
+            this.miCSharp.Click += new System.EventHandler(this.MiCSharp_Click);
             // 
             // cSharpbuiltinHighlighterToolStripMenuItem
             // 
             this.cSharpbuiltinHighlighterToolStripMenuItem.Name = "cSharpbuiltinHighlighterToolStripMenuItem";
             this.cSharpbuiltinHighlighterToolStripMenuItem.Size = new System.Drawing.Size(269, 26);
             this.cSharpbuiltinHighlighterToolStripMenuItem.Text = "CSharp (built-in highlighter)";
-            this.cSharpbuiltinHighlighterToolStripMenuItem.Click += new System.EventHandler(this.miCSharp_Click);
+            this.cSharpbuiltinHighlighterToolStripMenuItem.Click += new System.EventHandler(this.MiCSharp_Click);
             // 
             // miVB
             // 
             this.miVB.Name = "miVB";
             this.miVB.Size = new System.Drawing.Size(269, 26);
             this.miVB.Text = "VB";
-            this.miVB.Click += new System.EventHandler(this.miCSharp_Click);
+            this.miVB.Click += new System.EventHandler(this.MiCSharp_Click);
             // 
             // hTMLToolStripMenuItem
             // 
             this.hTMLToolStripMenuItem.Name = "hTMLToolStripMenuItem";
             this.hTMLToolStripMenuItem.Size = new System.Drawing.Size(269, 26);
             this.hTMLToolStripMenuItem.Text = "HTML";
-            this.hTMLToolStripMenuItem.Click += new System.EventHandler(this.miCSharp_Click);
+            this.hTMLToolStripMenuItem.Click += new System.EventHandler(this.MiCSharp_Click);
             // 
             // xmlToolStripMenuItem
             // 
             this.xmlToolStripMenuItem.Name = "xmlToolStripMenuItem";
             this.xmlToolStripMenuItem.Size = new System.Drawing.Size(269, 26);
             this.xmlToolStripMenuItem.Text = "XML";
-            this.xmlToolStripMenuItem.Click += new System.EventHandler(this.miCSharp_Click);
+            this.xmlToolStripMenuItem.Click += new System.EventHandler(this.MiCSharp_Click);
             // 
             // sQLToolStripMenuItem
             // 
             this.sQLToolStripMenuItem.Name = "sQLToolStripMenuItem";
             this.sQLToolStripMenuItem.Size = new System.Drawing.Size(269, 26);
             this.sQLToolStripMenuItem.Text = "SQL";
-            this.sQLToolStripMenuItem.Click += new System.EventHandler(this.miCSharp_Click);
+            this.sQLToolStripMenuItem.Click += new System.EventHandler(this.MiCSharp_Click);
             // 
             // pHPToolStripMenuItem
             // 
             this.pHPToolStripMenuItem.Name = "pHPToolStripMenuItem";
             this.pHPToolStripMenuItem.Size = new System.Drawing.Size(269, 26);
             this.pHPToolStripMenuItem.Text = "PHP";
-            this.pHPToolStripMenuItem.Click += new System.EventHandler(this.miCSharp_Click);
+            this.pHPToolStripMenuItem.Click += new System.EventHandler(this.MiCSharp_Click);
             // 
             // jSToolStripMenuItem
             // 
             this.jSToolStripMenuItem.Name = "jSToolStripMenuItem";
             this.jSToolStripMenuItem.Size = new System.Drawing.Size(269, 26);
             this.jSToolStripMenuItem.Text = "JS";
-            this.jSToolStripMenuItem.Click += new System.EventHandler(this.miCSharp_Click);
+            this.jSToolStripMenuItem.Click += new System.EventHandler(this.MiCSharp_Click);
             // 
             // luaToolStripMenuItem
             // 
             this.luaToolStripMenuItem.Name = "luaToolStripMenuItem";
             this.luaToolStripMenuItem.Size = new System.Drawing.Size(269, 26);
             this.luaToolStripMenuItem.Text = "Lua";
-            this.luaToolStripMenuItem.Click += new System.EventHandler(this.miCSharp_Click);
+            this.luaToolStripMenuItem.Click += new System.EventHandler(this.MiCSharp_Click);
             // 
             // miExport
             // 
@@ -413,14 +413,14 @@ namespace Tester
             this.hTMLToolStripMenuItem1.Name = "hTMLToolStripMenuItem1";
             this.hTMLToolStripMenuItem1.Size = new System.Drawing.Size(123, 26);
             this.hTMLToolStripMenuItem1.Text = "HTML";
-            this.hTMLToolStripMenuItem1.Click += new System.EventHandler(this.hTMLToolStripMenuItem1_Click);
+            this.hTMLToolStripMenuItem1.Click += new System.EventHandler(this.HTMLToolStripMenuItem1_Click);
             // 
             // rTFToolStripMenuItem
             // 
             this.rTFToolStripMenuItem.Name = "rTFToolStripMenuItem";
             this.rTFToolStripMenuItem.Size = new System.Drawing.Size(123, 26);
             this.rTFToolStripMenuItem.Text = "RTF";
-            this.rTFToolStripMenuItem.Click += new System.EventHandler(this.rTFToolStripMenuItem_Click);
+            this.rTFToolStripMenuItem.Click += new System.EventHandler(this.RTFToolStripMenuItem_Click);
             // 
             // miChangeColors
             // 
@@ -428,14 +428,14 @@ namespace Tester
             this.miChangeColors.Name = "miChangeColors";
             this.miChangeColors.Size = new System.Drawing.Size(115, 24);
             this.miChangeColors.Text = "Change colors";
-            this.miChangeColors.Click += new System.EventHandler(this.miChangeColors_Click);
+            this.miChangeColors.Click += new System.EventHandler(this.MiChangeColors_Click);
             // 
             // changeHotkeysToolStripMenuItem
             // 
             this.changeHotkeysToolStripMenuItem.Name = "changeHotkeysToolStripMenuItem";
             this.changeHotkeysToolStripMenuItem.Size = new System.Drawing.Size(125, 24);
             this.changeHotkeysToolStripMenuItem.Text = "Change hotkeys";
-            this.changeHotkeysToolStripMenuItem.Click += new System.EventHandler(this.changeHotkeysToolStripMenuItem_Click);
+            this.changeHotkeysToolStripMenuItem.Click += new System.EventHandler(this.ChangeHotkeysToolStripMenuItem_Click);
             // 
             // fctb
             // 
@@ -478,17 +478,17 @@ namespace Tester
             this.fctb.TabIndex = 3;
             this.fctb.Text = resources.GetString("fctb.Text");
             this.fctb.Zoom = 100;
-            this.fctb.TextChanged += new System.EventHandler<FastColoredTextBoxNS.TextChangedEventArgs>(this.fctb_TextChanged);
-            this.fctb.SelectionChangedDelayed += new System.EventHandler(this.fctb_SelectionChangedDelayed);
-            this.fctb.AutoIndentNeeded += new System.EventHandler<FastColoredTextBoxNS.AutoIndentEventArgs>(this.fctb_AutoIndentNeeded);
-            this.fctb.CustomAction += new System.EventHandler<FastColoredTextBoxNS.CustomActionEventArgs>(this.fctb_CustomAction);
+            this.fctb.TextChanged += new System.EventHandler<FastColoredTextBoxNS.TextChangedEventArgs>(this.Fctb_TextChanged);
+            this.fctb.SelectionChangedDelayed += new System.EventHandler(this.Fctb_SelectionChangedDelayed);
+            this.fctb.AutoIndentNeeded += new System.EventHandler<FastColoredTextBoxNS.AutoIndentEventArgs>(this.Fctb_AutoIndentNeeded);
+            this.fctb.CustomAction += new System.EventHandler<FastColoredTextBoxNS.CustomActionEventArgs>(this.Fctb_CustomAction);
             // 
             // jSONToolStripMenuItem
             // 
             this.jSONToolStripMenuItem.Name = "jSONToolStripMenuItem";
             this.jSONToolStripMenuItem.Size = new System.Drawing.Size(269, 26);
             this.jSONToolStripMenuItem.Text = "JSON";
-            this.jSONToolStripMenuItem.Click += new System.EventHandler(this.miCSharp_Click);
+            this.jSONToolStripMenuItem.Click += new System.EventHandler(this.MiCSharp_Click);
             // 
             // PowerfulSample
             // 

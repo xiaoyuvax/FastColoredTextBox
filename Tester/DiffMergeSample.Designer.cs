@@ -119,7 +119,7 @@
             this.btSecond.TabIndex = 18;
             this.btSecond.Text = "...";
             this.btSecond.UseVisualStyleBackColor = true;
-            this.btSecond.Click += new System.EventHandler(this.btSecond_Click);
+            this.btSecond.Click += new System.EventHandler(this.BtSecond_Click);
             // 
             // label2
             // 
@@ -148,7 +148,7 @@
             this.btFirst.TabIndex = 15;
             this.btFirst.Text = "...";
             this.btFirst.UseVisualStyleBackColor = true;
-            this.btFirst.Click += new System.EventHandler(this.btFirst_Click);
+            this.btFirst.Click += new System.EventHandler(this.BtFirst_Click);
             // 
             // btCompare
             // 
@@ -159,7 +159,7 @@
             this.btCompare.TabIndex = 25;
             this.btCompare.Text = "Compare";
             this.btCompare.UseVisualStyleBackColor = true;
-            this.btCompare.Click += new System.EventHandler(this.btCompare_Click);
+            this.btCompare.Click += new System.EventHandler(this.BtCompare_Click);
             // 
             // fctb1
             // 
@@ -192,8 +192,8 @@
             this.fctb1.TabIndex = 26;
             this.fctb1.Text = "fastColoredTextBox1";
             this.fctb1.Zoom = 100;
-            this.fctb1.SelectionChanged += new System.EventHandler(this.tb_VisibleRangeChanged);
-            this.fctb1.VisibleRangeChanged += new System.EventHandler(this.tb_VisibleRangeChanged);
+            this.fctb1.SelectionChanged += new System.EventHandler(this.Tb_VisibleRangeChanged);
+            this.fctb1.VisibleRangeChanged += new System.EventHandler(this.Tb_VisibleRangeChanged);
             // 
             // fctb2
             // 
@@ -226,8 +226,8 @@
             this.fctb2.TabIndex = 27;
             this.fctb2.Text = "fastColoredTextBox2";
             this.fctb2.Zoom = 100;
-            this.fctb2.SelectionChanged += new System.EventHandler(this.tb_VisibleRangeChanged);
-            this.fctb2.VisibleRangeChanged += new System.EventHandler(this.tb_VisibleRangeChanged);
+            this.fctb2.SelectionChanged += new System.EventHandler(this.Tb_VisibleRangeChanged);
+            this.fctb2.VisibleRangeChanged += new System.EventHandler(this.Tb_VisibleRangeChanged);
             // 
             // splitContainer1
             // 

@@ -1,17 +1,16 @@
 ﻿Public Class AutocompleteSample
-
-    Dim popupMenu As FastColoredTextBoxNS.AutocompleteMenu
+    ReadOnly popupMenu As FastColoredTextBoxNS.AutocompleteMenu
 
     Public Sub New()
         InitializeComponent()
 
         'create autocomplete popup menu
-        popupMenu = New FastColoredTextBoxNS.AutocompleteMenu(fastColoredTextBox1)
-
-        popupMenu.MinFragmentLength = 2
+        popupMenu = New FastColoredTextBoxNS.AutocompleteMenu(fastColoredTextBox1) With {
+            .MinFragmentLength = 2
+        }
 
         'generate 456976 words
-        Dim randomWords As List(Of String) = New List(Of String)
+        Dim randomWords As New List(Of String)
         Dim codeA As Integer = Asc("a")
         For i As Integer = 0 To 25
             For j As Integer = 0 To 25

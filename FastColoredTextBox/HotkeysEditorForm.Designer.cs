@@ -74,7 +74,7 @@
             this.dgv.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.dgv.Size = new System.Drawing.Size(525, 278);
             this.dgv.TabIndex = 0;
-            this.dgv.RowsAdded += new System.Windows.Forms.DataGridViewRowsAddedEventHandler(this.dgv_RowsAdded);
+            this.dgv.RowsAdded += new System.Windows.Forms.DataGridViewRowsAddedEventHandler(this.Dgv_RowsAdded);
             // 
             // cbModifiers
             // 
@@ -112,7 +112,7 @@
             this.btAdd.TabIndex = 1;
             this.btAdd.Text = "Add";
             this.btAdd.UseVisualStyleBackColor = true;
-            this.btAdd.Click += new System.EventHandler(this.btAdd_Click);
+            this.btAdd.Click += new System.EventHandler(this.BtAdd_Click);
             // 
             // btRemove
             // 
@@ -123,7 +123,7 @@
             this.btRemove.TabIndex = 2;
             this.btRemove.Text = "Remove";
             this.btRemove.UseVisualStyleBackColor = true;
-            this.btRemove.Click += new System.EventHandler(this.btRemove_Click);
+            this.btRemove.Click += new System.EventHandler(this.BtRemove_Click);
             // 
             // btCancel
             // 
@@ -166,7 +166,7 @@
             this.btResore.TabIndex = 6;
             this.btResore.Text = "Restore default";
             this.btResore.UseVisualStyleBackColor = true;
-            this.btResore.Click += new System.EventHandler(this.btResore_Click);
+            this.btResore.Click += new System.EventHandler(this.BtResore_Click);
             // 
             // HotkeysEditorForm
             // 

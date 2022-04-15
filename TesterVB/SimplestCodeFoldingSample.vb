@@ -1,14 +1,10 @@
-Imports FastColoredTextBoxNS
-Imports System
 Imports System.ComponentModel
-Imports System.Drawing
-Imports System.Windows.Forms
 
 Namespace TesterVB
     Public Class SimplestCodeFoldingSample
         Inherits Form
 
-        Private components As IContainer = Nothing
+        Private ReadOnly components As IContainer = Nothing
 
         Private label1 As Label
 
@@ -48,7 +44,7 @@ Namespace TesterVB
             Me.fctb.ShowLineNumbers = False
             Me.fctb.Size = New Size(361, 295)
             Me.fctb.TabIndex = 3
-            AddHandler Me.fctb.TextChanged, New EventHandler(Of TextChangedEventArgs)(AddressOf Me.fctb_TextChanged)
+            AddHandler Me.fctb.TextChanged, New EventHandler(Of TextChangedEventArgs)(AddressOf Me.Fctb_TextChanged)
             MyBase.AutoScaleDimensions = New SizeF(6.0F, 13.0F)
             MyBase.AutoScaleMode = AutoScaleMode.Font
             MyBase.ClientSize = New Size(361, 340)
@@ -64,7 +60,7 @@ Namespace TesterVB
             Me.fctb.Text = vbCrLf & "    /// <summary>" & vbCrLf & "    /// Char and style" & vbCrLf & "    /// </summary>" & vbCrLf & "    struct Char" & vbCrLf & "    {" & vbCrLf & "        public char c;" & vbCrLf & "        public StyleIndex style;" & vbCrLf & vbCrLf & "        public Char(char c)" & vbCrLf & "        {" & vbCrLf & "            this.c = c;" & vbCrLf & "            style = StyleIndex.None;" & vbCrLf & "        }" & vbCrLf & "    }"
         End Sub
 
-        Private Sub fctb_TextChanged(sender As Object, e As TextChangedEventArgs)
+        Private Sub Fctb_TextChanged(sender As Object, e As TextChangedEventArgs)
             e.ChangedRange.ClearFoldingMarkers()
             e.ChangedRange.SetFoldingMarkers("{", "}")
         End Sub

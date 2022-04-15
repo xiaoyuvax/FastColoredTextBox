@@ -75,7 +75,7 @@
             this.fctb.WordWrap = true;
             this.fctb.WordWrapMode = FastColoredTextBoxNS.WordWrapMode.Custom;
             this.fctb.Zoom = 100;
-            this.fctb.WordWrapNeeded += new System.EventHandler<FastColoredTextBoxNS.WordWrapNeededEventArgs>(this.fctb_WordWrapNeeded);
+            this.fctb.WordWrapNeeded += new System.EventHandler<FastColoredTextBoxNS.WordWrapNeededEventArgs>(this.Fctb_WordWrapNeeded);
             // 
             // CustomWordWrapSample
             // 

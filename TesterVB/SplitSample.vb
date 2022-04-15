@@ -1,14 +1,10 @@
-Imports FastColoredTextBoxNS
-Imports System
 Imports System.ComponentModel
-Imports System.Drawing
-Imports System.Windows.Forms
 
 Namespace TesterVB
     Public Class SplitSample
         Inherits Form
 
-        Private components As IContainer = Nothing
+        Private ReadOnly components As IContainer = Nothing
 
         Private fctbMaster As FastColoredTextBox
 
@@ -28,7 +24,7 @@ Namespace TesterVB
         End Sub
 
         Private Sub InitializeComponent()
-            Dim resources As ComponentResourceManager = New ComponentResourceManager(GetType(SplitSample))
+            Dim resources As New ComponentResourceManager(GetType(SplitSample))
             Me.label1 = New Label()
             Me.label2 = New Label()
             Me.splitter1 = New Splitter()
@@ -75,7 +71,7 @@ Namespace TesterVB
             Me.fctbMaster.Size = New Size(610, 205)
             Me.fctbMaster.TabIndex = 0
             Me.fctbMaster.Text = "#region Char" & vbCrLf & "    /// <summary>" & vbCrLf & "    /// Char and style" & vbCrLf & "    /// </summary>" & vbCrLf & "    struct Char" & vbCrLf & "    {" & vbCrLf & "        public char c;" & vbCrLf & "        public StyleIndex style;" & vbCrLf & "" & vbCrLf & "        public Char(char c)" & vbCrLf & "        {" & vbCrLf & "            this.c = c;" & vbCrLf & "            style = StyleIndex.None;" & vbCrLf & "        }" & vbCrLf & "    }" & vbCrLf & "    #endregion"
-            AddHandler Me.fctbMaster.Scroll, New ScrollEventHandler(AddressOf Me.fctbMaster_Scroll)
+            AddHandler Me.fctbMaster.Scroll, New ScrollEventHandler(AddressOf Me.FctbMaster_Scroll)
             Me.fctbSlave.AutoScrollMinSize = New Size(0, 255)
             Me.fctbSlave.BackBrush = Nothing
             Me.fctbSlave.Cursor = Cursors.IBeam
@@ -112,7 +108,7 @@ Namespace TesterVB
             Me.InitializeComponent()
         End Sub
 
-        Private Sub fctbMaster_Scroll(sender As Object, e As ScrollEventArgs)
+        Private Sub FctbMaster_Scroll(sender As Object, e As ScrollEventArgs)
             Me.fctbSlave.VerticalScroll.Value = Me.fctbMaster.VerticalScroll.Value
             Me.fctbSlave.Invalidate()
         End Sub

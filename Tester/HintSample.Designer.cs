@@ -50,7 +50,7 @@
             this.btFind.TabIndex = 2;
             this.btFind.Text = "Find and hint:";
             this.btFind.UseVisualStyleBackColor = true;
-            this.btFind.Click += new System.EventHandler(this.button2_Click);
+            this.btFind.Click += new System.EventHandler(this.Button2_Click);
             // 
             // cbInline
             // 
@@ -162,7 +162,7 @@
             this.fctb.TextAreaBorderColor = System.Drawing.Color.Gray;
             this.fctb.WordWrap = true;
             this.fctb.Zoom = 100;
-            this.fctb.HintClick += new System.EventHandler<FastColoredTextBoxNS.HintClickEventArgs>(this.fctb_HintClick);
+            this.fctb.HintClick += new System.EventHandler<FastColoredTextBoxNS.HintClickEventArgs>(this.Fctb_HintClick);
             // 
             // HintSample
             // 

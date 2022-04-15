@@ -80,21 +80,21 @@
             this.miOpen.Name = "miOpen";
             this.miOpen.Size = new System.Drawing.Size(166, 22);
             this.miOpen.Text = "Bind to file ...";
-            this.miOpen.Click += new System.EventHandler(this.miOpen_Click);
+            this.miOpen.Click += new System.EventHandler(this.MiOpen_Click);
             // 
             // miSave
             // 
             this.miSave.Name = "miSave";
             this.miSave.Size = new System.Drawing.Size(166, 22);
             this.miSave.Text = "Save to file ...";
-            this.miSave.Click += new System.EventHandler(this.miSave_Click);
+            this.miSave.Click += new System.EventHandler(this.MiSave_Click);
             // 
             // closeFileToolStripMenuItem
             // 
             this.closeFileToolStripMenuItem.Name = "closeFileToolStripMenuItem";
             this.closeFileToolStripMenuItem.Size = new System.Drawing.Size(166, 22);
             this.closeFileToolStripMenuItem.Text = "Close binding file";
-            this.closeFileToolStripMenuItem.Click += new System.EventHandler(this.closeFileToolStripMenuItem_Click);
+            this.closeFileToolStripMenuItem.Click += new System.EventHandler(this.CloseFileToolStripMenuItem_Click);
             // 
             // editToolStripMenuItem
             // 
@@ -111,28 +111,28 @@
             this.collapseAllFoldingBlocksToolStripMenuItem.Name = "collapseAllFoldingBlocksToolStripMenuItem";
             this.collapseAllFoldingBlocksToolStripMenuItem.Size = new System.Drawing.Size(217, 22);
             this.collapseAllFoldingBlocksToolStripMenuItem.Text = "Collapse all folding blocks";
-            this.collapseAllFoldingBlocksToolStripMenuItem.Click += new System.EventHandler(this.collapseAllFoldingBlocksToolStripMenuItem_Click);
+            this.collapseAllFoldingBlocksToolStripMenuItem.Click += new System.EventHandler(this.CollapseAllFoldingBlocksToolStripMenuItem_Click);
             // 
             // expandAllCollapsedBlocksToolStripMenuItem
             // 
             this.expandAllCollapsedBlocksToolStripMenuItem.Name = "expandAllCollapsedBlocksToolStripMenuItem";
             this.expandAllCollapsedBlocksToolStripMenuItem.Size = new System.Drawing.Size(217, 22);
             this.expandAllCollapsedBlocksToolStripMenuItem.Text = "Expand all collapsed blocks";
-            this.expandAllCollapsedBlocksToolStripMenuItem.Click += new System.EventHandler(this.expandAllCollapsedBlocksToolStripMenuItem_Click);
+            this.expandAllCollapsedBlocksToolStripMenuItem.Click += new System.EventHandler(this.ExpandAllCollapsedBlocksToolStripMenuItem_Click);
             // 
             // removeEmptyLinesToolStripMenuItem
             // 
             this.removeEmptyLinesToolStripMenuItem.Name = "removeEmptyLinesToolStripMenuItem";
             this.removeEmptyLinesToolStripMenuItem.Size = new System.Drawing.Size(217, 22);
             this.removeEmptyLinesToolStripMenuItem.Text = "Remove empty lines";
-            this.removeEmptyLinesToolStripMenuItem.Click += new System.EventHandler(this.removeEmptyLinesToolStripMenuItem_Click);
+            this.removeEmptyLinesToolStripMenuItem.Click += new System.EventHandler(this.RemoveEmptyLinesToolStripMenuItem_Click);
             // 
             // createTestFileToolStripMenuItem
             // 
             this.createTestFileToolStripMenuItem.Name = "createTestFileToolStripMenuItem";
             this.createTestFileToolStripMenuItem.Size = new System.Drawing.Size(94, 20);
             this.createTestFileToolStripMenuItem.Text = "Create test file";
-            this.createTestFileToolStripMenuItem.Click += new System.EventHandler(this.createTestFileToolStripMenuItem_Click);
+            this.createTestFileToolStripMenuItem.Click += new System.EventHandler(this.CreateTestFileToolStripMenuItem_Click);
             // 
             // sfd
             // 
@@ -183,8 +183,8 @@
     "d large file (approx. 50mb). \r\nThen bind file to the control in menu File/Bind t" +
     "o file.";
             this.fctb.Zoom = 100;
-            this.fctb.TextChangedDelayed += new System.EventHandler<FastColoredTextBoxNS.TextChangedEventArgs>(this.fctb_TextChangedDelayed);
-            this.fctb.VisibleRangeChangedDelayed += new System.EventHandler(this.fctb_VisibleRangeChangedDelayed);
+            this.fctb.TextChangedDelayed += new System.EventHandler<FastColoredTextBoxNS.TextChangedEventArgs>(this.Fctb_TextChangedDelayed);
+            this.fctb.VisibleRangeChangedDelayed += new System.EventHandler(this.Fctb_VisibleRangeChangedDelayed);
             // 
             // LazyLoadingSample
             // 

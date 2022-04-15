@@ -1,8 +1,4 @@
-Imports FastColoredTextBoxNS
-Imports System
 Imports System.ComponentModel
-Imports System.Drawing
-Imports System.Windows.Forms
 
 Namespace TesterVB
 
@@ -20,7 +16,7 @@ Namespace TesterVB
             Me.fctb.DefaultStyle = New JokeStyle()
         End Sub
 
-        Private Sub timer1_Tick(sender As Object, e As EventArgs)
+        Private Sub Timer1_Tick(sender As Object, e As EventArgs)
             Me.fctb.Invalidate()
         End Sub
 
@@ -33,13 +29,13 @@ Namespace TesterVB
 
         Private Sub InitializeComponent()
             Me.components = New Container()
-            Dim resources As ComponentResourceManager = New ComponentResourceManager(GetType(JokeSample))
+            Dim resources As New ComponentResourceManager(GetType(JokeSample))
             Me.timer1 = New Timer(Me.components)
             Me.fctb = New FastColoredTextBox()
             MyBase.SuspendLayout()
             Me.timer1.Enabled = True
             Me.timer1.Interval = 10
-            AddHandler Me.timer1.Tick, New EventHandler(AddressOf Me.timer1_Tick)
+            AddHandler Me.timer1.Tick, New EventHandler(AddressOf Me.Timer1_Tick)
             Me.fctb.AutoIndent = False
             Me.fctb.AutoScrollMinSize = New Size(0, 621)
             Me.fctb.Cursor = Cursors.IBeam

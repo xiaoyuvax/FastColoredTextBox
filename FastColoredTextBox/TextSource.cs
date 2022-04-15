@@ -1,338 +1,274 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Collections;
+using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
+using System.Text;
 
-namespace FastColoredTextBoxNS
-{
-    /// <summary>
-    /// This class contains the source text (chars and styles).
-    /// It stores a text lines, the manager of commands, undo/redo stack, styles.
-    /// </summary>
-    public class TextSource: IList<Line>, IDisposable
-    {
-        readonly protected List<Line> lines = new List<Line>();
-        protected LinesAccessor linesAccessor;
-        int lastLineUniqueId;
-        public CommandManager Manager { get; set; }
-        FastColoredTextBox currentTB;
-        /// <summary>
-        /// Styles
-        /// </summary>
-        public readonly Style[] Styles;
-        /// <summary>
-        /// Occurs when line was inserted/added
-        /// </summary>
-        public event EventHandler<LineInsertedEventArgs> LineInserted;
-        /// <summary>
-        /// Occurs when line was removed
-        /// </summary>
-        public event EventHandler<LineRemovedEventArgs> LineRemoved;
-        /// <summary>
-        /// Occurs when text was changed
-        /// </summary>
-        public event EventHandler<TextChangedEventArgs> TextChanged;
-        /// <summary>
-        /// Occurs when recalc is needed
-        /// </summary>
-        public event EventHandler<TextChangedEventArgs> RecalcNeeded;
-        /// <summary>
-        /// Occurs when recalc wordwrap is needed
-        /// </summary>
-        public event EventHandler<TextChangedEventArgs> RecalcWordWrap;
-        /// <summary>
-        /// Occurs before text changing
-        /// </summary>
-        public event EventHandler<TextChangingEventArgs> TextChanging;
-        /// <summary>
-        /// Occurs after CurrentTB was changed
-        /// </summary>
-        public event EventHandler CurrentTBChanged;
-        /// <summary>
-        /// Current focused FastColoredTextBox
-        /// </summary>
-        public FastColoredTextBox CurrentTB {
-            get { return currentTB; }
-            set {
-                if (currentTB == value)
-                    return;
-                currentTB = value;
-                OnCurrentTBChanged(); 
-            }
-        }
+namespace FastColoredTextBoxNS {
+	/// <summary>
+	/// This class contains the source text (chars and styles).
+	/// It stores a text lines, the manager of commands, undo/redo stack, styles.
+	/// </summary>
+	public class TextSource : IList<Line>, IDisposable {
+		readonly protected List<Line> lines = new List<Line>();
+		protected LinesAccessor linesAccessor;
+		int lastLineUniqueId;
+		public CommandManager Manager { get; set; }
+		FastColoredTextBox currentTB;
+		/// <summary>
+		/// Styles
+		/// </summary>
+		public readonly Style[] Styles;
+		/// <summary>
+		/// Occurs when line was inserted/added
+		/// </summary>
+		public event EventHandler<LineInsertedEventArgs> LineInserted;
+		/// <summary>
+		/// Occurs when line was removed
+		/// </summary>
+		public event EventHandler<LineRemovedEventArgs> LineRemoved;
+		/// <summary>
+		/// Occurs when text was changed
+		/// </summary>
+		public event EventHandler<TextChangedEventArgs> TextChanged;
+		/// <summary>
+		/// Occurs when recalc is needed
+		/// </summary>
+		public event EventHandler<TextChangedEventArgs> RecalcNeeded;
+		/// <summary>
+		/// Occurs when recalc wordwrap is needed
+		/// </summary>
+		public event EventHandler<TextChangedEventArgs> RecalcWordWrap;
+		/// <summary>
+		/// Occurs before text changing
+		/// </summary>
+		public event EventHandler<TextChangingEventArgs> TextChanging;
+		/// <summary>
+		/// Occurs after CurrentTB was changed
+		/// </summary>
+		public event EventHandler CurrentTBChanged;
+		/// <summary>
+		/// Current focused FastColoredTextBox
+		/// </summary>
+		public FastColoredTextBox CurrentTB {
+			get { return currentTB; }
+			set {
+				if (currentTB == value)
+					return;
+				currentTB = value;
+				OnCurrentTBChanged();
+			}
+		}
 
-        public virtual void ClearIsChanged()
-        {
-            foreach(var line in lines)
-                line.IsChanged = false;
-        }
-        
-        public virtual Line CreateLine()
-        {
-            return new Line(GenerateUniqueLineId());
-        }
+		public virtual void ClearIsChanged() {
+			foreach (var line in lines)
+				line.IsChanged = false;
+		}
 
-        private void OnCurrentTBChanged()
-        {
-            if (CurrentTBChanged != null)
-                CurrentTBChanged(this, EventArgs.Empty);
-        }
+		public virtual Line CreateLine() {
+			return new Line(GenerateUniqueLineId());
+		}
 
-        /// <summary>
-        /// Default text style
-        /// This style is using when no one other TextStyle is not defined in Char.style
-        /// </summary>
-        public TextStyle DefaultStyle { get; set; }
+		private void OnCurrentTBChanged() => CurrentTBChanged?.Invoke(this, EventArgs.Empty);
 
-        public TextSource(FastColoredTextBox currentTB)
-        {
-            this.CurrentTB = currentTB;
-            linesAccessor = new LinesAccessor(this);
-            Manager = new CommandManager(this);
+		/// <summary>
+		/// Default text style
+		/// This style is using when no one other TextStyle is not defined in Char.style
+		/// </summary>
+		public TextStyle DefaultStyle { get; set; }
 
-            if (Enum.GetUnderlyingType(typeof(StyleIndex)) == typeof(UInt32))
-                Styles = new Style[32];
-            else
-                Styles = new Style[16];
+		public TextSource(FastColoredTextBox currentTB) {
+			this.CurrentTB = currentTB;
+			linesAccessor = new LinesAccessor(this);
+			Manager = new CommandManager(this);
 
-            InitDefaultStyle();
-        }
+			if (Enum.GetUnderlyingType(typeof(StyleIndex)) == typeof(UInt32))
+				Styles = new Style[32];
+			else
+				Styles = new Style[16];
 
-        public virtual void InitDefaultStyle()
-        {
-            DefaultStyle = new TextStyle(null, null, FontStyle.Regular);
-        }
+			InitDefaultStyle();
+		}
 
-        public virtual Line this[int i]
-        {
-            get{
-                 return lines[i];
-            }
-            set {
-                throw new NotImplementedException();
-            }
-        }
+		public virtual void InitDefaultStyle() {
+			DefaultStyle = new TextStyle(null, null, FontStyle.Regular);
+		}
 
-        public virtual bool IsLineLoaded(int iLine)
-        {
-            return lines[iLine] != null;
-        }
+		public virtual Line this[int i] {
+			get {
+				return lines[i];
+			}
+			set {
+				throw new NotImplementedException();
+			}
+		}
 
-        /// <summary>
-        /// Text lines
-        /// </summary>
-        public virtual IList<string> GetLines()
-        {
-            return linesAccessor;
-        }
+		public virtual bool IsLineLoaded(int iLine) {
+			return lines[iLine] != null;
+		}
 
-        public IEnumerator<Line> GetEnumerator()
-        {
-            return lines.GetEnumerator();
-        }
+		/// <summary>
+		/// Text lines
+		/// </summary>
+		public virtual IList<string> GetLines() {
+			return linesAccessor;
+		}
 
-        IEnumerator System.Collections.IEnumerable.GetEnumerator()
-        {
-            return (lines  as IEnumerator);
-        }
+		public IEnumerator<Line> GetEnumerator() {
+			return lines.GetEnumerator();
+		}
 
-        public virtual int BinarySearch(Line item, IComparer<Line> comparer)
-        {
-            return lines.BinarySearch(item, comparer);
-        }
+		IEnumerator System.Collections.IEnumerable.GetEnumerator() {
+			return (lines as IEnumerator);
+		}
 
-        public virtual int GenerateUniqueLineId()
-        {
-            return lastLineUniqueId++;
-        }
+		public virtual int BinarySearch(Line item, IComparer<Line> comparer) {
+			return lines.BinarySearch(item, comparer);
+		}
 
-        public virtual void InsertLine(int index, Line line)
-        {
-            lines.Insert(index, line);
-            OnLineInserted(index);
-        }
+		public virtual int GenerateUniqueLineId() {
+			return lastLineUniqueId++;
+		}
 
-        public virtual void OnLineInserted(int index)
-        {
-            OnLineInserted(index, 1);
-        }
+		public virtual void InsertLine(int index, Line line) {
+			lines.Insert(index, line);
+			OnLineInserted(index);
+		}
 
-        public virtual void OnLineInserted(int index, int count)
-        {
-            if (LineInserted != null)
-                LineInserted(this, new LineInsertedEventArgs(index, count));
-        }
+		public virtual void OnLineInserted(int index) {
+			OnLineInserted(index, 1);
+		}
 
-        public virtual void RemoveLine(int index)
-        {
-            RemoveLine(index, 1);
-        }
+		public virtual void OnLineInserted(int index, int count) => LineInserted?.Invoke(this, new LineInsertedEventArgs(index, count));
 
-        public virtual bool IsNeedBuildRemovedLineIds
-        {
-            get { return LineRemoved != null; }
-        }
+		public virtual void RemoveLine(int index) {
+			RemoveLine(index, 1);
+		}
 
-        public virtual void RemoveLine(int index, int count)
-        {
-            List<int> removedLineIds = new List<int>();
-            //
-            if (count > 0)
-                if (IsNeedBuildRemovedLineIds)
-                    for (int i = 0; i < count; i++)
-                        removedLineIds.Add(this[index + i].UniqueId);
-            //
-            lines.RemoveRange(index, count);
+		public virtual bool IsNeedBuildRemovedLineIds {
+			get { return LineRemoved != null; }
+		}
 
-            OnLineRemoved(index, count, removedLineIds);
-        }
+		public virtual void RemoveLine(int index, int count) {
+			List<int> removedLineIds = new List<int>();
+			//
+			if (count > 0)
+				if (IsNeedBuildRemovedLineIds)
+					for (int i = 0; i < count; i++)
+						removedLineIds.Add(this[index + i].UniqueId);
+			//
+			lines.RemoveRange(index, count);
 
-        public virtual void OnLineRemoved(int index, int count, List<int> removedLineIds)
-        {
-            if (count > 0)
-                if (LineRemoved != null)
-                    LineRemoved(this, new LineRemovedEventArgs(index, count, removedLineIds));
-        }
+			OnLineRemoved(index, count, removedLineIds);
+		}
 
-        public virtual void OnTextChanged(int fromLine, int toLine)
-        {
-            if (TextChanged != null)
-                TextChanged(this, new TextChangedEventArgs(Math.Min(fromLine, toLine), Math.Max(fromLine, toLine) ));
-        }
+		public virtual void OnLineRemoved(int index, int count, List<int> removedLineIds) {
+			if (count > 0)
+				LineRemoved?.Invoke(this, new LineRemovedEventArgs(index, count, removedLineIds));
+		}
 
-        public class TextChangedEventArgs : EventArgs
-        {
-            public int iFromLine;
-            public int iToLine;
+		public virtual void OnTextChanged(int fromLine, int toLine) => TextChanged?.Invoke(this, new TextChangedEventArgs(Math.Min(fromLine, toLine), Math.Max(fromLine, toLine)));
 
-            public TextChangedEventArgs(int iFromLine, int iToLine)
-            {
-                this.iFromLine = iFromLine;
-                this.iToLine = iToLine;
-            }
-        }
+		public class TextChangedEventArgs : EventArgs {
+			public int iFromLine;
+			public int iToLine;
 
-        public virtual int IndexOf(Line item)
-        {
-            return lines.IndexOf(item);
-        }
+			public TextChangedEventArgs(int iFromLine, int iToLine) {
+				this.iFromLine = iFromLine;
+				this.iToLine = iToLine;
+			}
+		}
 
-        public virtual void Insert(int index, Line item)
-        {
-            InsertLine(index, item);
-        }
+		public virtual int IndexOf(Line item) {
+			return lines.IndexOf(item);
+		}
 
-        public virtual void RemoveAt(int index)
-        {
-            RemoveLine(index);
-        }
+		public virtual void Insert(int index, Line item) {
+			InsertLine(index, item);
+		}
 
-        public virtual void Add(Line item)
-        {
-            InsertLine(Count, item);
-        }
+		public virtual void RemoveAt(int index) {
+			RemoveLine(index);
+		}
 
-        public virtual void Clear()
-        {
-            RemoveLine(0, Count);
-        }
+		public virtual void Add(Line item) {
+			InsertLine(Count, item);
+		}
 
-        public virtual bool Contains(Line item)
-        {
-            return lines.Contains(item);
-        }
+		public virtual void Clear() {
+			RemoveLine(0, Count);
+		}
 
-        public virtual void CopyTo(Line[] array, int arrayIndex)
-        {
-            lines.CopyTo(array, arrayIndex);
-        }
+		public virtual bool Contains(Line item) {
+			return lines.Contains(item);
+		}
 
-        /// <summary>
-        /// Lines count
-        /// </summary>
-        public virtual int Count
-        {
-            get { return lines.Count; }
-        }
+		public virtual void CopyTo(Line[] array, int arrayIndex) {
+			lines.CopyTo(array, arrayIndex);
+		}
 
-        public virtual bool IsReadOnly
-        {
-            get { return false; }
-        }
+		/// <summary>
+		/// Lines count
+		/// </summary>
+		public virtual int Count {
+			get { return lines.Count; }
+		}
 
-        public virtual bool Remove(Line item)
-        {
-            int i = IndexOf(item);
-            if (i >= 0)
-            {
-                RemoveLine(i);
-                return true;
-            }
-            else
-                return false;
-        }
+		public virtual bool IsReadOnly {
+			get { return false; }
+		}
 
-        public virtual void NeedRecalc(TextChangedEventArgs args)
-        {
-            if (RecalcNeeded != null)
-                RecalcNeeded(this, args);
-        }
+		public virtual bool Remove(Line item) {
+			int i = IndexOf(item);
+			if (i >= 0) {
+				RemoveLine(i);
+				return true;
+			} else
+				return false;
+		}
 
-        public virtual void OnRecalcWordWrap(TextChangedEventArgs args)
-        {
-            if (RecalcWordWrap != null)
-                RecalcWordWrap(this, args);
-        }
+		public virtual void NeedRecalc(TextChangedEventArgs args) => RecalcNeeded?.Invoke(this, args);
+		public virtual void OnRecalcWordWrap(TextChangedEventArgs args) => RecalcWordWrap?.Invoke(this, args);
 
-        public virtual void OnTextChanging()
-        {
-            string temp = null;
-            OnTextChanging(ref temp);
-        }
+		public virtual void OnTextChanging() {
+			string temp = null;
+			OnTextChanging(ref temp);
+		}
 
-        public virtual void OnTextChanging(ref string text)
-        {
-            if (TextChanging != null)
-            {
-                var args = new TextChangingEventArgs() { InsertingText = text };
-                TextChanging(this, args);
-                text = args.InsertingText;
-                if (args.Cancel)
-                    text = string.Empty;
-            };
-        }
+		public virtual void OnTextChanging(ref string text) {
+			if (TextChanging != null) {
+				var args = new TextChangingEventArgs() { InsertingText = text };
+				TextChanging(this, args);
+				text = args.InsertingText;
+				if (args.Cancel)
+					text = string.Empty;
+			};
+		}
 
-        public virtual int GetLineLength(int i)
-        {
-            return lines[i].Count;
-        }
+		public virtual int GetLineLength(int i) {
+			return lines[i].Count;
+		}
 
-        public virtual bool LineHasFoldingStartMarker(int iLine)
-        {
-            return !string.IsNullOrEmpty(lines[iLine].FoldingStartMarker);
-        }
+		public virtual bool LineHasFoldingStartMarker(int iLine) {
+			return !string.IsNullOrEmpty(lines[iLine].FoldingStartMarker);
+		}
 
-        public virtual bool LineHasFoldingEndMarker(int iLine)
-        {
-            return !string.IsNullOrEmpty(lines[iLine].FoldingEndMarker);
-        }
+		public virtual bool LineHasFoldingEndMarker(int iLine) {
+			return !string.IsNullOrEmpty(lines[iLine].FoldingEndMarker);
+		}
 
-        public virtual void Dispose()
-        {
-            ;
-        }
+		public virtual void Dispose() {
+			;
+		}
 
-        public virtual void SaveToFile(string fileName, Encoding enc)
-        {
-            using (StreamWriter sw = new StreamWriter(fileName, false, enc))
-            {
-                for (int i = 0; i < Count - 1;i++ )
-                    sw.WriteLine(lines[i].Text);
+		public virtual void SaveToFile(string fileName, Encoding enc) {
+			using (StreamWriter sw = new StreamWriter(fileName, false, enc)) {
+				for (int i = 0; i < Count - 1; i++)
+					sw.WriteLine(lines[i].Text);
 
-                sw.Write(lines[Count-1].Text);
-            }
-        }
-    }
+				sw.Write(lines[Count - 1].Text);
+			}
+		}
+	}
 }

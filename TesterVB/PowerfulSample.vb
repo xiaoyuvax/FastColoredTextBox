@@ -1,6 +1,5 @@
-﻿Imports System.Text.RegularExpressions
-Imports System.IO
-Imports FastColoredTextBoxNS
+﻿Imports System.IO
+Imports System.Text.RegularExpressions
 
 
 ''' <summary>
@@ -11,14 +10,14 @@ Public Class PowerfulSample
 
     Dim lang As String = "VB"
 
-    Dim BlueStyle As TextStyle = New TextStyle(Brushes.Blue, Nothing, FontStyle.Regular)
-    Dim BoldStyle As TextStyle = New TextStyle(Nothing, Nothing, FontStyle.Bold Or FontStyle.Underline)
-    Dim GrayStyle As TextStyle = New TextStyle(Brushes.Gray, Nothing, FontStyle.Regular)
-    Dim MagentaStyle As TextStyle = New TextStyle(Brushes.Magenta, Nothing, FontStyle.Regular)
-    Dim GreenStyle As TextStyle = New TextStyle(Brushes.Green, Nothing, FontStyle.Italic)
-    Dim BrownStyle As TextStyle = New TextStyle(Brushes.Brown, Nothing, FontStyle.Italic)
-    Dim MaroonStyle As TextStyle = New TextStyle(Brushes.Maroon, Nothing, FontStyle.Regular)
-    Dim SameWordsStyle As MarkerStyle = New MarkerStyle(New SolidBrush(Color.FromArgb(40, Color.Gray)))
+    ReadOnly BlueStyle As New TextStyle(Brushes.Blue, Nothing, FontStyle.Regular)
+    ReadOnly BoldStyle As New TextStyle(Nothing, Nothing, FontStyle.Bold Or FontStyle.Underline)
+    ReadOnly GrayStyle As New TextStyle(Brushes.Gray, Nothing, FontStyle.Regular)
+    ReadOnly MagentaStyle As New TextStyle(Brushes.Magenta, Nothing, FontStyle.Regular)
+    ReadOnly GreenStyle As New TextStyle(Brushes.Green, Nothing, FontStyle.Italic)
+    ReadOnly BrownStyle As New TextStyle(Brushes.Brown, Nothing, FontStyle.Italic)
+    ReadOnly MaroonStyle As New TextStyle(Brushes.Maroon, Nothing, FontStyle.Regular)
+    ReadOnly SameWordsStyle As New MarkerStyle(New SolidBrush(Color.FromArgb(40, Color.Gray)))
 
     Public Sub New()
         InitializeComponent()
@@ -95,7 +94,7 @@ Public Class PowerfulSample
         e.ChangedRange.SetFoldingMarkers("/\*", "\*/") 'allow to collapse comment block
     End Sub
 
-    Private Sub miCSharp_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles miCSharp.Click, sQLToolStripMenuItem.Click, pHPToolStripMenuItem.Click, miVB.Click, hTMLToolStripMenuItem.Click
+    Private Sub MiCSharp_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles miCSharp.Click, sQLToolStripMenuItem.Click, pHPToolStripMenuItem.Click, miVB.Click, hTMLToolStripMenuItem.Click
         'set language
         lang = CType(sender, ToolStripMenuItem).Text
 
@@ -118,23 +117,24 @@ Public Class PowerfulSample
         FastColoredTextBox1.OnSyntaxHighlight(New TextChangedEventArgs(FastColoredTextBox1.Range))
     End Sub
 
-    Private Sub miLanguage_DropDownOpening(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles miLanguage.DropDownOpening
+    Private Sub MiLanguage_DropDownOpening(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles miLanguage.DropDownOpening
         For Each mi As ToolStripMenuItem In miLanguage.DropDownItems
             mi.Checked = (mi.Text = lang)
         Next
     End Sub
 
-    Private Sub findToolStripMenuItem_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles findToolStripMenuItem.Click
+    Private Sub FindToolStripMenuItem_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles findToolStripMenuItem.Click
         FastColoredTextBox1.ShowFindDialog()
     End Sub
 
-    Private Sub replaceToolStripMenuItem_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles replaceToolStripMenuItem.Click
+    Private Sub ReplaceToolStripMenuItem_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles replaceToolStripMenuItem.Click
         FastColoredTextBox1.ShowReplaceDialog()
     End Sub
 
-    Private Sub hTMLToolStripMenuItem1_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles hTMLToolStripMenuItem1.Click
-        Dim sfd As SaveFileDialog = New SaveFileDialog()
-        sfd.Filter = "HTML|*.html"
+    Private Sub HTMLToolStripMenuItem1_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles hTMLToolStripMenuItem1.Click
+        Dim sfd As New SaveFileDialog With {
+            .Filter = "HTML|*.html"
+        }
         If sfd.ShowDialog() = DialogResult.OK Then
             File.WriteAllText(sfd.FileName, FastColoredTextBox1.Html)
         End If

@@ -1,8 +1,3 @@
-Imports FastColoredTextBoxNS
-Imports System
-Imports System.Collections.Generic
-Imports System.Drawing
-
 Namespace TesterVB
     Friend Class JokeStyle
         Inherits TextStyle
@@ -18,7 +13,7 @@ Namespace TesterVB
                 Dim angle2 As Integer = CInt(CLng(time - (p.iChar - range.Start.iChar) * 20) Mod 360L) * 2
                 Dim x As Integer = position.X + (p.iChar - range.Start.iChar) * range.tb.CharWidth
                 Dim r As Range = range.tb.GetRange(p, New Place(p.iChar + 1, p.iLine))
-                Dim point As Point = New Point(x, position.Y + CInt(5.0 + 5.0 * Math.Sin(3.1415926535897931 * CDec(angle2) / 180.0)))
+                Dim point As New Point(x, position.Y + CInt(5.0 + 5.0 * Math.Sin(3.1415926535897931 * CDec(angle2) / 180.0)))
                 gr.ResetTransform()
                 gr.TranslateTransform(CSng(point.X + range.tb.CharWidth / 2), CSng(point.Y + range.tb.CharHeight / 2))
                 gr.RotateTransform(CSng(angle))

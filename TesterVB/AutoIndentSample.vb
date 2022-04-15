@@ -2,7 +2,7 @@
 
 Public Class AutoIndentSample
 
-    Private Sub fastColoredTextBox1_AutoIndentNeeded(ByVal sender As System.Object, ByVal e As FastColoredTextBoxNS.AutoIndentEventArgs) Handles fastColoredTextBox1.AutoIndentNeeded
+    Private Sub FastColoredTextBox1_AutoIndentNeeded(ByVal sender As System.Object, ByVal e As FastColoredTextBoxNS.AutoIndentEventArgs) Handles fastColoredTextBox1.AutoIndentNeeded
         ' if current line is "begin" then next
         ' line shift to right
         If e.LineText.Trim() = "begin" Then

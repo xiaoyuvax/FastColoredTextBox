@@ -1,8 +1,4 @@
-Imports FastColoredTextBoxNS
-Imports System
 Imports System.ComponentModel
-Imports System.Drawing
-Imports System.Windows.Forms
 
 Namespace TesterVB
     Public Class LoggerSample
@@ -18,11 +14,11 @@ Namespace TesterVB
 
         Private tm As Timer
 
-        Private infoStyle As TextStyle = New TextStyle(Brushes.Black, Nothing, FontStyle.Regular)
+        Private ReadOnly infoStyle As New TextStyle(Brushes.Black, Nothing, FontStyle.Regular)
 
-        Private warningStyle As TextStyle = New TextStyle(Brushes.BurlyWood, Nothing, FontStyle.Regular)
+        Private ReadOnly warningStyle As New TextStyle(Brushes.BurlyWood, Nothing, FontStyle.Regular)
 
-        Private errorStyle As TextStyle = New TextStyle(Brushes.Red, Nothing, FontStyle.Regular)
+        Private ReadOnly errorStyle As New TextStyle(Brushes.Red, Nothing, FontStyle.Regular)
 
         Protected Overrides Sub Dispose(disposing As Boolean)
             If disposing AndAlso Me.components IsNot Nothing Then
@@ -52,9 +48,9 @@ Namespace TesterVB
             Me.btGotToEnd.TabIndex = 6
             Me.btGotToEnd.Text = "Go to end"
             Me.btGotToEnd.UseVisualStyleBackColor = True
-            AddHandler Me.btGotToEnd.Click, New EventHandler(AddressOf Me.btGotToEnd_Click)
+            AddHandler Me.btGotToEnd.Click, New EventHandler(AddressOf Me.BtGotToEnd_Click)
             Me.tm.Enabled = True
-            AddHandler Me.tm.Tick, New EventHandler(AddressOf Me.tm_Tick)
+            AddHandler Me.tm.Tick, New EventHandler(AddressOf Me.Tm_Tick)
             Me.fctb.AutoScrollMinSize = New Size(25, 15)
             Me.fctb.BackBrush = Nothing
             Me.fctb.Cursor = Cursors.IBeam
@@ -83,7 +79,7 @@ Namespace TesterVB
             Me.InitializeComponent()
         End Sub
 
-        Private Sub tm_Tick(sender As Object, e As EventArgs)
+        Private Sub Tm_Tick(sender As Object, e As EventArgs)
             Select Case DateTime.Now.Millisecond Mod 3
                 Case 0
                     Me.Log(DateTime.Now + " Error" & vbCrLf, Me.errorStyle)
@@ -110,7 +106,7 @@ Namespace TesterVB
             Me.fctb.EndUpdate()
         End Sub
 
-        Private Sub btGotToEnd_Click(sender As Object, e As EventArgs)
+        Private Sub BtGotToEnd_Click(sender As Object, e As EventArgs)
             Me.fctb.GoEnd()
         End Sub
     End Class

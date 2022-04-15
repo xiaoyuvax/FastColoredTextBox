@@ -1,14 +1,10 @@
-Imports FastColoredTextBoxNS
-Imports System
 Imports System.ComponentModel
-Imports System.Drawing
-Imports System.Windows.Forms
 
 Namespace TesterVB
     Public Class CustomFoldingSample
         Inherits Form
 
-        Private components As IContainer = Nothing
+        Private ReadOnly components As IContainer = Nothing
 
         Private label1 As Label
 
@@ -20,7 +16,7 @@ Namespace TesterVB
             Me.fctb.OnTextChangedDelayed(Me.fctb.Range)
         End Sub
 
-        Private Sub fctb_TextChangedDelayed(sender As Object, e As TextChangedEventArgs)
+        Private Sub Fctb_TextChangedDelayed(sender As Object, e As TextChangedEventArgs)
             Me.fctb.Range.ClearFoldingMarkers()
             Dim currentIndent As Integer = 0
             Dim lastNonEmptyLine As Integer = 0
@@ -41,7 +37,7 @@ Namespace TesterVB
             Next
         End Sub
 
-        Private Sub fctb_AutoIndentNeeded(sender As Object, e As AutoIndentEventArgs)
+        Private Sub Fctb_AutoIndentNeeded(sender As Object, e As AutoIndentEventArgs)
         End Sub
 
         Protected Overrides Sub Dispose(disposing As Boolean)
@@ -77,8 +73,8 @@ Namespace TesterVB
             Me.fctb.ShowFoldingLines = True
             Me.fctb.Size = New Size(467, 358)
             Me.fctb.TabIndex = 3
-            AddHandler Me.fctb.TextChangedDelayed, New EventHandler(Of TextChangedEventArgs)(AddressOf Me.fctb_TextChangedDelayed)
-            AddHandler Me.fctb.AutoIndentNeeded, New EventHandler(Of AutoIndentEventArgs)(AddressOf Me.fctb_AutoIndentNeeded)
+            AddHandler Me.fctb.TextChangedDelayed, New EventHandler(Of TextChangedEventArgs)(AddressOf Me.Fctb_TextChangedDelayed)
+            AddHandler Me.fctb.AutoIndentNeeded, New EventHandler(Of AutoIndentEventArgs)(AddressOf Me.Fctb_AutoIndentNeeded)
             MyBase.AutoScaleDimensions = New SizeF(6.0F, 13.0F)
             MyBase.AutoScaleMode = AutoScaleMode.Font
             MyBase.ClientSize = New Size(467, 403)

@@ -1,21 +1,14 @@
-Imports FastColoredTextBoxNS
-Imports System
-Imports System.Collections.Generic
 Imports System.ComponentModel
-Imports System.Drawing
 Imports System.IO
 Imports System.Text
 Imports System.Text.RegularExpressions
-Imports System.Windows.Forms
 
 Namespace TesterVB
 
     Public Class LazyLoadingSample
         Inherits Form
 
-        Private Const marging As Integer = 2000
-
-        Private components As IContainer = Nothing
+        Private ReadOnly components As IContainer = Nothing
 
         Private fctb As FastColoredTextBox
 
@@ -53,7 +46,7 @@ Namespace TesterVB
         End Sub
 
         Private Sub InitializeComponent()
-            Dim resources As ComponentResourceManager = New ComponentResourceManager(GetType(LazyLoadingSample))
+            Dim resources As New ComponentResourceManager(GetType(LazyLoadingSample))
             Me.ofd = New OpenFileDialog()
             Me.ms = New MenuStrip()
             Me.fileToolStripMenuItem = New ToolStripMenuItem()
@@ -85,15 +78,15 @@ Namespace TesterVB
             Me.miOpen.Name = "miOpen"
             Me.miOpen.Size = New Size(166, 22)
             Me.miOpen.Text = "Bind to file ..."
-            AddHandler Me.miOpen.Click, New EventHandler(AddressOf Me.miOpen_Click)
+            AddHandler Me.miOpen.Click, New EventHandler(AddressOf Me.MiOpen_Click)
             Me.miSave.Name = "miSave"
             Me.miSave.Size = New Size(166, 22)
             Me.miSave.Text = "Save to file ..."
-            AddHandler Me.miSave.Click, New EventHandler(AddressOf Me.miSave_Click)
+            AddHandler Me.miSave.Click, New EventHandler(AddressOf Me.MiSave_Click)
             Me.closeFileToolStripMenuItem.Name = "closeFileToolStripMenuItem"
             Me.closeFileToolStripMenuItem.Size = New Size(166, 22)
             Me.closeFileToolStripMenuItem.Text = "Close binding file"
-            AddHandler Me.closeFileToolStripMenuItem.Click, New EventHandler(AddressOf Me.closeFileToolStripMenuItem_Click)
+            AddHandler Me.closeFileToolStripMenuItem.Click, New EventHandler(AddressOf Me.CloseFileToolStripMenuItem_Click)
             Me.editToolStripMenuItem.DropDownItems.AddRange(New ToolStripItem() {Me.collapseAllFoldingBlocksToolStripMenuItem, Me.expandAllCollapsedBlocksToolStripMenuItem, Me.removeEmptyLinesToolStripMenuItem})
             Me.editToolStripMenuItem.Name = "editToolStripMenuItem"
             Me.editToolStripMenuItem.Size = New Size(39, 20)
@@ -101,19 +94,19 @@ Namespace TesterVB
             Me.collapseAllFoldingBlocksToolStripMenuItem.Name = "collapseAllFoldingBlocksToolStripMenuItem"
             Me.collapseAllFoldingBlocksToolStripMenuItem.Size = New Size(217, 22)
             Me.collapseAllFoldingBlocksToolStripMenuItem.Text = "Collapse all folding blocks"
-            AddHandler Me.collapseAllFoldingBlocksToolStripMenuItem.Click, New EventHandler(AddressOf Me.collapseAllFoldingBlocksToolStripMenuItem_Click)
+            AddHandler Me.collapseAllFoldingBlocksToolStripMenuItem.Click, New EventHandler(AddressOf Me.CollapseAllFoldingBlocksToolStripMenuItem_Click)
             Me.expandAllCollapsedBlocksToolStripMenuItem.Name = "expandAllCollapsedBlocksToolStripMenuItem"
             Me.expandAllCollapsedBlocksToolStripMenuItem.Size = New Size(217, 22)
             Me.expandAllCollapsedBlocksToolStripMenuItem.Text = "Expand all collapsed blocks"
-            AddHandler Me.expandAllCollapsedBlocksToolStripMenuItem.Click, New EventHandler(AddressOf Me.expandAllCollapsedBlocksToolStripMenuItem_Click)
+            AddHandler Me.expandAllCollapsedBlocksToolStripMenuItem.Click, New EventHandler(AddressOf Me.ExpandAllCollapsedBlocksToolStripMenuItem_Click)
             Me.removeEmptyLinesToolStripMenuItem.Name = "removeEmptyLinesToolStripMenuItem"
             Me.removeEmptyLinesToolStripMenuItem.Size = New Size(217, 22)
             Me.removeEmptyLinesToolStripMenuItem.Text = "Remove empty lines"
-            AddHandler Me.removeEmptyLinesToolStripMenuItem.Click, New EventHandler(AddressOf Me.removeEmptyLinesToolStripMenuItem_Click)
+            AddHandler Me.removeEmptyLinesToolStripMenuItem.Click, New EventHandler(AddressOf Me.RemoveEmptyLinesToolStripMenuItem_Click)
             Me.createTestFileToolStripMenuItem.Name = "createTestFileToolStripMenuItem"
             Me.createTestFileToolStripMenuItem.Size = New Size(94, 20)
             Me.createTestFileToolStripMenuItem.Text = "Create test file"
-            AddHandler Me.createTestFileToolStripMenuItem.Click, New EventHandler(AddressOf Me.createTestFileToolStripMenuItem_Click)
+            AddHandler Me.createTestFileToolStripMenuItem.Click, New EventHandler(AddressOf Me.CreateTestFileToolStripMenuItem_Click)
             Me.sfd.DefaultExt = "txt"
             Me.sfd.Filter = "Text file|*.txt|All files|*.*"
             Me.label2.Dock = DockStyle.Top
@@ -137,8 +130,8 @@ Namespace TesterVB
             Me.fctb.Size = New Size(647, 251)
             Me.fctb.TabIndex = 0
             Me.fctb.Text = "Press ""Create test file"", select target directory and press Save." & vbCrLf & "Will be created large file (approx. 50mb). " & vbCrLf & "Then bind file to the control in menu File/Bind to file."
-            AddHandler Me.fctb.TextChangedDelayed, New EventHandler(Of TextChangedEventArgs)(AddressOf Me.fctb_TextChangedDelayed)
-            AddHandler Me.fctb.VisibleRangeChangedDelayed, New EventHandler(AddressOf Me.fctb_VisibleRangeChangedDelayed)
+            AddHandler Me.fctb.TextChangedDelayed, New EventHandler(Of TextChangedEventArgs)(AddressOf Me.Fctb_TextChangedDelayed)
+            AddHandler Me.fctb.VisibleRangeChangedDelayed, New EventHandler(AddressOf Me.Fctb_VisibleRangeChangedDelayed)
             MyBase.AutoScaleDimensions = New SizeF(6.0F, 13.0F)
             MyBase.AutoScaleMode = AutoScaleMode.Font
             MyBase.ClientSize = New Size(647, 337)
@@ -159,7 +152,7 @@ Namespace TesterVB
             Me.InitializeComponent()
         End Sub
 
-        Private Sub miOpen_Click(sender As Object, e As EventArgs)
+        Private Sub MiOpen_Click(sender As Object, e As EventArgs)
             If Me.ofd.ShowDialog() = DialogResult.OK Then
                 Me.fctb.OpenBindingFile(Me.ofd.FileName, Encoding.UTF8)
                 Me.fctb.IsChanged = False
@@ -169,18 +162,18 @@ Namespace TesterVB
             End If
         End Sub
 
-        Private Sub fctb_VisibleRangeChangedDelayed(sender As Object, e As EventArgs)
+        Private Sub Fctb_VisibleRangeChangedDelayed(sender As Object, e As EventArgs)
             Me.HighlightVisibleRange()
         End Sub
 
-        Private Sub fctb_TextChangedDelayed(sender As Object, e As TextChangedEventArgs)
+        Private Sub Fctb_TextChangedDelayed(sender As Object, e As TextChangedEventArgs)
             Me.HighlightVisibleRange()
         End Sub
 
         Private Sub HighlightVisibleRange()
             Dim startLine As Integer = Math.Max(0, Me.fctb.VisibleRange.Start.iLine - 2000)
             Dim endLine As Integer = Math.Min(Me.fctb.LinesCount - 1, Me.fctb.VisibleRange.[End].iLine + 2000)
-            Dim range As Range = New Range(Me.fctb, 0, startLine, 0, endLine)
+            Dim range As New Range(Me.fctb, 0, startLine, 0, endLine)
             range.ClearFoldingMarkers()
             range.SetFoldingMarkers("N\d\d00", "N\d\d99")
             range.ClearStyle(StyleIndex.All)
@@ -188,7 +181,7 @@ Namespace TesterVB
             range.SetStyle(Me.fctb.SyntaxHighlighter.RedStyle, "[+\-]?[\d\.]+\d+")
         End Sub
 
-        Private Sub closeFileToolStripMenuItem_Click(sender As Object, e As EventArgs)
+        Private Sub CloseFileToolStripMenuItem_Click(sender As Object, e As EventArgs)
             Me.fctb.CloseBindingFile()
         End Sub
 
@@ -196,16 +189,16 @@ Namespace TesterVB
             Me.fctb.CloseBindingFile()
         End Sub
 
-        Private Sub miSave_Click(sender As Object, e As EventArgs)
+        Private Sub MiSave_Click(sender As Object, e As EventArgs)
             If Me.sfd.ShowDialog() = DialogResult.OK Then
                 Me.fctb.SaveToFile(Me.sfd.FileName, Encoding.UTF8)
             End If
         End Sub
 
-        Private Sub createTestFileToolStripMenuItem_Click(sender As Object, e As EventArgs)
-            Dim rnd As Random = New Random()
+        Private Sub CreateTestFileToolStripMenuItem_Click(sender As Object, e As EventArgs)
+            Dim rnd As New Random()
             If Me.sfd.ShowDialog() = DialogResult.OK Then
-                Using sw As StreamWriter = New StreamWriter(Me.sfd.FileName, False, Encoding.[Default])
+                Using sw As New StreamWriter(Me.sfd.FileName, False, Encoding.[Default])
                     For i As Integer = 0 To 130 - 1
                         sw.WriteLine(vbCrLf & "--====" & i & "=====--" & vbCrLf)
                         For j As Integer = 0 To 10000 - 1
@@ -216,17 +209,17 @@ Namespace TesterVB
             End If
         End Sub
 
-        Private Sub collapseAllFoldingBlocksToolStripMenuItem_Click(sender As Object, e As EventArgs)
+        Private Sub CollapseAllFoldingBlocksToolStripMenuItem_Click(sender As Object, e As EventArgs)
             Me.fctb.CollapseAllFoldingBlocks()
             Me.fctb.DoSelectionVisible()
         End Sub
 
-        Private Sub expandAllCollapsedBlocksToolStripMenuItem_Click(sender As Object, e As EventArgs)
+        Private Sub ExpandAllCollapsedBlocksToolStripMenuItem_Click(sender As Object, e As EventArgs)
             Me.fctb.ExpandAllFoldingBlocks()
             Me.fctb.DoSelectionVisible()
         End Sub
 
-        Private Sub removeEmptyLinesToolStripMenuItem_Click(sender As Object, e As EventArgs)
+        Private Sub RemoveEmptyLinesToolStripMenuItem_Click(sender As Object, e As EventArgs)
             Dim iLines As List(Of Integer) = Me.fctb.FindLines("^\s*$", RegexOptions.None)
             Me.fctb.RemoveLines(iLines)
         End Sub

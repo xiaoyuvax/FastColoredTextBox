@@ -1,8 +1,4 @@
-Imports FastColoredTextBoxNS
-Imports System
 Imports System.ComponentModel
-Imports System.Drawing
-Imports System.Windows.Forms
 
 Namespace TesterVB
     Public Class TooltipSample
@@ -12,7 +8,7 @@ Namespace TesterVB
 
         Private label1 As Label
 
-        Private WithEvents fctb As FastColoredTextBox
+        Private WithEvents Fctb As FastColoredTextBox
 
         Public Sub New()
             Me.InitializeComponent()
@@ -28,9 +24,9 @@ Namespace TesterVB
 
         Private Sub InitializeComponent()
             Me.components = New System.ComponentModel.Container()
-            Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(TooltipSample))
+            Dim resources As New System.ComponentModel.ComponentResourceManager(GetType(TooltipSample))
             Me.label1 = New System.Windows.Forms.Label()
-            Me.fctb = New FastColoredTextBoxNS.FastColoredTextBox()
+            Me.Fctb = New FastColoredTextBoxNS.FastColoredTextBox()
             Me.SuspendLayout()
             '
             'label1
@@ -45,31 +41,31 @@ Namespace TesterVB
             '
             'fctb
             '
-            Me.fctb.AllowDrop = True
-            Me.fctb.AutoScrollMinSize = New System.Drawing.Size(0, 255)
-            Me.fctb.BackBrush = Nothing
-            Me.fctb.Cursor = System.Windows.Forms.Cursors.IBeam
-            Me.fctb.DisabledColor = System.Drawing.Color.FromArgb(CType(CType(100, Byte), Integer), CType(CType(180, Byte), Integer), CType(CType(180, Byte), Integer), CType(CType(180, Byte), Integer))
-            Me.fctb.Dock = System.Windows.Forms.DockStyle.Fill
-            Me.fctb.Font = New System.Drawing.Font("Consolas", 9.75!)
-            Me.fctb.IsReplaceMode = False
-            Me.fctb.Language = FastColoredTextBoxNS.Language.CSharp
-            Me.fctb.LeftBracket = Global.Microsoft.VisualBasic.ChrW(40)
-            Me.fctb.Location = New System.Drawing.Point(0, 30)
-            Me.fctb.Name = "fctb"
-            Me.fctb.Paddings = New System.Windows.Forms.Padding(0)
-            Me.fctb.ReadOnly = True
-            Me.fctb.RightBracket = Global.Microsoft.VisualBasic.ChrW(41)
-            Me.fctb.SelectionColor = System.Drawing.Color.FromArgb(CType(CType(50, Byte), Integer), CType(CType(0, Byte), Integer), CType(CType(0, Byte), Integer), CType(CType(255, Byte), Integer))
-            Me.fctb.Size = New System.Drawing.Size(355, 282)
-            Me.fctb.TabIndex = 5
-            Me.fctb.Text = resources.GetString("fctb.Text")
-            Me.fctb.WordWrap = True
+            Me.Fctb.AllowDrop = True
+            Me.Fctb.AutoScrollMinSize = New System.Drawing.Size(0, 255)
+            Me.Fctb.BackBrush = Nothing
+            Me.Fctb.Cursor = System.Windows.Forms.Cursors.IBeam
+            Me.Fctb.DisabledColor = System.Drawing.Color.FromArgb(CType(CType(100, Byte), Integer), CType(CType(180, Byte), Integer), CType(CType(180, Byte), Integer), CType(CType(180, Byte), Integer))
+            Me.Fctb.Dock = System.Windows.Forms.DockStyle.Fill
+            Me.Fctb.Font = New System.Drawing.Font("Consolas", 9.75!)
+            Me.Fctb.IsReplaceMode = False
+            Me.Fctb.Language = FastColoredTextBoxNS.Language.CSharp
+            Me.Fctb.LeftBracket = Global.Microsoft.VisualBasic.ChrW(40)
+            Me.Fctb.Location = New System.Drawing.Point(0, 30)
+            Me.Fctb.Name = "fctb"
+            Me.Fctb.Paddings = New System.Windows.Forms.Padding(0)
+            Me.Fctb.ReadOnly = True
+            Me.Fctb.RightBracket = Global.Microsoft.VisualBasic.ChrW(41)
+            Me.Fctb.SelectionColor = System.Drawing.Color.FromArgb(CType(CType(50, Byte), Integer), CType(CType(0, Byte), Integer), CType(CType(0, Byte), Integer), CType(CType(255, Byte), Integer))
+            Me.Fctb.Size = New System.Drawing.Size(355, 282)
+            Me.Fctb.TabIndex = 5
+            Me.Fctb.Text = resources.GetString("fctb.Text")
+            Me.Fctb.WordWrap = True
             '
             'TooltipSample
             '
             Me.ClientSize = New System.Drawing.Size(355, 312)
-            Me.Controls.Add(Me.fctb)
+            Me.Controls.Add(Me.Fctb)
             Me.Controls.Add(Me.label1)
             Me.Name = "TooltipSample"
             Me.Text = "TooltipSample"
@@ -77,7 +73,7 @@ Namespace TesterVB
 
         End Sub
 
-        Private Sub fctb_ToolTipNeeded(sender As System.Object, e As FastColoredTextBoxNS.ToolTipNeededEventArgs) Handles fctb.ToolTipNeeded
+        Private Sub Fctb_ToolTipNeeded(sender As System.Object, e As FastColoredTextBoxNS.ToolTipNeededEventArgs) Handles Fctb.ToolTipNeeded
             If Not String.IsNullOrEmpty(e.HoveredWord) Then
                 e.ToolTipTitle = e.HoveredWord
                 e.ToolTipText = "This is tooltip for '" + e.HoveredWord & "'"

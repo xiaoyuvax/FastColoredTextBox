@@ -61,7 +61,7 @@
             this.btAddBookmark.Name = "btAddBookmark";
             this.btAddBookmark.Size = new System.Drawing.Size(90, 22);
             this.btAddBookmark.Text = "Add bookmark";
-            this.btAddBookmark.Click += new System.EventHandler(this.btAddBookmark_Click);
+            this.btAddBookmark.Click += new System.EventHandler(this.BtAddBookmark_Click);
             // 
             // btRemoveBookmark
             // 
@@ -71,7 +71,7 @@
             this.btRemoveBookmark.Name = "btRemoveBookmark";
             this.btRemoveBookmark.Size = new System.Drawing.Size(111, 22);
             this.btRemoveBookmark.Text = "Remove bookmark";
-            this.btRemoveBookmark.Click += new System.EventHandler(this.btRemoveBookmark_Click);
+            this.btRemoveBookmark.Click += new System.EventHandler(this.BtRemoveBookmark_Click);
             // 
             // btGo
             // 
@@ -81,7 +81,7 @@
             this.btGo.Name = "btGo";
             this.btGo.Size = new System.Drawing.Size(61, 22);
             this.btGo.Text = "Go to ...";
-            this.btGo.DropDownOpening += new System.EventHandler(this.btGo_DropDownOpening);
+            this.btGo.DropDownOpening += new System.EventHandler(this.BtGo_DropDownOpening);
             // 
             // fctb
             // 
@@ -108,7 +108,7 @@
             this.fctb.Text = resources.GetString("fctb.Text");
             this.fctb.WordWrap = true;
             this.fctb.Zoom = 100;
-            this.fctb.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.fctb_MouseDoubleClick);
+            this.fctb.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.Fctb_MouseDoubleClick);
             // 
             // label2
             // 

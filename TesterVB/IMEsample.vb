@@ -1,14 +1,10 @@
-﻿Imports FastColoredTextBoxNS
-Imports System
-Imports System.ComponentModel
-Imports System.Drawing
-Imports System.Windows.Forms
+﻿Imports System.ComponentModel
 
 Namespace TesterVB
     Public Class IMEsample
         Inherits Form
 
-        Private components As IContainer = Nothing
+        Private ReadOnly components As IContainer = Nothing
 
         Private fctb As FastColoredTextBox
 
@@ -26,7 +22,7 @@ Namespace TesterVB
         End Sub
 
         Private Sub InitializeComponent()
-            Dim resources As ComponentResourceManager = New ComponentResourceManager(GetType(IMEsample))
+            Dim resources As New ComponentResourceManager(GetType(IMEsample))
             Me.label1 = New Label()
             Me.fctb = New FastColoredTextBox()
             MyBase.SuspendLayout()

@@ -150,7 +150,7 @@
             this.fctb.TabIndex = 3;
             this.fctb.Text = resources.GetString("fctb.Text");
             this.fctb.Zoom = 100;
-            this.fctb.ScrollbarsUpdated += new System.EventHandler(this.fctb_ScrollbarsUpdated);
+            this.fctb.ScrollbarsUpdated += new System.EventHandler(this.Fctb_ScrollbarsUpdated);
             // 
             // CustomScrollBarsSample
             // 

@@ -65,7 +65,7 @@
             this.fctb.TabIndex = 5;
             this.fctb.Text = resources.GetString("fctb.Text");
             this.fctb.WordWrap = true;
-            this.fctb.ToolTipNeeded += new System.EventHandler<FastColoredTextBoxNS.ToolTipNeededEventArgs>(this.fctb_ToolTipNeeded);
+            this.fctb.ToolTipNeeded += new System.EventHandler<FastColoredTextBoxNS.ToolTipNeededEventArgs>(this.Fctb_ToolTipNeeded);
             // 
             // TooltipSample
             // 

@@ -50,7 +50,7 @@
             this.tb.TabIndex = 0;
             this.tb.Text = "<html>\r\n <head></head>\r\n <body>\r\n <ul> \r\n  <?php for($i=1;$i<=5;$i++){ ?>\r\n  <li>" +
     "Menu Item <?php echo $i; ?></li> \r\n  <?php } ?>\r\n </ul> \r\n</body>\r\n</html>\r\n";
-            this.tb.TextChangedDelayed += new System.EventHandler<FastColoredTextBoxNS.TextChangedEventArgs>(this.tb_TextChangedDelayed);
+            this.tb.TextChangedDelayed += new System.EventHandler<FastColoredTextBoxNS.TextChangedEventArgs>(this.Tb_TextChangedDelayed);
             // 
             // BilingualHighlighterSample
             // 

@@ -110,7 +110,7 @@
             this.cbAutoIndentType.Name = "cbAutoIndentType";
             this.cbAutoIndentType.Size = new System.Drawing.Size(387, 21);
             this.cbAutoIndentType.TabIndex = 5;
-            this.cbAutoIndentType.SelectedIndexChanged += new System.EventHandler(this.cbAutoIndentType_SelectedIndexChanged);
+            this.cbAutoIndentType.SelectedIndexChanged += new System.EventHandler(this.CbAutoIndentType_SelectedIndexChanged);
             // 
             // AutoIndentSample
             // 

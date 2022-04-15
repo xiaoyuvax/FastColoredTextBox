@@ -2,28 +2,28 @@
 
 Public Class AutocompleteSample2
 
-    Private popupMenu As AutocompleteMenu
-    Private keywords As String() = {"abstract", "as", "base", "bool", "break", "byte", _
-     "case", "catch", "char", "checked", "class", "const", _
-     "continue", "decimal", "default", "delegate", "do", "double", _
-     "else", "enum", "event", "explicit", "extern", "false", _
-     "finally", "fixed", "float", "for", "foreach", "goto", _
-     "if", "implicit", "in", "int", "interface", "internal", _
-     "is", "lock", "long", "namespace", "new", "null", _
-     "object", "operator", "out", "override", "params", "private", _
-     "protected", "public", "readonly", "ref", "return", "sbyte", _
-     "sealed", "short", "sizeof", "stackalloc", "static", "string", _
-     "struct", "switch", "this", "throw", "true", "try", _
-     "typeof", "uint", "ulong", "unchecked", "unsafe", "ushort", _
-     "using", "virtual", "void", "volatile", "while", "add", _
-     "alias", "ascending", "descending", "dynamic", "from", "get", _
-     "global", "group", "into", "join", "let", "orderby", _
-     "partial", "remove", "select", "set", "value", "var", _
+    Private ReadOnly popupMenu As AutocompleteMenu
+    Private ReadOnly keywords As String() = {"abstract", "as", "base", "bool", "break", "byte",
+     "case", "catch", "char", "checked", "class", "const",
+     "continue", "decimal", "default", "delegate", "do", "double",
+     "else", "enum", "event", "explicit", "extern", "false",
+     "finally", "fixed", "float", "for", "foreach", "goto",
+     "if", "implicit", "in", "int", "interface", "internal",
+     "is", "lock", "long", "namespace", "new", "null",
+     "object", "operator", "out", "override", "params", "private",
+     "protected", "public", "readonly", "ref", "return", "sbyte",
+     "sealed", "short", "sizeof", "stackalloc", "static", "string",
+     "struct", "switch", "this", "throw", "true", "try",
+     "typeof", "uint", "ulong", "unchecked", "unsafe", "ushort",
+     "using", "virtual", "void", "volatile", "while", "add",
+     "alias", "ascending", "descending", "dynamic", "from", "get",
+     "global", "group", "into", "join", "let", "orderby",
+     "partial", "remove", "select", "set", "value", "var",
      "where", "yield"}
-    Private methods As String() = {"Equals()", "GetHashCode()", "GetType()", "ToString()"}
-    Private snippets As String() = {"if(^)" & vbLf & "{" & vbLf & ";" & vbLf & "}", "if(^)" & vbLf & "{" & vbLf & ";" & vbLf & "}" & vbLf & "else" & vbLf & "{" & vbLf & ";" & vbLf & "}", "for(^;;)" & vbLf & "{" & vbLf & ";" & vbLf & "}", "while(^)" & vbLf & "{" & vbLf & ";" & vbLf & "}", "do${" & vbLf & "^;" & vbLf & "}while();", "switch(^)" & vbLf & "{" & vbLf & "case : break;" & vbLf & "}"}
-    Private declarationSnippets As String() = {"public class ^" & vbLf & "{" & vbLf & "}", "private class ^" & vbLf & "{" & vbLf & "}", "internal class ^" & vbLf & "{" & vbLf & "}", "public struct ^" & vbLf & "{" & vbLf & ";" & vbLf & "}", "private struct ^" & vbLf & "{" & vbLf & ";" & vbLf & "}", "internal struct ^" & vbLf & "{" & vbLf & ";" & vbLf & "}", _
-     "public void ^()" & vbLf & "{" & vbLf & ";" & vbLf & "}", "private void ^()" & vbLf & "{" & vbLf & ";" & vbLf & "}", "internal void ^()" & vbLf & "{" & vbLf & ";" & vbLf & "}", "protected void ^()" & vbLf & "{" & vbLf & ";" & vbLf & "}", "public ^{ get; set; }", "private ^{ get; set; }", _
+    Private ReadOnly methods As String() = {"Equals()", "GetHashCode()", "GetType()", "ToString()"}
+    Private ReadOnly snippets As String() = {"if(^)" & vbLf & "{" & vbLf & ";" & vbLf & "}", "if(^)" & vbLf & "{" & vbLf & ";" & vbLf & "}" & vbLf & "else" & vbLf & "{" & vbLf & ";" & vbLf & "}", "for(^;;)" & vbLf & "{" & vbLf & ";" & vbLf & "}", "while(^)" & vbLf & "{" & vbLf & ";" & vbLf & "}", "do${" & vbLf & "^;" & vbLf & "}while();", "switch(^)" & vbLf & "{" & vbLf & "case : break;" & vbLf & "}"}
+    Private ReadOnly declarationSnippets As String() = {"public class ^" & vbLf & "{" & vbLf & "}", "private class ^" & vbLf & "{" & vbLf & "}", "internal class ^" & vbLf & "{" & vbLf & "}", "public struct ^" & vbLf & "{" & vbLf & ";" & vbLf & "}", "private struct ^" & vbLf & "{" & vbLf & ";" & vbLf & "}", "internal struct ^" & vbLf & "{" & vbLf & ";" & vbLf & "}",
+     "public void ^()" & vbLf & "{" & vbLf & ";" & vbLf & "}", "private void ^()" & vbLf & "{" & vbLf & ";" & vbLf & "}", "internal void ^()" & vbLf & "{" & vbLf & ";" & vbLf & "}", "protected void ^()" & vbLf & "{" & vbLf & ";" & vbLf & "}", "public ^{ get; set; }", "private ^{ get; set; }",
      "internal ^{ get; set; }", "protected ^{ get; set; }"}
 
     Public Sub New()
@@ -85,7 +85,7 @@ Public Class AutocompleteSample2
     ''' </summary>
     Private Class InsertSpaceSnippet
         Inherits AutocompleteItem
-        Private pattern As String
+        Private ReadOnly pattern As String
 
         Public Sub New(ByVal pattern As String)
             MyBase.New("")

@@ -1,8 +1,4 @@
-Imports FastColoredTextBoxNS
-Imports System
 Imports System.ComponentModel
-Imports System.Drawing
-Imports System.Windows.Forms
 
 Namespace TesterVB
     Public Class ConsoleSample
@@ -10,7 +6,7 @@ Namespace TesterVB
 
         Private _stop As Boolean
 
-        Private components As IContainer = Nothing
+        Private ReadOnly components As IContainer = Nothing
 
         Private consoleTextBox1 As ConsoleTextBox
 
@@ -49,7 +45,7 @@ Namespace TesterVB
         End Sub
 
         Private Sub InitializeComponent()
-            Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(ConsoleSample))
+            Dim resources As New System.ComponentModel.ComponentResourceManager(GetType(ConsoleSample))
             Me.label2 = New System.Windows.Forms.Label()
             Me.consoleTextBox1 = New TesterVB.ConsoleTextBox()
             Me.SuspendLayout()

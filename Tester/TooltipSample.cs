@@ -1,24 +1,17 @@
-﻿using System.Windows.Forms;
-using FastColoredTextBoxNS;
+﻿using FastColoredTextBoxNS;
+using System.Windows.Forms;
 
-namespace Tester
-{
-    public partial class TooltipSample : Form
-    {
-        public TooltipSample()
-        {
-            InitializeComponent();
-        }
+namespace Tester {
+	public partial class TooltipSample : Form {
+		public TooltipSample() => InitializeComponent();
 
-        private void fctb_ToolTipNeeded(object sender, ToolTipNeededEventArgs e)
-        {
-            if (!string.IsNullOrEmpty(e.HoveredWord))
-            {
-                e.ToolTipTitle = e.HoveredWord;
-                e.ToolTipText = "This is tooltip for '" + e.HoveredWord + "'";
-            }
+		private void Fctb_ToolTipNeeded(object sender, ToolTipNeededEventArgs e) {
+			if (!string.IsNullOrEmpty(e.HoveredWord)) {
+				e.ToolTipTitle = e.HoveredWord;
+				e.ToolTipText = "This is tooltip for '" + e.HoveredWord + "'";
+			}
 
-            /*
+			/*
              * Also you can get any fragment of the text for tooltip.
              * Following example gets whole line for tooltip:
             
@@ -28,6 +21,6 @@ namespace Tester
             e.ToolTipText = "This is tooltip for '" + hoveredWord + "'";
 
              */
-        }
-    }
+		}
+	}
 }

@@ -58,7 +58,7 @@
             this.fctb.TabIndex = 0;
             this.fctb.WordWrap = true;
             this.fctb.Zoom = 100;
-            this.fctb.VisibleRangeChanged += new System.EventHandler(this.fctb_VisibleRangeChanged);
+            this.fctb.VisibleRangeChanged += new System.EventHandler(this.Fctb_VisibleRangeChanged);
             // 
             // label1
             // 

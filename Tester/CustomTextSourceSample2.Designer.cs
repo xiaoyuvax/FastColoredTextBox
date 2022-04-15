@@ -89,7 +89,7 @@
             this.tbLineFilter.Name = "tbLineFilter";
             this.tbLineFilter.Size = new System.Drawing.Size(155, 22);
             this.tbLineFilter.TabIndex = 3;
-            this.tbLineFilter.TextChanged += new System.EventHandler(this.tbLineFilter_TextChanged);
+            this.tbLineFilter.TextChanged += new System.EventHandler(this.TbLineFilter_TextChanged);
             // 
             // label2
             // 

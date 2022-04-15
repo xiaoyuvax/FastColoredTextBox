@@ -68,7 +68,7 @@
             this.fctb.TabIndex = 0;
             this.fctb.Text = "\r\n<html>\r\n<body>\r\n    <h1> Hello, this text is writable! </h1>\r\n    <div class=re" +
     "adonly_attribute> Writable text </div>\r\n</body>\r\n</html>";
-            this.fctb.KeyPressing += new System.Windows.Forms.KeyPressEventHandler(this.fctb_KeyPressing);
+            this.fctb.KeyPressing += new System.Windows.Forms.KeyPressEventHandler(this.Fctb_KeyPressing);
             // 
             // ReadOnlyBlocksSample
             // 

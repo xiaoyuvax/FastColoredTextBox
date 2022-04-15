@@ -1,25 +1,21 @@
-Imports FastColoredTextBoxNS
-Imports System
 Imports System.ComponentModel
-Imports System.Drawing
 Imports System.Text
-Imports System.Windows.Forms
 
 Namespace TesterVB
     Public Class VisibleRangeChangedDelayedSample
         Inherits Form
 
-        Private components As IContainer = Nothing
+        Private ReadOnly components As IContainer = Nothing
 
         Private label1 As Label
 
         Private fctb As FastColoredTextBox
 
-        Private BlueStyle As Style = New TextStyle(Brushes.Blue, Nothing, FontStyle.Regular)
+        Private ReadOnly BlueStyle As Style = New TextStyle(Brushes.Blue, Nothing, FontStyle.Regular)
 
-        Private RedStyle As Style = New TextStyle(Brushes.Red, Nothing, FontStyle.Regular)
+        Private ReadOnly RedStyle As Style = New TextStyle(Brushes.Red, Nothing, FontStyle.Regular)
 
-        Private MaroonStyle As Style = New TextStyle(Brushes.Maroon, Nothing, FontStyle.Regular)
+        Private ReadOnly MaroonStyle As Style = New TextStyle(Brushes.Maroon, Nothing, FontStyle.Regular)
 
         Protected Overrides Sub Dispose(disposing As Boolean)
             If disposing AndAlso Me.components IsNot Nothing Then
@@ -53,7 +49,7 @@ Namespace TesterVB
             Me.fctb.SelectionColor = Color.FromArgb(50, 0, 0, 255)
             Me.fctb.Size = New Size(371, 235)
             Me.fctb.TabIndex = 1
-            AddHandler Me.fctb.VisibleRangeChangedDelayed, New EventHandler(AddressOf Me.fctb_VisibleRangeChangedDelayed)
+            AddHandler Me.fctb.VisibleRangeChangedDelayed, New EventHandler(AddressOf Me.Fctb_VisibleRangeChangedDelayed)
             MyBase.AutoScaleDimensions = New SizeF(6.0F, 13.0F)
             MyBase.AutoScaleMode = AutoScaleMode.Font
             MyBase.ClientSize = New Size(371, 283)
@@ -67,7 +63,7 @@ Namespace TesterVB
         Public Sub New()
             Me.InitializeComponent()
             Dim html4line As String = "<li id=""ctl00_TopNavBar_AQL"">" & vbCrLf & "<a id=""ctl00_TopNavBar_ArticleQuestion"" class=""fly highlight"" href=""#_comments"">Ask a Question about this article</a></li>" & vbCrLf & "<li class=""heading"">Quick Answers</li>" & vbCrLf & "<li><a id=""ctl00_TopNavBar_QAAsk"" class=""fly"" href=""/Questions/ask.aspx"">Ask a Question</a></li>"
-            Dim sb As StringBuilder = New StringBuilder()
+            Dim sb As New StringBuilder()
             For i As Integer = 0 To 50000 - 1
                 sb.AppendLine(html4line)
             Next
@@ -77,7 +73,7 @@ Namespace TesterVB
             Me.fctb.DelayedEventsInterval = 10
         End Sub
 
-        Private Sub fctb_VisibleRangeChangedDelayed(sender As Object, e As EventArgs)
+        Private Sub Fctb_VisibleRangeChangedDelayed(sender As Object, e As EventArgs)
             Me.HTMLSyntaxHighlight(Me.fctb.VisibleRange)
         End Sub
 

@@ -1,13 +1,8 @@
-Imports FastColoredTextBoxNS
-Imports System
-Imports System.Collections.Generic
-Imports System.Drawing
-
 Namespace TesterVB
     Public Class InvisibleCharsRenderer
         Inherits Style
 
-        Private pen As Pen
+        Private ReadOnly pen As Pen
 
         Public Sub New(pen As Pen)
             Me.pen = pen

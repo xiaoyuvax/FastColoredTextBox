@@ -1412,6 +1412,11 @@
             Occurs when mouse is moving over text and tooltip is needed
             </summary>
         </member>
+        <member name="P:FastColoredTextBoxNS.FastColoredTextBox.DefaultMarkerSize">
+            <summary>
+            Default size of the markers
+            </summary>
+        </member>
         <member name="M:FastColoredTextBoxNS.FastColoredTextBox.ClearHints">
             <summary>
             Removes all hints
@@ -1667,6 +1672,12 @@
             <summary>
             Shows replace dialog
             </summary>
+        </member>
+        <member name="M:FastColoredTextBoxNS.FastColoredTextBox.GetColumn">
+            <summary>
+            Gets the column of the caret
+            </summary>
+            <returns>Current column</returns>
         </member>
         <member name="M:FastColoredTextBoxNS.FastColoredTextBox.GetLineLength(System.Int32)">
             <summary>
@@ -2129,9 +2140,8 @@
         </member>
         <member name="M:FastColoredTextBoxNS.FastColoredTextBox.ExpandAllFoldingBlocks">
             <summary>
-            Exapnds all folded blocks
+            Expands all folded blocks
             </summary>
-            <param name="iLine"></param>
         </member>
         <member name="M:FastColoredTextBoxNS.FastColoredTextBox.CollapseFoldingBlock(System.Int32)">
             <summary>
@@ -2235,6 +2245,11 @@
         <member name="M:FastColoredTextBoxNS.FastColoredTextBox.OpenFile(System.String)">
             <summary>
             Open text file (with automatic encoding detector)
+            </summary>
+        </member>
+        <member name="M:FastColoredTextBoxNS.FastColoredTextBox.ReloadText">
+            <summary>
+            Reloads the text, in case the highlighting changed
             </summary>
         </member>
         <member name="M:FastColoredTextBoxNS.FastColoredTextBox.OpenBindingFile(System.String,System.Text.Encoding)">
@@ -2477,7 +2492,7 @@
             <summary>
             Constructor
             </summary>
-            <param name="tb">Underlaying textbox</param>
+            <param name="ts">Underlaying textbox</param>
             <param name="c">Inserting char</param>
         </member>
         <member name="M:FastColoredTextBoxNS.InsertCharCommand.Undo">
@@ -2504,7 +2519,7 @@
             <summary>
             Constructor
             </summary>
-            <param name="tb">Underlaying textbox</param>
+            <param name="ts">Underlaying textbox</param>
             <param name="insertedText">Text for inserting</param>
         </member>
         <member name="M:FastColoredTextBoxNS.InsertTextCommand.Undo">
@@ -2526,7 +2541,7 @@
             <summary>
             Constructor
             </summary>
-            <param name="tb">Underlaying textbox</param>
+            <param name="ts">Underlaying textbox</param>
             <param name="ranges">List of ranges for replace</param>
             <param name="insertedText">Text for inserting</param>
         </member>
@@ -2549,7 +2564,7 @@
             <summary>
             Construstor
             </summary>
-            <param name="tb">Underlaying textbox</param>
+            <param name="ts">Underlaying textbox</param>
         </member>
         <member name="M:FastColoredTextBoxNS.ClearSelectedCommand.Undo">
             <summary>
@@ -2592,9 +2607,8 @@
             <summary>
             Constructor
             </summary>
-            <param name="tb">Underlaying textbox</param>
-            <param name="ranges">List of ranges for replace</param>
-            <param name="insertedText">Text for inserting</param>
+            <param name="ts">Underlaying textbox</param>
+            <param name="iLines">List of lines to remove</param>
         </member>
         <member name="M:FastColoredTextBoxNS.RemoveLinesCommand.Undo">
             <summary>
@@ -2942,7 +2956,8 @@
             <summary>
             Sets folding markers
             </summary>
-            <param name="startEndFoldingPattern">Pattern for start and end folding line</param>
+            <param name="foldingPattern">Pattern for start and end folding line</param>
+            <param name="options">Options for regex</param>
         </member>
         <member name="M:FastColoredTextBoxNS.Range.GetRanges(System.String)">
             <summary>
@@ -2956,6 +2971,7 @@
             Finds ranges for given regex pattern
             </summary>
             <param name="regexPattern">Regex pattern</param>
+            <param name="options">Regex options</param>
             <returns>Enumeration of ranges</returns>
         </member>
         <member name="M:FastColoredTextBoxNS.Range.GetRangesByLines(System.String,System.Text.RegularExpressions.RegexOptions)">
@@ -2983,6 +2999,7 @@
             This method requires less memory than GetRanges().
             </summary>
             <param name="regexPattern">Regex pattern</param>
+            <param name="options">Regex options</param>
             <returns>Enumeration of ranges</returns>
         </member>
         <member name="M:FastColoredTextBoxNS.Range.GetRanges(System.Text.RegularExpressions.Regex)">

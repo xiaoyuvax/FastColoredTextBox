@@ -44,7 +44,7 @@
             this.button1.TabIndex = 0;
             this.button1.Text = "button1";
             this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.button1.Click += new System.EventHandler(this.Button1_Click);
             // 
             // fctb
             // 
@@ -81,7 +81,7 @@
             this.fctb.Text = "(fastColoredTextBox1)\r\ngfdsg fd\r\ng fdsg (local) = 12\r\ndsfds\r\n";
             this.fctb.WordWrap = true;
             this.fctb.Zoom = 100;
-            this.fctb.TextChanged += new System.EventHandler<FastColoredTextBoxNS.TextChangedEventArgs>(this.fctb_TextChanged);
+            this.fctb.TextChanged += new System.EventHandler<FastColoredTextBoxNS.TextChangedEventArgs>(this.Fctb_TextChanged);
             // 
             // Sandbox
             // 

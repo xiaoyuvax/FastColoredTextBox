@@ -1,22 +1,15 @@
-﻿using System.Windows.Forms;
-using FastColoredTextBoxNS;
-using System.Text.RegularExpressions;
+﻿using FastColoredTextBoxNS;
+using System.Windows.Forms;
 
-namespace Tester
-{
-    public partial class SimplestCodeFoldingSample : Form
-    {
-        public SimplestCodeFoldingSample()
-        {
-            InitializeComponent();
-        }
+namespace Tester {
+	public partial class SimplestCodeFoldingSample : Form {
+		public SimplestCodeFoldingSample() => InitializeComponent();
 
-        private void fctb_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            //clear folding markers
-            e.ChangedRange.ClearFoldingMarkers();
-            //set markers for folding
-            e.ChangedRange.SetFoldingMarkers("{", "}");
-        }
-    }
+		private void Fctb_TextChanged(object sender, TextChangedEventArgs e) {
+			//clear folding markers
+			e.ChangedRange.ClearFoldingMarkers();
+			//set markers for folding
+			e.ChangedRange.SetFoldingMarkers("{", "}");
+		}
+	}
 }

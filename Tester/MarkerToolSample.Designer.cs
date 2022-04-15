@@ -62,7 +62,7 @@
             this.markAsYellowToolStripMenuItem.Size = new System.Drawing.Size(190, 22);
             this.markAsYellowToolStripMenuItem.Tag = "yellow";
             this.markAsYellowToolStripMenuItem.Text = "Mark as Yellow";
-            this.markAsYellowToolStripMenuItem.Click += new System.EventHandler(this.markAsYellowToolStripMenuItem_Click);
+            this.markAsYellowToolStripMenuItem.Click += new System.EventHandler(this.MarkAsYellowToolStripMenuItem_Click);
             // 
             // markAsRedToolStripMenuItem
             // 
@@ -70,7 +70,7 @@
             this.markAsRedToolStripMenuItem.Size = new System.Drawing.Size(190, 22);
             this.markAsRedToolStripMenuItem.Tag = "red";
             this.markAsRedToolStripMenuItem.Text = "Mark as Red";
-            this.markAsRedToolStripMenuItem.Click += new System.EventHandler(this.markAsYellowToolStripMenuItem_Click);
+            this.markAsRedToolStripMenuItem.Click += new System.EventHandler(this.MarkAsYellowToolStripMenuItem_Click);
             // 
             // markAsGreenToolStripMenuItem
             // 
@@ -78,7 +78,7 @@
             this.markAsGreenToolStripMenuItem.Size = new System.Drawing.Size(190, 22);
             this.markAsGreenToolStripMenuItem.Tag = "green";
             this.markAsGreenToolStripMenuItem.Text = "Mark as Green";
-            this.markAsGreenToolStripMenuItem.Click += new System.EventHandler(this.markAsYellowToolStripMenuItem_Click);
+            this.markAsGreenToolStripMenuItem.Click += new System.EventHandler(this.MarkAsYellowToolStripMenuItem_Click);
             // 
             // toolStripMenuItem1
             // 
@@ -91,7 +91,7 @@
             this.markLineBackgroundToolStripMenuItem.Size = new System.Drawing.Size(190, 22);
             this.markLineBackgroundToolStripMenuItem.Tag = "lineBackground";
             this.markLineBackgroundToolStripMenuItem.Text = "Mark line background";
-            this.markLineBackgroundToolStripMenuItem.Click += new System.EventHandler(this.markAsYellowToolStripMenuItem_Click);
+            this.markLineBackgroundToolStripMenuItem.Click += new System.EventHandler(this.MarkAsYellowToolStripMenuItem_Click);
             // 
             // toolStripMenuItem2
             // 
@@ -103,7 +103,7 @@
             this.clearMarkedToolStripMenuItem.Name = "clearMarkedToolStripMenuItem";
             this.clearMarkedToolStripMenuItem.Size = new System.Drawing.Size(190, 22);
             this.clearMarkedToolStripMenuItem.Text = "Clear marked";
-            this.clearMarkedToolStripMenuItem.Click += new System.EventHandler(this.clearMarkedToolStripMenuItem_Click);
+            this.clearMarkedToolStripMenuItem.Click += new System.EventHandler(this.ClearMarkedToolStripMenuItem_Click);
             // 
             // fctb
             // 
@@ -143,10 +143,10 @@
             this.fctb.Text = resources.GetString("fctb.Text");
             this.fctb.WordWrap = true;
             this.fctb.Zoom = 100;
-            this.fctb.SelectionChangedDelayed += new System.EventHandler(this.fctb_SelectionChangedDelayed);
-            this.fctb.VisualMarkerClick += new System.EventHandler<FastColoredTextBoxNS.VisualMarkerEventArgs>(this.fctb_VisualMarkerClick);
-            this.fctb.PaintLine += new System.EventHandler<FastColoredTextBoxNS.PaintLineEventArgs>(this.fctb_PaintLine);
-            this.fctb.Resize += new System.EventHandler(this.fctb_Resize);
+            this.fctb.SelectionChangedDelayed += new System.EventHandler(this.Fctb_SelectionChangedDelayed);
+            this.fctb.VisualMarkerClick += new System.EventHandler<FastColoredTextBoxNS.VisualMarkerEventArgs>(this.Fctb_VisualMarkerClick);
+            this.fctb.PaintLine += new System.EventHandler<FastColoredTextBoxNS.PaintLineEventArgs>(this.Fctb_PaintLine);
+            this.fctb.Resize += new System.EventHandler(this.Fctb_Resize);
             // 
             // MarkerToolSample
             // 

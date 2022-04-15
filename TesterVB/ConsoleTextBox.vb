@@ -1,8 +1,4 @@
-Imports FastColoredTextBoxNS
-Imports System
-Imports System.Linq
 Imports System.Threading
-Imports System.Windows.Forms
 
 Namespace TesterVB
     Public Class ConsoleTextBox
@@ -73,7 +69,7 @@ Namespace TesterVB
                     End If
                 End If
                 MyBase.OnTextChanging(text)
-                End If
+            End If
         End Sub
     End Class
 End Namespace

@@ -1,9 +1,5 @@
-Imports FastColoredTextBoxNS
-Imports System
 Imports System.ComponentModel
-Imports System.Drawing
 Imports System.Drawing.Drawing2D
-Imports System.Windows.Forms
 
 Namespace TesterVB
     Public Class MarkerToolSample
@@ -29,13 +25,13 @@ Namespace TesterVB
 
         Private toolStripMenuItem2 As ToolStripSeparator
 
-        Private shortCutStyle As ShortcutStyle = New ShortcutStyle(Pens.Maroon)
+        Private ReadOnly shortCutStyle As New ShortcutStyle(Pens.Maroon)
 
-        Private YellowStyle As MarkerStyle = New MarkerStyle(New SolidBrush(Color.FromArgb(180, Color.Yellow)))
+        Private ReadOnly YellowStyle As New MarkerStyle(New SolidBrush(Color.FromArgb(180, Color.Yellow)))
 
-        Private RedStyle As MarkerStyle = New MarkerStyle(New SolidBrush(Color.FromArgb(180, Color.Red)))
+        Private ReadOnly RedStyle As New MarkerStyle(New SolidBrush(Color.FromArgb(180, Color.Red)))
 
-        Private GreenStyle As MarkerStyle = New MarkerStyle(New SolidBrush(Color.FromArgb(180, Color.Green)))
+        Private ReadOnly GreenStyle As New MarkerStyle(New SolidBrush(Color.FromArgb(180, Color.Green)))
 
         Protected Overrides Sub Dispose(disposing As Boolean)
             If disposing AndAlso Me.components IsNot Nothing Then
@@ -64,30 +60,30 @@ Namespace TesterVB
             Me.markAsYellowToolStripMenuItem.Size = New Size(190, 22)
             Me.markAsYellowToolStripMenuItem.Tag = "yellow"
             Me.markAsYellowToolStripMenuItem.Text = "Mark as Yellow"
-            AddHandler Me.markAsYellowToolStripMenuItem.Click, New EventHandler(AddressOf Me.markAsYellowToolStripMenuItem_Click)
+            AddHandler Me.markAsYellowToolStripMenuItem.Click, New EventHandler(AddressOf Me.MarkAsYellowToolStripMenuItem_Click)
             Me.markAsRedToolStripMenuItem.Name = "markAsRedToolStripMenuItem"
             Me.markAsRedToolStripMenuItem.Size = New Size(190, 22)
             Me.markAsRedToolStripMenuItem.Tag = "red"
             Me.markAsRedToolStripMenuItem.Text = "Mark as Red"
-            AddHandler Me.markAsRedToolStripMenuItem.Click, New EventHandler(AddressOf Me.markAsYellowToolStripMenuItem_Click)
+            AddHandler Me.markAsRedToolStripMenuItem.Click, New EventHandler(AddressOf Me.MarkAsYellowToolStripMenuItem_Click)
             Me.markAsGreenToolStripMenuItem.Name = "markAsGreenToolStripMenuItem"
             Me.markAsGreenToolStripMenuItem.Size = New Size(190, 22)
             Me.markAsGreenToolStripMenuItem.Tag = "green"
             Me.markAsGreenToolStripMenuItem.Text = "Mark as Green"
-            AddHandler Me.markAsGreenToolStripMenuItem.Click, New EventHandler(AddressOf Me.markAsYellowToolStripMenuItem_Click)
+            AddHandler Me.markAsGreenToolStripMenuItem.Click, New EventHandler(AddressOf Me.MarkAsYellowToolStripMenuItem_Click)
             Me.toolStripMenuItem1.Name = "toolStripMenuItem1"
             Me.toolStripMenuItem1.Size = New Size(187, 6)
             Me.markLineBackgroundToolStripMenuItem.Name = "markLineBackgroundToolStripMenuItem"
             Me.markLineBackgroundToolStripMenuItem.Size = New Size(190, 22)
             Me.markLineBackgroundToolStripMenuItem.Tag = "lineBackground"
             Me.markLineBackgroundToolStripMenuItem.Text = "Mark line background"
-            AddHandler Me.markLineBackgroundToolStripMenuItem.Click, New EventHandler(AddressOf Me.markAsYellowToolStripMenuItem_Click)
+            AddHandler Me.markLineBackgroundToolStripMenuItem.Click, New EventHandler(AddressOf Me.MarkAsYellowToolStripMenuItem_Click)
             Me.toolStripMenuItem2.Name = "toolStripMenuItem2"
             Me.toolStripMenuItem2.Size = New Size(187, 6)
             Me.clearMarkedToolStripMenuItem.Name = "clearMarkedToolStripMenuItem"
             Me.clearMarkedToolStripMenuItem.Size = New Size(190, 22)
             Me.clearMarkedToolStripMenuItem.Text = "Clear marked"
-            AddHandler Me.clearMarkedToolStripMenuItem.Click, New EventHandler(AddressOf Me.clearMarkedToolStripMenuItem_Click)
+            AddHandler Me.clearMarkedToolStripMenuItem.Click, New EventHandler(AddressOf Me.ClearMarkedToolStripMenuItem_Click)
             Me.fctb.AutoIndent = False
             Me.fctb.AutoScrollMinSize = New Size(0, 15)
             Me.fctb.BackBrush = Nothing
@@ -107,10 +103,10 @@ Namespace TesterVB
             Me.fctb.Size = New Size(447, 262)
             Me.fctb.TabIndex = 0
             Me.fctb.WordWrap = True
-            AddHandler Me.fctb.SelectionChangedDelayed, New EventHandler(AddressOf Me.fctb_SelectionChangedDelayed)
-            AddHandler Me.fctb.VisualMarkerClick, New EventHandler(Of VisualMarkerEventArgs)(AddressOf Me.fctb_VisualMarkerClick)
-            AddHandler Me.fctb.PaintLine, New EventHandler(Of PaintLineEventArgs)(AddressOf Me.fctb_PaintLine)
-            AddHandler Me.fctb.Resize, New EventHandler(AddressOf Me.fctb_Resize)
+            AddHandler Me.fctb.SelectionChangedDelayed, New EventHandler(AddressOf Me.Fctb_SelectionChangedDelayed)
+            AddHandler Me.fctb.VisualMarkerClick, New EventHandler(Of VisualMarkerEventArgs)(AddressOf Me.Fctb_VisualMarkerClick)
+            AddHandler Me.fctb.PaintLine, New EventHandler(Of PaintLineEventArgs)(AddressOf Me.Fctb_PaintLine)
+            AddHandler Me.fctb.Resize, New EventHandler(AddressOf Me.Fctb_Resize)
             MyBase.AutoScaleDimensions = New SizeF(6.0F, 13.0F)
             MyBase.AutoScaleMode = AutoScaleMode.Font
             MyBase.ClientSize = New Size(447, 262)
@@ -128,10 +124,10 @@ Namespace TesterVB
             Me.fctb.AddStyle(Me.RedStyle)
             Me.fctb.AddStyle(Me.GreenStyle)
             Me.fctb.AddStyle(Me.shortCutStyle)
-            Me.fctb_Resize(Me.fctb, Nothing)
+            Me.Fctb_Resize(Me.fctb, Nothing)
         End Sub
 
-        Private Sub fctb_SelectionChangedDelayed(sender As Object, e As EventArgs)
+        Private Sub Fctb_SelectionChangedDelayed(sender As Object, e As EventArgs)
             Dim selection As Range = Me.fctb.Selection
             Me.fctb.VisibleRange.ClearStyle(New Style() {Me.shortCutStyle})
             If Not selection.IsEmpty Then
@@ -143,13 +139,13 @@ Namespace TesterVB
             End If
         End Sub
 
-        Private Sub fctb_VisualMarkerClick(sender As Object, e As VisualMarkerEventArgs)
+        Private Sub Fctb_VisualMarkerClick(sender As Object, e As VisualMarkerEventArgs)
             If e.Style Is Me.shortCutStyle Then
                 Me.cmMark.Show(Me.fctb.PointToScreen(e.Location))
             End If
         End Sub
 
-        Private Sub markAsYellowToolStripMenuItem_Click(sender As Object, e As EventArgs)
+        Private Sub MarkAsYellowToolStripMenuItem_Click(sender As Object, e As EventArgs)
             Me.TrimSelection()
             Dim text As String = CStr(TryCast(sender, ToolStripMenuItem).Tag)
             If text IsNot Nothing Then
@@ -184,18 +180,18 @@ Namespace TesterVB
             End While
         End Sub
 
-        Private Sub clearMarkedToolStripMenuItem_Click(sender As Object, e As EventArgs)
+        Private Sub ClearMarkedToolStripMenuItem_Click(sender As Object, e As EventArgs)
             Me.fctb.Selection.ClearStyle(New Style() {Me.YellowStyle, Me.RedStyle, Me.GreenStyle})
             Me.fctb(Me.fctb.Selection.Start.iLine).BackgroundBrush = Nothing
         End Sub
 
-        Private Sub fctb_PaintLine(sender As Object, e As PaintLineEventArgs)
+        Private Sub Fctb_PaintLine(sender As Object, e As PaintLineEventArgs)
             If e.LineIndex = Me.fctb.Selection.Start.iLine Then
                 e.Graphics.FillEllipse(New LinearGradientBrush(New Rectangle(0, e.LineRect.Top, 15, 15), Color.LightPink, Color.Red, 45.0F), 0, e.LineRect.Top, 15, 15)
             End If
         End Sub
 
-        Private Sub fctb_Resize(sender As Object, e As EventArgs)
+        Private Sub Fctb_Resize(sender As Object, e As EventArgs)
             Me.fctb.BackBrush = New LinearGradientBrush(Me.fctb.ClientRectangle, Color.White, Color.Silver, LinearGradientMode.Vertical)
         End Sub
     End Class

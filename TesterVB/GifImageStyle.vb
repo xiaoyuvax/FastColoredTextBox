@@ -1,25 +1,17 @@
-Imports FastColoredTextBoxNS
-Imports System
-Imports System.Collections.Generic
-Imports System.Drawing
-Imports System.Windows.Forms
-
 Namespace TesterVB
     Friend Class GifImageStyle
         Inherits TextStyle
 
-        Private parent As FastColoredTextBox
-
-        Private timer As Timer
+        Private ReadOnly timer As Timer
 
         Public Property ImagesByText() As Dictionary(Of String, Image)
 
         Public Sub New(parent As FastColoredTextBox)
             MyBase.New(Nothing, Nothing, FontStyle.Regular)
             Me.ImagesByText = New Dictionary(Of String, Image)()
-            Me.parent = parent
-            Me.timer = New Timer()
-            Me.timer.Interval = 100
+            Me.timer = New Timer With {
+                .Interval = 100
+            }
             AddHandler Me.timer.Tick, Sub()
                                           ImageAnimator.UpdateFrames()
                                           parent.Invalidate()
@@ -50,7 +42,7 @@ Namespace TesterVB
                             i = 1.0F
                         End If
                         text = text.Substring(pair.Key.Length)
-                        Dim rect As RectangleF = New RectangleF(CSng(position.X + range.tb.CharWidth * pair.Key.Length / 2) - CSng(pair.Value.Width) * i / 2.0F, CSng(position.Y), CSng(pair.Value.Width) * i, CSng(pair.Value.Height) * i)
+                        Dim rect As New RectangleF(CSng(position.X + range.tb.CharWidth * pair.Key.Length / 2) - CSng(pair.Value.Width) * i / 2.0F, CSng(position.Y), CSng(pair.Value.Width) * i, CSng(pair.Value.Height) * i)
                         gr.DrawImage(pair.Value, rect)
                         position.Offset(range.tb.CharWidth * pair.Key.Length, 0)
                         replaced = True
@@ -59,7 +51,7 @@ Namespace TesterVB
                     End If
                 Next
                 If Not replaced AndAlso text.Length > 0 Then
-                    Dim r As Range = New Range(range.tb, iChar, range.Start.iLine, iChar + 1, range.Start.iLine)
+                    Dim r As New Range(range.tb, iChar, range.Start.iLine, iChar + 1, range.Start.iLine)
                     MyBase.Draw(gr, position, r)
                     position.Offset(range.tb.CharWidth, 0)
                     text = text.Substring(1)

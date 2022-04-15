@@ -56,12 +56,12 @@
             this.btGotToEnd.TabIndex = 6;
             this.btGotToEnd.Text = "Go to end";
             this.btGotToEnd.UseVisualStyleBackColor = true;
-            this.btGotToEnd.Click += new System.EventHandler(this.btGotToEnd_Click);
+            this.btGotToEnd.Click += new System.EventHandler(this.BtGotToEnd_Click);
             // 
             // tm
             // 
             this.tm.Enabled = true;
-            this.tm.Tick += new System.EventHandler(this.tm_Tick);
+            this.tm.Tick += new System.EventHandler(this.Tm_Tick);
             // 
             // fctb
             // 

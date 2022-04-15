@@ -49,9 +49,9 @@
             this.fctb.TabIndex = 0;
             this.fctb.Text = "some text \r\nsome text http://google.com?q=FastColoredTextBox some text\r\n\r\n(see al" +
     "so PredefinedStylesSample)";
-            this.fctb.TextChangedDelayed += new System.EventHandler<FastColoredTextBoxNS.TextChangedEventArgs>(this.fctb_TextChangedDelayed);
-            this.fctb.MouseDown += new System.Windows.Forms.MouseEventHandler(this.fctb_MouseDown);
-            this.fctb.MouseMove += new System.Windows.Forms.MouseEventHandler(this.fctb_MouseMove);
+            this.fctb.TextChangedDelayed += new System.EventHandler<FastColoredTextBoxNS.TextChangedEventArgs>(this.Fctb_TextChangedDelayed);
+            this.fctb.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Fctb_MouseDown);
+            this.fctb.MouseMove += new System.Windows.Forms.MouseEventHandler(this.Fctb_MouseMove);
             // 
             // HyperlinkSample
             // 

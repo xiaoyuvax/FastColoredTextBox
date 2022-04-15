@@ -61,7 +61,7 @@
             this.fctb.SelectionColor = System.Drawing.Color.FromArgb(((int)(((byte)(50)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.fctb.Size = new System.Drawing.Size(371, 235);
             this.fctb.TabIndex = 1;
-            this.fctb.VisibleRangeChangedDelayed += new System.EventHandler(this.fctb_VisibleRangeChangedDelayed);
+            this.fctb.VisibleRangeChangedDelayed += new System.EventHandler(this.Fctb_VisibleRangeChangedDelayed);
             // 
             // VisibleRangeChangedDelayedSample
             // 

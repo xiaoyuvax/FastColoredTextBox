@@ -1,14 +1,10 @@
-Imports FastColoredTextBoxNS
-Imports System
 Imports System.ComponentModel
-Imports System.Drawing
-Imports System.Windows.Forms
 
 Namespace TesterVB
     Public Class SyntaxHighlightingByXmlDescription
         Inherits Form
 
-        Private components As IContainer = Nothing
+        Private ReadOnly components As IContainer = Nothing
 
         Private fctb As FastColoredTextBox
 
@@ -22,10 +18,10 @@ Namespace TesterVB
         End Sub
 
         Private Sub InitializeComponent()
-            Dim resources As ComponentResourceManager = New ComponentResourceManager(GetType(SyntaxHighlightingByXmlDescription))
+            Dim resources As New ComponentResourceManager(GetType(SyntaxHighlightingByXmlDescription))
             Me.label1 = New Label()
             Me.fctb = New FastColoredTextBox()
-            Dim syntaxHighlighter As SyntaxHighlighter = New SyntaxHighlighter(fctb)
+            Dim syntaxHighlighter As New SyntaxHighlighter(fctb)
             MyBase.SuspendLayout()
             Me.label1.Dock = DockStyle.Top
             Me.label1.Font = New Font("Microsoft Sans Serif", 9.75F, FontStyle.Regular, GraphicsUnit.Point, 204)

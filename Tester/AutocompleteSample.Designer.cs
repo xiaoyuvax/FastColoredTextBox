@@ -86,7 +86,7 @@
             this.fctb.Text = resources.GetString("fctb.Text");
             this.fctb.WordWrap = true;
             this.fctb.Zoom = 100;
-            this.fctb.KeyDown += new System.Windows.Forms.KeyEventHandler(this.fctb_KeyDown);
+            this.fctb.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Fctb_KeyDown);
             // 
             // AutocompleteSample
             // 

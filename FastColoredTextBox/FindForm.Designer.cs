@@ -45,7 +45,7 @@
             this.btClose.TabIndex = 5;
             this.btClose.Text = "Close";
             this.btClose.UseVisualStyleBackColor = true;
-            this.btClose.Click += new System.EventHandler(this.btClose_Click);
+            this.btClose.Click += new System.EventHandler(this.BtClose_Click);
             // 
             // btFindNext
             // 
@@ -55,7 +55,7 @@
             this.btFindNext.TabIndex = 4;
             this.btFindNext.Text = "Find next";
             this.btFindNext.UseVisualStyleBackColor = true;
-            this.btFindNext.Click += new System.EventHandler(this.btFindNext_Click);
+            this.btFindNext.Click += new System.EventHandler(this.BtFindNext_Click);
             // 
             // tbFind
             // 
@@ -63,8 +63,8 @@
             this.tbFind.Name = "tbFind";
             this.tbFind.Size = new System.Drawing.Size(306, 20);
             this.tbFind.TabIndex = 0;
-            this.tbFind.TextChanged += new System.EventHandler(this.cbMatchCase_CheckedChanged);
-            this.tbFind.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.tbFind_KeyPress);
+            this.tbFind.TextChanged += new System.EventHandler(this.CbMatchCase_CheckedChanged);
+            this.tbFind.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.TbFind_KeyPress);
             // 
             // cbRegex
             // 
@@ -75,7 +75,7 @@
             this.cbRegex.TabIndex = 3;
             this.cbRegex.Text = "Regex";
             this.cbRegex.UseVisualStyleBackColor = true;
-            this.cbRegex.CheckedChanged += new System.EventHandler(this.cbMatchCase_CheckedChanged);
+            this.cbRegex.CheckedChanged += new System.EventHandler(this.CbMatchCase_CheckedChanged);
             // 
             // cbMatchCase
             // 
@@ -86,7 +86,7 @@
             this.cbMatchCase.TabIndex = 1;
             this.cbMatchCase.Text = "Match case";
             this.cbMatchCase.UseVisualStyleBackColor = true;
-            this.cbMatchCase.CheckedChanged += new System.EventHandler(this.cbMatchCase_CheckedChanged);
+            this.cbMatchCase.CheckedChanged += new System.EventHandler(this.CbMatchCase_CheckedChanged);
             // 
             // label1
             // 
@@ -106,7 +106,7 @@
             this.cbWholeWord.TabIndex = 2;
             this.cbWholeWord.Text = "Match whole word";
             this.cbWholeWord.UseVisualStyleBackColor = true;
-            this.cbWholeWord.CheckedChanged += new System.EventHandler(this.cbMatchCase_CheckedChanged);
+            this.cbWholeWord.CheckedChanged += new System.EventHandler(this.CbMatchCase_CheckedChanged);
             // 
             // FindForm
             // 

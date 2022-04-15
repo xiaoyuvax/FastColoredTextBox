@@ -85,7 +85,7 @@
             this.cbFont.Name = "cbFont";
             this.cbFont.Size = new System.Drawing.Size(222, 21);
             this.cbFont.TabIndex = 5;
-            this.cbFont.SelectedIndexChanged += new System.EventHandler(this.cbFont_SelectedIndexChanged);
+            this.cbFont.SelectedIndexChanged += new System.EventHandler(this.CbFont_SelectedIndexChanged);
             // 
             // panel1
             // 
@@ -128,7 +128,7 @@
             this.cbSize.Name = "cbSize";
             this.cbSize.Size = new System.Drawing.Size(42, 21);
             this.cbSize.TabIndex = 7;
-            this.cbSize.SelectedIndexChanged += new System.EventHandler(this.cbFont_SelectedIndexChanged);
+            this.cbSize.SelectedIndexChanged += new System.EventHandler(this.CbFont_SelectedIndexChanged);
             // 
             // label1
             // 
