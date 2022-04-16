@@ -1,5 +1,7 @@
 ﻿using FarsiLibrary.Win;
 using FastColoredTextBoxNS;
+using FastColoredTextBoxNS.Features;
+using FastColoredTextBoxNS.Types;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -9,8 +11,6 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows.Forms;
-using FastColoredTextBoxNS.Types;
-using FastColoredTextBoxNS.Features;
 
 namespace Tester {
 	public partial class PowerfulCSharpEditor : Form {
@@ -665,7 +665,7 @@ namespace Tester {
 			//get text of selected lines
 			string text = Environment.NewLine + CurrentTB.Selection.Text;
 			//move caret to end of selected lines
-			CurrentTB.Selection.Start = CurrentTB.Selection.End;
+			CurrentTB.Selection.SetStartAndEnd(CurrentTB.Selection.End);
 			//insert text
 			CurrentTB.InsertText(text);
 		}
@@ -680,7 +680,7 @@ namespace Tester {
 			//comment lines
 			CurrentTB.InsertLinePrefix("//");
 			//move caret to end of selected lines
-			CurrentTB.Selection.Start = CurrentTB.Selection.End;
+			CurrentTB.Selection.SetStartAndEnd(CurrentTB.Selection.End);
 			//insert text
 			CurrentTB.InsertText(text);
 			//end of autoUndo block

@@ -21,9 +21,7 @@ namespace FastColoredTextBoxNS.Types {
 		/// <summary>
 		/// Constructor
 		/// </summary>
-		public Range(FastColoredTextBox tb) {
-			this.tb = tb;
-		}
+		public Range(FastColoredTextBox tb) => this.tb = tb;
 
 		/// <summary>
 		/// Return true if no selected text
@@ -154,7 +152,7 @@ namespace FastColoredTextBoxNS.Types {
 		public Place Start {
 			get { return start; }
 			set {
-				end = start = value;
+				start = value;
 				preferedPos = -1;
 				OnSelectionChanged();
 			}
@@ -644,6 +642,12 @@ namespace FastColoredTextBoxNS.Types {
 
 			preferedPos = -1;
 		}
+
+		/// <summary>
+		/// Setter changing both, the Start and End property to the same value
+		/// </summary>
+		/// <param name="value">The new place</param>
+		public void SetStartAndEnd(Place value) { End = Start = value; }
 
 		/// <summary>
 		/// Set style for range

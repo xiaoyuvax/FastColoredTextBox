@@ -1,11 +1,11 @@
 ﻿using FastColoredTextBoxNS;
+using FastColoredTextBoxNS.Types;
 using System;
 using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
-using FastColoredTextBoxNS.Types;
 
 namespace Tester {
 	public partial class PowerfulSample : Form {
@@ -198,7 +198,7 @@ namespace Tester {
 				if (range.CharAfterStart == rightBracket) counter--;
 				if (counter == 1) {
 					//found
-					tb.Selection.Start = range.Start;
+					tb.Selection.SetStartAndEnd(range.Start);
 					tb.DoSelectionVisible();
 					break;
 				}
@@ -218,7 +218,7 @@ namespace Tester {
 				if (range.CharAfterStart == rightBracket) counter--;
 				if (counter == -1) {
 					//found
-					tb.Selection.Start = range.Start;
+					tb.Selection.SetStartAndEnd(range.Start);
 					tb.Selection.GoRightThroughFolded();
 					tb.DoSelectionVisible();
 					break;

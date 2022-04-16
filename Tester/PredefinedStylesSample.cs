@@ -1,10 +1,10 @@
 ﻿using FastColoredTextBoxNS;
+using FastColoredTextBoxNS.Types;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
-using FastColoredTextBoxNS.Types;
 
 namespace Tester {
 	public partial class PredefinedStylesSample : Form {

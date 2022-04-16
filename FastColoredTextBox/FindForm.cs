@@ -1,7 +1,7 @@
-﻿using System;
+﻿using FastColoredTextBoxNS.Types;
+using System;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
-using FastColoredTextBoxNS.Types;
 
 namespace FastColoredTextBoxNS {
 	public partial class FindForm : Form {
@@ -35,7 +35,7 @@ namespace FastColoredTextBoxNS {
 				//
 				range.Start = range.End;
 				if (range.Start >= startPlace)
-					range.End = new Place(tb.GetLineLength(tb.LinesCount - 1), tb.LinesCount - 1);
+					tb.Selection.SetStartAndEnd(new Place(0, 0));
 				else
 					range.End = startPlace;
 				//

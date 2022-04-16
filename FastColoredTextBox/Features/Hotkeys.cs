@@ -85,6 +85,7 @@ namespace FastColoredTextBoxNS.Features {
 			this[KEYS.Control | KEYS.Add] = FCTBAction.ZoomIn;
 			this[KEYS.Control | KEYS.D0] = FCTBAction.ZoomNormal;
 			this[KEYS.Control | KEYS.I] = FCTBAction.AutoIndentChars;
+			this[KEYS.Control | KEYS.D] = FCTBAction.CloneLine;
 		}
 
 		public override string ToString() {
@@ -135,6 +136,7 @@ namespace FastColoredTextBoxNS.Features {
 		ClearHints,
 		ClearWordLeft,
 		ClearWordRight,
+		CloneLine,
 		CommentSelected,
 		Copy,
 		Cut,

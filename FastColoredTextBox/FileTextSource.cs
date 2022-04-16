@@ -1,10 +1,10 @@
 ﻿//#define debug
 
+using FastColoredTextBoxNS.Types;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
-using FastColoredTextBoxNS.Types;
 
 namespace FastColoredTextBoxNS {
 	/// <summary>
@@ -61,7 +61,7 @@ namespace FastColoredTextBoxNS {
 #endif
 		}
 
-		public void OpenFile(string fileName, Encoding enc) {
+		public void OpenFile(string fileName, Encoding enc, FileAccess openMode = FileAccess.ReadWrite, FileShare shareMode = FileShare.None) {
 			Clear();
 
 			if (fs != null)
@@ -70,7 +70,7 @@ namespace FastColoredTextBoxNS {
 			SaveEOL = Environment.NewLine;
 
 			//read lines of file
-			fs = new FileStream(fileName, FileMode.Open);
+			fs = new FileStream(fileName, FileMode.Open, openMode, shareMode);
 			var length = fs.Length;
 			//read signature
 			enc = DefineEncoding(enc, fs);
@@ -79,32 +79,6 @@ namespace FastColoredTextBoxNS {
 			base.lines.Add(null);
 			//other lines
 			sourceFileLinePositions.Capacity = (int)(length / 7 + 1000);
-
-			//int prev = 0;
-			//while(fs.Position < length)
-			//{
-			//    var b = fs.ReadByte();
-
-			//    if (b == 10)// \n
-			//    {
-			//        sourceFileLinePositions.Add((int)(fs.Position) + shift);
-			//        base.lines.Add(null);
-			//    }else
-			//    if (prev == 13)// \r (Mac format)
-			//    {
-			//        sourceFileLinePositions.Add((int)(fs.Position - 1) + shift);
-			//        base.lines.Add(null);
-			//        SaveEOL = "\r";
-			//    }
-
-			//    prev = b;
-			//}
-
-			//if (prev == 13)
-			//{
-			//    sourceFileLinePositions.Add((int)(fs.Position) + shift);
-			//    base.lines.Add(null);
-			//}
 
 			int prev = 0;
 			int prevPos = 0;

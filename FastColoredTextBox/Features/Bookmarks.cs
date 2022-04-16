@@ -1,8 +1,8 @@
-﻿using System;
+﻿using FastColoredTextBoxNS.Types;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
-using FastColoredTextBoxNS.Types;
 
 namespace FastColoredTextBoxNS.Features {
 	/// <summary>
@@ -202,7 +202,7 @@ namespace FastColoredTextBoxNS.Features {
 		/// Scroll textbox to the bookmark
 		/// </summary>
 		public virtual void DoVisible() {
-			TB.Selection.Start = new Place(0, LineIndex);
+			TB.Selection.SetStartAndEnd(new Place(0, LineIndex));
 			TB.DoRangeVisible(TB.Selection, true);
 			TB.Invalidate();
 		}

@@ -1,10 +1,10 @@
 ﻿using FastColoredTextBoxNS;
+using FastColoredTextBoxNS.Types;
 using System;
 using System.ComponentModel;
 using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
-using FastColoredTextBoxNS.Types;
 
 namespace Tester {
 	public partial class ConsoleSample : Form {

@@ -1,8 +1,8 @@
-﻿using System;
+﻿using FastColoredTextBoxNS.Types;
+using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
-using FastColoredTextBoxNS.Types;
 
 namespace FastColoredTextBoxNS {
 	public partial class ReplaceForm : Form {
@@ -15,9 +15,7 @@ namespace FastColoredTextBoxNS {
 			this.tb = tb;
 		}
 
-		private void BtClose_Click(object sender, EventArgs e) {
-			Close();
-		}
+		private void BtClose_Click(object sender, EventArgs e) => Close();
 
 		private void BtFindNext_Click(object sender, EventArgs e) {
 			try {
@@ -61,7 +59,7 @@ namespace FastColoredTextBoxNS {
 			//
 			range.Start = range.End;
 			if (range.Start >= startPlace)
-				range.End = new Place(tb.GetLineLength(tb.LinesCount - 1), tb.LinesCount - 1);
+				tb.Selection.SetStartAndEnd(new Place(0, 0));
 			else
 				range.End = startPlace;
 			//
@@ -131,7 +129,7 @@ namespace FastColoredTextBoxNS {
 				if (!ro)
 					if (ranges.Count > 0) {
 						tb.TextSource.Manager.ExecuteCommand(new ReplaceTextCommand(tb.TextSource, ranges, tbReplace.Text));
-						tb.Selection.Start = new Place(0, 0);
+						tb.Selection.SetStartAndEnd(new Place(0, 0));
 					}
 				//
 				tb.Invalidate();

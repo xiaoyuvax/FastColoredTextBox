@@ -54,6 +54,7 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Features\Bookmarks.cs" />
+    <Compile Include="Types\CharSizeCache.cs" />
     <Compile Include="Types\StyledChar.cs" />
     <Compile Include="DocumentMap.cs">
       <SubType>Component</SubType>

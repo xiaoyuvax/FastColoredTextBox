@@ -1,4 +1,5 @@
 ﻿using FastColoredTextBoxNS;
+using FastColoredTextBoxNS.Types;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -7,7 +8,6 @@ using System.IO;
 using System.Text;
 using System.Windows.Forms;
 using Tester.DiffMergeStuffs;
-using FastColoredTextBoxNS.Types;
 
 namespace Tester {
 	public partial class DiffMergeSample : Form {

@@ -1,9 +1,9 @@
 ﻿using FastColoredTextBoxNS;
+using FastColoredTextBoxNS.Types;
 using System;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
-using FastColoredTextBoxNS.Types;
 
 namespace Tester {
 	public partial class VisibleRangeChangedDelayedSample : Form {

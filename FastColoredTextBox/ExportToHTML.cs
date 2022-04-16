@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using FastColoredTextBoxNS.Types;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Text;
-using FastColoredTextBoxNS.Types;
 
 namespace FastColoredTextBoxNS {
 	/// <summary>

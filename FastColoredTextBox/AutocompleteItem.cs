@@ -1,6 +1,6 @@
-﻿using System;
+﻿using FastColoredTextBoxNS.Types;
+using System;
 using System.Drawing;
-using FastColoredTextBoxNS.Types;
 
 namespace FastColoredTextBoxNS {
 	/// <summary>
@@ -17,9 +17,7 @@ namespace FastColoredTextBoxNS {
 
 		public AutocompleteItem() { }
 
-		public AutocompleteItem(string text) {
-			Text = text;
-		}
+		public AutocompleteItem(string text) => Text = text;
 
 		public AutocompleteItem(string text, int imageIndex)
 			: this(text) {
@@ -40,9 +38,7 @@ namespace FastColoredTextBoxNS {
 		/// <summary>
 		/// Returns text for inserting into Textbox
 		/// </summary>
-		public virtual string GetTextForReplace() {
-			return Text;
-		}
+		public virtual string GetTextForReplace() => Text;
 
 		/// <summary>
 		/// Compares fragment text with this item
@@ -58,16 +54,12 @@ namespace FastColoredTextBoxNS {
 		/// <summary>
 		/// Returns text for display into popup menu
 		/// </summary>
-		public override string ToString() {
-			return menuText ?? Text;
-		}
+		public override string ToString() => menuText ?? Text;
 
 		/// <summary>
 		/// This method is called after item inserted into text
 		/// </summary>
-		public virtual void OnSelected(AutocompleteMenu popupMenu, SelectedEventArgs e) {
-			;
-		}
+		public virtual void OnSelected(AutocompleteMenu popupMenu, SelectedEventArgs e) { }
 
 		/// <summary>
 		/// Title for tooltip.
@@ -138,13 +130,8 @@ namespace FastColoredTextBoxNS {
 			ToolTipText = Text;
 		}
 
-		public override string ToString() {
-			return MenuText ?? Text.Replace("\n", " ").Replace("^", "");
-		}
-
-		public override string GetTextForReplace() {
-			return Text;
-		}
+		public override string ToString() => MenuText ?? Text.Replace("\n", " ").Replace("^", "");
+		public override string GetTextForReplace() => Text;
 
 		public override void OnSelected(AutocompleteMenu popupMenu, SelectedEventArgs e) {
 			e.Tb.BeginUpdate();
@@ -155,11 +142,11 @@ namespace FastColoredTextBoxNS {
 			//do auto indent
 			if (e.Tb.AutoIndent) {
 				for (int iLine = p1.iLine + 1; iLine <= p2.iLine; iLine++) {
-					e.Tb.Selection.Start = new Place(0, iLine);
+					e.Tb.Selection.SetStartAndEnd(new Place(0, iLine));
 					e.Tb.DoAutoIndent(iLine);
 				}
 			}
-			e.Tb.Selection.Start = p1;
+			e.Tb.Selection.SetStartAndEnd(p1);
 			//move caret position right and find char ^
 			while (e.Tb.Selection.CharBeforeStart != '^')
 				if (!e.Tb.Selection.GoRightThroughFolded())
@@ -212,9 +199,7 @@ namespace FastColoredTextBoxNS {
 			return CompareResult.Hidden;
 		}
 
-		public override string GetTextForReplace() {
-			return firstPart + "." + Text;
-		}
+		public override string GetTextForReplace() => firstPart + "." + Text;
 	}
 
 	/// <summary>
@@ -222,11 +207,7 @@ namespace FastColoredTextBoxNS {
 	/// SuggestItem is intended for dynamic menus.
 	/// </summary>
 	public class SuggestItem : AutocompleteItem {
-		public SuggestItem(string text, int imageIndex) : base(text, imageIndex) {
-		}
-
-		public override CompareResult Compare(string fragmentText) {
-			return CompareResult.Visible;
-		}
+		public SuggestItem(string text, int imageIndex) : base(text, imageIndex) { }
+		public override CompareResult Compare(string fragmentText) => CompareResult.Visible;
 	}
 }

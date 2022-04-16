@@ -20,6 +20,8 @@
 //
 // #define Styles32
 
+using FastColoredTextBoxNS.Features;
+using FastColoredTextBoxNS.Types;
 using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
@@ -35,9 +37,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows.Forms;
 using System.Windows.Forms.Design;
-using FastColoredTextBoxNS.Types;
 using Timer = System.Windows.Forms.Timer;
-using FastColoredTextBoxNS.Features;
 
 namespace FastColoredTextBoxNS {
 	/// <summary>
@@ -230,6 +230,13 @@ namespace FastColoredTextBoxNS {
 		[DefaultValue(false)]
 		[Description("AutoComplete brackets.")]
 		public bool AutoCompleteBrackets { get; set; }
+
+		/// <summary>
+		/// Force inserted string or char to be uppercase
+		/// </summary>
+		[DefaultValue(false)]
+		[Description("Force upper case.")]
+		public bool ForceUpperCase { get; set; }
 
 		/// <summary>
 		/// Colors of some service visual markers
@@ -767,7 +774,7 @@ namespace FastColoredTextBoxNS {
 		/// </summary>
 		[Description("Here you can change hotkeys for FastColoredTextBox.")]
 		[Editor(typeof(HotkeysEditor), typeof(UITypeEditor))]
-		[DefaultValue("Tab=IndentIncrease, Escape=ClearHints, PgUp=GoPageUp, PgDn=GoPageDown, End=GoEnd, Home=GoHome, Left=GoLeft, Up=GoUp, Right=GoRight, Down=GoDown, Ins=ReplaceMode, Del=DeleteCharRight, F3=FindNext, Shift+Tab=IndentDecrease, Shift+PgUp=GoPageUpWithSelection, Shift+PgDn=GoPageDownWithSelection, Shift+End=GoEndWithSelection, Shift+Home=GoHomeWithSelection, Shift+Left=GoLeftWithSelection, Shift+Up=GoUpWithSelection, Shift+Right=GoRightWithSelection, Shift+Down=GoDownWithSelection, Shift+Ins=Paste, Shift+Del=Cut, Ctrl+Back=ClearWordLeft, Ctrl+Space=AutocompleteMenu, Ctrl+End=GoLastLine, Ctrl+Home=GoFirstLine, Ctrl+Left=GoWordLeft, Ctrl+Up=ScrollUp, Ctrl+Right=GoWordRight, Ctrl+Down=ScrollDown, Ctrl+Ins=Copy, Ctrl+Del=ClearWordRight, Ctrl+0=ZoomNormal, Ctrl+A=SelectAll, Ctrl+B=BookmarkLine, Ctrl+C=Copy, Ctrl+E=MacroExecute, Ctrl+F=FindDialog, Ctrl+G=GoToDialog, Ctrl+H=ReplaceDialog, Ctrl+I=AutoIndentChars, Ctrl+M=MacroRecord, Ctrl+N=GoNextBookmark, Ctrl+R=Redo, Ctrl+U=UpperCase, Ctrl+V=Paste, Ctrl+X=Cut, Ctrl+Z=Undo, Ctrl+Add=ZoomIn, Ctrl+Subtract=ZoomOut, Ctrl+OemMinus=NavigateBackward, Ctrl+Shift+End=GoLastLineWithSelection, Ctrl+Shift+Home=GoFirstLineWithSelection, Ctrl+Shift+Left=GoWordLeftWithSelection, Ctrl+Shift+Right=GoWordRightWithSelection, Ctrl+Shift+B=UnbookmarkLine, Ctrl+Shift+C=CommentSelected, Ctrl+Shift+N=GoPrevBookmark, Ctrl+Shift+U=LowerCase, Ctrl+Shift+OemMinus=NavigateForward, Alt+Back=Undo, Alt+Up=MoveSelectedLinesUp, Alt+Down=MoveSelectedLinesDown, Alt+F=FindChar, Alt+Shift+Left=GoLeft_ColumnSelectionMode, Alt+Shift+Up=GoUp_ColumnSelectionMode, Alt+Shift+Right=GoRight_ColumnSelectionMode, Alt+Shift+Down=GoDown_ColumnSelectionMode")]
+		[DefaultValue("Tab=IndentIncrease, Escape=ClearHints, PgUp=GoPageUp, PgDn=GoPageDown, End=GoEnd, Home=GoHome, Left=GoLeft, Up=GoUp, Right=GoRight, Down=GoDown, Ins=ReplaceMode, Del=DeleteCharRight, F3=FindNext, Shift+Tab=IndentDecrease, Shift+PgUp=GoPageUpWithSelection, Shift+PgDn=GoPageDownWithSelection, Shift+End=GoEndWithSelection, Shift+Home=GoHomeWithSelection, Shift+Left=GoLeftWithSelection, Shift+Up=GoUpWithSelection, Shift+Right=GoRightWithSelection, Shift+Down=GoDownWithSelection, Shift+Ins=Paste, Shift+Del=Cut, Ctrl+Back=ClearWordLeft, Ctrl+Space=AutocompleteMenu, Ctrl+End=GoLastLine, Ctrl+Home=GoFirstLine, Ctrl+Left=GoWordLeft, Ctrl+Up=ScrollUp, Ctrl+Right=GoWordRight, Ctrl+Down=ScrollDown, Ctrl+Ins=Copy, Ctrl+Del=ClearWordRight, Ctrl+0=ZoomNormal, Ctrl+A=SelectAll, Ctrl+B=BookmarkLine, Ctrl+C=Copy, Ctrl+E=MacroExecute, Ctrl+F=FindDialog, Ctrl+G=GoToDialog, Ctrl+H=ReplaceDialog, Ctrl+I=AutoIndentChars, Ctrl+M=MacroRecord, Ctrl+N=GoNextBookmark, Ctrl+R=Redo, Ctrl+U=UpperCase, Ctrl+V=Paste, Ctrl+X=Cut, Ctrl+Z=Undo, Ctrl+Add=ZoomIn, Ctrl+Subtract=ZoomOut, Ctrl+OemMinus=NavigateBackward, Ctrl+Shift+End=GoLastLineWithSelection, Ctrl+Shift+Home=GoFirstLineWithSelection, Ctrl+Shift+Left=GoWordLeftWithSelection, Ctrl+Shift+Right=GoWordRightWithSelection, Ctrl+Shift+B=UnbookmarkLine, Ctrl+Shift+C=CommentSelected, Ctrl+Shift+N=GoPrevBookmark, Ctrl+Shift+U=LowerCase, Ctrl+Shift+OemMinus=NavigateForward, Alt+Back=Undo, Alt+Up=MoveSelectedLinesUp, Alt+Down=MoveSelectedLinesDown, Alt+F=FindChar, Alt+Shift+Left=GoLeft_ColumnSelectionMode, Alt+Shift+Up=GoUp_ColumnSelectionMode, Alt+Shift+Right=GoRight_ColumnSelectionMode, Alt+Shift+Down=GoDown_ColumnSelectionMode, Ctrl+D=CloneLine")]
 		public string Hotkeys {
 			get { return HotkeysMapping.ToString(); }
 			set { HotkeysMapping = HotkeysMapping.Parse(value); }
@@ -2256,7 +2263,7 @@ namespace FastColoredTextBoxNS {
 
 			if (goToLine < 1)
 				GoToForm.SelectedLineNumber = Selection.Start.iLine + 1;
-			else 
+			else
 				GoToForm.SelectedLineNumber = goToLine;
 
 			if (GoToForm.ShowDialog() != DialogResult.OK) {
@@ -2442,7 +2449,7 @@ namespace FastColoredTextBoxNS {
 
 			if (string.IsNullOrEmpty(text))
 				return;
-			
+
 			InsertText(text);
 		}
 
@@ -2537,11 +2544,11 @@ namespace FastColoredTextBoxNS {
 					lines.Manager.ExecuteCommand(new ClearSelectedCommand(TextSource));
 
 				//insert virtual spaces
-				if (this.TextSource.Count > 0)
+				if (TextSource.Count > 0)
 					if (Selection.IsEmpty && Selection.Start.iChar > GetLineLength(Selection.Start.iLine) && VirtualSpace)
 						InsertVirtualSpaces();
 
-				lines.Manager.ExecuteCommand(new InsertTextCommand(TextSource, text));
+				lines.Manager.ExecuteCommand(new InsertTextCommand(TextSource, ForceUpperCase ? text.ToUpper() : text));
 				if (updating <= 0 && jumpToCaret)
 					DoCaretVisible();
 			} finally {
@@ -2674,12 +2681,7 @@ namespace FastColoredTextBoxNS {
 			return i;
 		}
 
-		public static SizeF GetCharSize(Font font, char c) {
-			Size sz2 = TextRenderer.MeasureText("<" + c.ToString() + ">", font);
-			Size sz3 = TextRenderer.MeasureText("<>", font);
-
-			return new SizeF(sz2.Width - sz3.Width + 1, /*sz2.Height*/font.Height);
-		}
+		public static SizeF GetCharSize(Font font, char c) => CharSizeCache.GetCharSize(font, c);
 
 		[DllImport("Imm32.dll")]
 		public static extern IntPtr ImmGetContext(IntPtr hWnd);
@@ -2766,7 +2768,7 @@ namespace FastColoredTextBoxNS {
 					InsertVirtualSpaces();
 
 				//insert char
-				lines.Manager.ExecuteCommand(new InsertCharCommand(TextSource, c));
+				lines.Manager.ExecuteCommand(new InsertCharCommand(TextSource, ForceUpperCase ? char.ToUpper(c) : c));
 			} finally {
 				lines.Manager.EndAutoUndoCommands();
 			}
@@ -3661,6 +3663,10 @@ namespace FastColoredTextBoxNS {
 					}
 					break;
 
+				case FCTBAction.CloneLine:
+					CloneLine(Selection);
+					break;
+
 				case FCTBAction.MacroExecute:
 					if (MacrosManager != null) {
 						MacrosManager.IsRecording = false;
@@ -3723,7 +3729,7 @@ namespace FastColoredTextBoxNS {
 				nearestBookmark.DoVisible();
 				return true;
 			}
-			
+
 			if (minBookmark != null) {
 				minBookmark.DoVisible();
 				return true;
@@ -3756,8 +3762,8 @@ namespace FastColoredTextBoxNS {
 			if (nearestBookmark != null) {
 				nearestBookmark.DoVisible();
 				return true;
-			} 
-			
+			}
+
 			if (maxBookmark != null) {
 				maxBookmark.DoVisible();
 				return true;
@@ -3772,6 +3778,20 @@ namespace FastColoredTextBoxNS {
 		public virtual void BookmarkLine(int iLine) {
 			if (!bookmarks.Contains(iLine))
 				bookmarks.Add(iLine);
+		}
+
+		/// <summary>
+		/// Clones current line
+		/// </summary>
+		public virtual void CloneLine(Range selection) {
+			// expand selection
+			selection.Expand();
+			// get text of selected lines
+			string text = Environment.NewLine + selection.Text;
+			// move caret to end of selected lines
+			selection.SetStartAndEnd(selection.End);
+			// insert text
+			InsertText(text);
 		}
 
 		/// <summary>
@@ -4295,7 +4315,7 @@ namespace FastColoredTextBoxNS {
 			//insert start spaces
 			if (needToInsert == 0)
 				return;
-			Selection.Start = new Place(0, iLine);
+			Selection.SetStartAndEnd(new Place(0, iLine));
 			if (needToInsert > 0)
 				InsertText(new String(' ', needToInsert));
 			else {
@@ -4304,7 +4324,7 @@ namespace FastColoredTextBoxNS {
 				ClearSelected();
 			}
 
-			Selection.Start = new Place(Math.Min(lines[iLine].Count, Math.Max(0, oldStart.iChar + needToInsert)), iLine);
+			Selection.SetStartAndEnd(new Place(Math.Min(lines[iLine].Count, Math.Max(0, oldStart.iChar + needToInsert)), iLine));
 		}
 
 		/// <summary>
@@ -5077,13 +5097,13 @@ namespace FastColoredTextBoxNS {
 			Selection.BeginUpdate();
 
 			if (Selection.ColumnSelectionMode) {
-				Selection.Start = PointToPlaceSimple(e.Location);
+				Selection.SetStartAndEnd(PointToPlaceSimple(e.Location));
 				Selection.ColumnSelectionMode = true;
 			} else {
 				if (VirtualSpace)
-					Selection.Start = PointToPlaceSimple(e.Location);
+					Selection.SetStartAndEnd(PointToPlaceSimple(e.Location));
 				else
-					Selection.Start = PointToPlace(e.Location);
+					Selection.SetStartAndEnd(PointToPlace(e.Location));
 			}
 
 			if ((lastModifiers & Keys.Shift) != 0)
@@ -5277,15 +5297,11 @@ namespace FastColoredTextBoxNS {
 					Invalidate();
 					return;
 				}
-				
+
 				if (place != Selection.Start) {
 					Place oldEnd = Selection.End;
 					Selection.BeginUpdate();
-					if (Selection.ColumnSelectionMode) {
-						Selection.Start = place;
-						Selection.ColumnSelectionMode = true;
-					} else
-						Selection.Start = place;
+					Selection.SetStartAndEnd(place);
 					Selection.End = oldEnd;
 					Selection.EndUpdate();
 					DoCaretVisible();
@@ -6033,7 +6049,7 @@ namespace FastColoredTextBoxNS {
 			int newLine = FindNextVisibleLine(to);
 			if (newLine == to)
 				newLine = FindPrevVisibleLine(from);
-			Selection.Start = new Place(0, newLine);
+			Selection.SetStartAndEnd(new Place(0, newLine));
 			//
 			needRecalc = true;
 			Invalidate();
@@ -6079,7 +6095,7 @@ namespace FastColoredTextBoxNS {
 		public virtual void IncreaseIndent() {
 			if (Selection.Start == Selection.End) {
 				if (!Selection.ReadOnly) {
-					Selection.Start = new Place(this[Selection.Start.iLine].StartSpacesCount, Selection.Start.iLine);
+					Selection.SetStartAndEnd(new Place(this[Selection.Start.iLine].StartSpacesCount, Selection.Start.iLine));
 					//insert tab as spaces
 					int spaces = TabLength - (Selection.Start.iChar % TabLength);
 					//replace mode? select forward chars
@@ -6109,7 +6125,7 @@ namespace FastColoredTextBoxNS {
 
 			//
 			Selection.Normalize();
-			Range currentSelection = this.Selection.Clone();
+			Range currentSelection = Selection.Clone();
 			int from = Selection.Start.iLine;
 			int to = Selection.End.iLine;
 
@@ -6118,7 +6134,7 @@ namespace FastColoredTextBoxNS {
 
 			for (int i = from; i <= to; i++) {
 				if (lines[i].Count == 0) continue;
-				Selection.Start = new Place(startChar, i);
+				Selection.SetStartAndEnd(new Place(startChar, i));
 				lines.Manager.ExecuteCommand(new InsertTextCommand(TextSource, new String(' ', TabLength)));
 			}
 
@@ -6126,8 +6142,8 @@ namespace FastColoredTextBoxNS {
 			if (Selection.ColumnSelectionMode == false) {
 				int newSelectionStartCharacterIndex = currentSelection.Start.iChar + this.TabLength;
 				int newSelectionEndCharacterIndex = currentSelection.End.iChar + (currentSelection.End.iLine == to ? this.TabLength : 0);
-				this.Selection.Start = new Place(newSelectionStartCharacterIndex, currentSelection.Start.iLine);
-				this.Selection.End = new Place(newSelectionEndCharacterIndex, currentSelection.End.iLine);
+				Selection.Start = new Place(newSelectionStartCharacterIndex, currentSelection.Start.iLine);
+				Selection.End = new Place(newSelectionEndCharacterIndex, currentSelection.End.iLine);
 			} else {
 				Selection = old;
 			}
@@ -6461,7 +6477,7 @@ namespace FastColoredTextBoxNS {
 				if (range.CharAfterStart == leftBracket) counter++;
 				if (range.CharAfterStart == rightBracket) counter--;
 				if (counter == 1) {
-					range.Start = new Place(range.Start.iChar + (!includeBrackets ? 1 : 0), range.Start.iLine);
+					range.SetStartAndEnd(new Place(range.Start.iChar + (!includeBrackets ? 1 : 0), range.Start.iLine));
 					leftBracketPosition = range;
 					break;
 				}
@@ -6755,6 +6771,16 @@ window.status = ""#print"";
 		}
 
 		/// <summary>
+		/// Sets the language
+		/// </summary>
+		public void SetLanguage(Language language) {
+			Language = language;
+			ClearStylesBuffer();
+			Range.ClearStyle(StyleIndex.All);
+			OnSyntaxHighlight(new TextChangedEventArgs(Range));
+		}
+
+		/// <summary>
 		/// Open text file
 		/// </summary>
 		public void OpenFile(string fileName, Encoding enc, Language language) {
@@ -6773,7 +6799,7 @@ window.status = ""#print"";
 				IsChanged = false;
 				throw;
 			}
-			Selection.Start = Place.Empty;
+			Selection.SetStartAndEnd(Place.Empty);
 			DoSelectionVisible();
 		}
 
@@ -6800,19 +6826,9 @@ window.status = ""#print"";
 		/// Open text file (with automatic encoding and language detector)
 		/// </summary>
 		public void OpenFile(string fileName) {
-			var extension = fileName.Substring(fileName.LastIndexOf('.') +1);
+			var extension = fileName.Substring(fileName.LastIndexOf('.') + 1);
 			var language = LanguageDetector.StringToLanguage(extension);
 			OpenFile(fileName, language);
-		}
-
-		/// <summary>
-		/// Sets the language
-		/// </summary>
-		public void SetLanguage(Language language) {
-			Language = language;
-			ClearStylesBuffer();
-			Range.ClearStyle(StyleIndex.All);
-			OnSyntaxHighlight(new TextChangedEventArgs(Range));
 		}
 
 		/// <summary>
@@ -6820,13 +6836,15 @@ window.status = ""#print"";
 		/// </summary>
 		/// <param name="fileName"></param>
 		/// <param name="enc"></param>
-		public void OpenBindingFile(string fileName, Encoding enc) {
-			var extension = fileName.Substring(fileName.LastIndexOf('.') +1);
+		/// <param name="openMode"></param>
+		/// <param name="shareMode"></param>
+		public void OpenBindingFile(string fileName, Encoding enc, FileAccess openMode = FileAccess.ReadWrite, FileShare shareMode = FileShare.None) {
+			var extension = fileName.Substring(fileName.LastIndexOf('.') + 1);
 			var language = LanguageDetector.StringToLanguage(extension);
 			var fts = new FileTextSource(this);
 			try {
 				InitTextSource(fts);
-				fts.OpenFile(fileName, enc);
+				fts.OpenFile(fileName, enc, openMode, shareMode);
 				SetLanguage(language);
 				IsChanged = false;
 				OnVisibleRangeChanged();
@@ -6926,7 +6944,7 @@ window.status = ""#print"";
 
 		void ISupportInitialize.EndInit() {
 			OnTextChanged();
-			Selection.Start = Place.Empty;
+			Selection.SetStartAndEnd(Place.Empty);
 			DoCaretVisible();
 			IsChanged = false;
 			ClearUndo();
@@ -6985,7 +7003,7 @@ window.status = ""#print"";
 			{
 				Selection.BeginUpdate();
 				// Insert text
-				Selection.Start = place;
+				Selection.SetStartAndEnd(place);
 				InsertText(text);
 				// Select inserted text
 				Selection = new Range(this, place, Selection.Start);
@@ -7119,7 +7137,7 @@ window.status = ""#print"";
 		protected override void OnDragOver(DragEventArgs e) {
 			if (e.Data.GetDataPresent(DataFormats.Text)) {
 				Point p = PointToClient(new Point(e.X, e.Y));
-				Selection.Start = PointToPlace(p);
+				Selection.SetStartAndEnd(PointToPlace(p));
 				if (p.Y < 6 && VerticalScroll.Visible && VerticalScroll.Value > 0)
 					VerticalScroll.Value = Math.Max(0, VerticalScroll.Value - charHeight);
 

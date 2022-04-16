@@ -1,8 +1,8 @@
-﻿using System;
+﻿using FastColoredTextBoxNS.Types;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
-using FastColoredTextBoxNS.Types;
 
 namespace FastColoredTextBoxNS.Features {
 	/// <summary>

@@ -1,12 +1,12 @@
-﻿using System;
+﻿using FastColoredTextBoxNS.Features;
+using FastColoredTextBoxNS.Types;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
-using FastColoredTextBoxNS.Features;
-using FastColoredTextBoxNS.Types;
 
 namespace FastColoredTextBoxNS {
 	/// <summary>
@@ -366,11 +366,6 @@ namespace FastColoredTextBoxNS {
 						foundSelected = true;
 						FocussedItemIndex = visibleItems.Count - 1;
 					}
-				}
-
-				if (foundSelected) {
-					AdjustScroll();
-					DoSelectedVisible();
 				}
 			}
 

@@ -1,10 +1,10 @@
 ﻿using FastColoredTextBoxNS;
+using FastColoredTextBoxNS.Features;
+using FastColoredTextBoxNS.Types;
 using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Windows.Forms;
-using FastColoredTextBoxNS.Types;
-using FastColoredTextBoxNS.Features;
 
 namespace Tester {
 	public partial class MarkerToolSample : Form {
