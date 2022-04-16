@@ -78,14 +78,17 @@ namespace FastColoredTextBoxNS {
 		}
 
 		private void TbFind_KeyPress(object sender, KeyPressEventArgs e) {
-			if (e.KeyChar == '\r')
-				BtFindNext_Click(sender, null);
-			if (e.KeyChar == '\x1b')
-				Hide();
+			switch (e.KeyChar) {
+				case '\r':
+					BtFindNext_Click(sender, null);
+					break;
+				case '\x1b':
+					Hide();
+					break;
+			}
 		}
 
-		protected override bool ProcessCmdKey(ref Message msg, Keys keyData) // David
-		{
+		protected override bool ProcessCmdKey(ref Message msg, Keys keyData) {
 			if (keyData == Keys.Escape) {
 				this.Close();
 				return true;

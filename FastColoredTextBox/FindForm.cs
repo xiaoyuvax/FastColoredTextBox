@@ -5,8 +5,6 @@ using System.Windows.Forms;
 
 namespace FastColoredTextBoxNS {
 	public partial class FindForm : Form {
-		bool firstSearch = true;
-		Place startPlace;
 		readonly FastColoredTextBox tb;
 
 		public FindForm(FastColoredTextBox tb) {
@@ -14,8 +12,27 @@ namespace FastColoredTextBoxNS {
 			this.tb = tb;
 		}
 
-		private void BtClose_Click(object sender, EventArgs e) => Close();
-		private void BtFindNext_Click(object sender, EventArgs e) => FindNext(tbFind.Text);
+		private bool SearchRange(string pattern, Range range, RegexOptions opt) {
+			foreach (var r in range.GetRangesByLines(pattern, opt)) {
+				tb.Selection = r;
+				tb.DoSelectionVisible();
+				tb.Invalidate();
+				return true;
+			}
+
+			return false;
+		}
+
+		private bool SearchRangeReversed(string pattern, Range range, RegexOptions opt) {
+			foreach (var r in range.GetRangesByLinesReversed(pattern, opt)) {
+				tb.Selection = r;
+				tb.DoSelectionVisible();
+				tb.Invalidate();
+				return true;
+			}
+
+			return false;
+		}
 
 		public virtual void FindNext(string pattern) {
 			try {
@@ -24,49 +41,63 @@ namespace FastColoredTextBoxNS {
 					pattern = Regex.Escape(pattern);
 				if (cbWholeWord.Checked)
 					pattern = "\\b" + pattern + "\\b";
-				//
-				Range range = tb.Selection.Clone();
-				range.Normalize();
-				//
-				if (firstSearch) {
-					startPlace = range.Start;
-					firstSearch = false;
-				}
-				//
-				range.Start = range.End;
-				if (range.Start >= startPlace)
-					tb.Selection.SetStartAndEnd(new Place(0, 0));
-				else
-					range.End = startPlace;
-				//
-				foreach (var r in range.GetRangesByLines(pattern, opt)) {
-					tb.Selection = r;
-					tb.DoSelectionVisible();
-					tb.Invalidate();
-					return;
-				}
-				//
-				if (range.Start >= startPlace && startPlace > Place.Empty) {
-					tb.Selection.Start = new Place(0, 0);
-					FindNext(pattern);
-					return;
-				}
+
+				Range selectedRange = tb.Selection.Clone();
+				selectedRange.Normalize();
+
+				// Search range after selection
+				Range searchRange = new Range(tb) {
+					Start = selectedRange.End,
+					End = new Place(tb.GetLineLength(tb.LinesCount - 1), tb.LinesCount - 1)
+				};
+				if (SearchRange(pattern, searchRange, opt)) { return; }
+
+				// Search range before selection
+				searchRange.Start = new Place(0,0);
+				searchRange.End = selectedRange.Start;
+				if (SearchRange(pattern, searchRange, opt)) { return;}
+
 				MessageBox.Show("Not found");
-			} catch (Exception ex) {
-				MessageBox.Show(ex.Message);
-			}
+			} catch (Exception ex) { MessageBox.Show(ex.Message); }
+		}
+
+		public virtual void FindPrev(string pattern) {
+			try {
+				RegexOptions opt = cbMatchCase.Checked ? RegexOptions.None : RegexOptions.IgnoreCase;
+				if (!cbRegex.Checked)
+					pattern = Regex.Escape(pattern);
+				if (cbWholeWord.Checked)
+					pattern = "\\b" + pattern + "\\b";
+
+				Range selectedRange = tb.Selection.Clone();
+				selectedRange.Normalize();
+
+				// Search range before selection
+				Range searchRange = new Range(tb) {
+					Start = new Place(0, 0),
+					End = selectedRange.Start
+				};
+				if (SearchRangeReversed(pattern, searchRange, opt)) { return; }
+
+				// Search range after selection
+				searchRange.Start = selectedRange.End;
+				searchRange.End = new Place(tb.GetLineLength(tb.LinesCount - 1), tb.LinesCount - 1);
+				if (SearchRangeReversed(pattern, searchRange, opt)) { return; }
+
+				MessageBox.Show("Not found");
+			} catch (Exception ex) { MessageBox.Show(ex.Message); }
 		}
 
 		private void TbFind_KeyPress(object sender, KeyPressEventArgs e) {
-			if (e.KeyChar == '\r') {
-				btFindNext.PerformClick();
-				e.Handled = true;
-				return;
-			}
-			if (e.KeyChar == '\x1b') {
-				Hide();
-				e.Handled = true;
-				return;
+			switch (e.KeyChar) {
+				case '\r':
+					btFindNext.PerformClick();
+					e.Handled = true;
+					return;
+				case '\x1b':
+					Hide();
+					e.Handled = true;
+					return;
 			}
 		}
 
@@ -75,23 +106,20 @@ namespace FastColoredTextBoxNS {
 				e.Cancel = true;
 				Hide();
 			}
-			this.tb.Focus();
+			tb.Focus();
 		}
 
 		protected override bool ProcessCmdKey(ref Message msg, Keys keyData) {
 			if (keyData == Keys.Escape) {
-				this.Close();
+				Close();
 				return true;
 			}
 			return base.ProcessCmdKey(ref msg, keyData);
 		}
 
-		protected override void OnActivated(EventArgs e) {
-			tbFind.Focus();
-			ResetSerach();
-		}
-
-		void ResetSerach() => firstSearch = true;
-		private void CbMatchCase_CheckedChanged(object sender, EventArgs e) => ResetSerach();
+		private void BtClose_Click(object sender, EventArgs e) => Close();
+		private void BtFindNext_Click(object sender, EventArgs e) => FindNext(tbFind.Text);
+		private void BtnFindPrev_Click(object sender, EventArgs e) => FindPrev(tbFind.Text);
+		protected override void OnActivated(EventArgs e) => tbFind.Focus();
 	}
 }
