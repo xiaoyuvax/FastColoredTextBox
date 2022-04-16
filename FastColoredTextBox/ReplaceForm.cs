@@ -20,9 +20,7 @@ namespace FastColoredTextBoxNS {
 			try {
 				if (!Find(tbFind.Text))
 					MessageBox.Show("Not found");
-			} catch (Exception ex) {
-				MessageBox.Show(ex.Message);
-			}
+			} catch (Exception ex) { MessageBox.Show(ex.Message); }
 		}
 
 		public List<Range> FindAll(string pattern) {
@@ -89,7 +87,7 @@ namespace FastColoredTextBoxNS {
 
 		protected override bool ProcessCmdKey(ref Message msg, Keys keyData) {
 			if (keyData == Keys.Escape) {
-				this.Close();
+				Close();
 				return true;
 			}
 			return base.ProcessCmdKey(ref msg, keyData);
@@ -100,7 +98,7 @@ namespace FastColoredTextBoxNS {
 				e.Cancel = true;
 				Hide();
 			}
-			this.tb.Focus();
+			tb.Focus();
 		}
 
 		private void BtReplace_Click(object sender, EventArgs e) {
@@ -136,9 +134,7 @@ namespace FastColoredTextBoxNS {
 				//
 				tb.Invalidate();
 				MessageBox.Show(ranges.Count + " occurrence(s) replaced");
-			} catch (Exception ex) {
-				MessageBox.Show(ex.Message);
-			}
+			} catch (Exception ex) { MessageBox.Show(ex.Message); }
 			tb.Selection.EndUpdate();
 		}
 
