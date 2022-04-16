@@ -1427,14 +1427,13 @@ namespace FastColoredTextBoxNS {
 			SizeF sizeM = GetCharSize(BaseFont, 'M');
 			SizeF sizeDot = GetCharSize(BaseFont, '.');
 			if (sizeM != sizeDot)
-				BaseFont = new Font("Courier New", BaseFont.SizeInPoints, FontStyle.Regular, GraphicsUnit.Point);
-			//clac size
+				// BaseFont = new Font("Courier New", BaseFont.SizeInPoints, FontStyle.Regular, GraphicsUnit.Point);
+				throw new Exception($"FastColoredTextBox-SetFont(): Font not supported ({newFont.Name}), FastColoredTextBox does not support Monospace fonts.");
+			//calc size
 			SizeF size = GetCharSize(BaseFont, 'M');
 			CharWidth = (int)Math.Round(size.Width * 1f /*0.85*/) - 1 /*0*/;
 			CharHeight = lineInterval + (int)Math.Round(size.Height * 1f /*0.9*/) - 1 /*0*/;
 			//
-			//if (wordWrap)
-			//    RecalcWordWrap(0, Lines.Count - 1);
 			NeedRecalc(false, wordWrap);
 			Invalidate();
 		}
@@ -2827,8 +2826,8 @@ namespace FastColoredTextBoxNS {
 			int charsForLineNumber = 2 + (maxLineNumber > 0 ? (int)Math.Log10(maxLineNumber) : 0);
 
 			// If there are reserved character for line numbers: correct this
-			if (this.ReservedCountOfLineNumberChars + 1 > charsForLineNumber)
-				charsForLineNumber = this.ReservedCountOfLineNumberChars + 1;
+			if (ReservedCountOfLineNumberChars + 1 > charsForLineNumber)
+				charsForLineNumber = ReservedCountOfLineNumberChars + 1;
 
 			if (Created) {
 				if (ShowLineNumbers)
