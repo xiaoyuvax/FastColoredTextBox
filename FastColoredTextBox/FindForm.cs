@@ -110,11 +110,13 @@ namespace FastColoredTextBoxNS {
 		}
 
 		protected override bool ProcessCmdKey(ref Message msg, Keys keyData) {
-			if (keyData == Keys.Escape) {
-				Close();
-				return true;
+			switch (keyData) {
+				case Keys.Escape:
+					Close();
+					return true;
+				default:
+					return base.ProcessCmdKey(ref msg, keyData);
 			}
-			return base.ProcessCmdKey(ref msg, keyData);
 		}
 
 		private void BtClose_Click(object sender, EventArgs e) => Close();
