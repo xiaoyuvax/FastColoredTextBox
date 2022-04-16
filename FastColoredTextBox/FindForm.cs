@@ -53,9 +53,9 @@ namespace FastColoredTextBoxNS {
 				if (SearchRange(pattern, searchRange, opt)) { return; }
 
 				// Search range before selection
-				searchRange.Start = new Place(0,0);
+				searchRange.Start = new Place(0, 0);
 				searchRange.End = selectedRange.Start;
-				if (SearchRange(pattern, searchRange, opt)) { return;}
+				if (SearchRange(pattern, searchRange, opt)) { return; }
 
 				MessageBox.Show("Not found");
 			} catch (Exception ex) { MessageBox.Show(ex.Message); }

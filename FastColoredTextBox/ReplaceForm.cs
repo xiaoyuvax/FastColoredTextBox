@@ -1,4 +1,5 @@
-﻿using FastColoredTextBoxNS.Types;
+﻿using FastColoredTextBoxNS.Input;
+using FastColoredTextBoxNS.Types;
 using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
@@ -14,8 +15,6 @@ namespace FastColoredTextBoxNS {
 			InitializeComponent();
 			this.tb = tb;
 		}
-
-		private void BtClose_Click(object sender, EventArgs e) => Close();
 
 		private void BtFindNext_Click(object sender, EventArgs e) {
 			try {
@@ -148,12 +147,8 @@ namespace FastColoredTextBoxNS {
 			ResetSerach();
 		}
 
-		void ResetSerach() {
-			firstSearch = true;
-		}
-
-		private void CbMatchCase_CheckedChanged(object sender, EventArgs e) {
-			ResetSerach();
-		}
+		void ResetSerach() => firstSearch = true;
+		private void CbMatchCase_CheckedChanged(object sender, EventArgs e) => ResetSerach();
+		private void BtClose_Click(object sender, EventArgs e) => Close();
 	}
 }

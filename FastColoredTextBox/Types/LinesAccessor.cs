@@ -1,14 +1,11 @@
-﻿using FastColoredTextBoxNS.Types;
-using System;
+﻿using System;
 using System.Collections.Generic;
 
-namespace FastColoredTextBoxNS {
+namespace FastColoredTextBoxNS.Types {
 	public class LinesAccessor : IList<string> {
 		readonly IList<Line> ts;
 
-		public LinesAccessor(IList<Line> ts) {
-			this.ts = ts;
-		}
+		public LinesAccessor(IList<Line> ts) => this.ts = ts;
 
 		public int IndexOf(string item) {
 			for (int i = 0; i < ts.Count; i++)
@@ -18,13 +15,8 @@ namespace FastColoredTextBoxNS {
 			return -1;
 		}
 
-		public void Insert(int index, string item) {
-			throw new NotImplementedException();
-		}
-
-		public void RemoveAt(int index) {
-			throw new NotImplementedException();
-		}
+		public void Insert(int index, string item) => throw new NotImplementedException();
+		public void RemoveAt(int index) => throw new NotImplementedException();
 
 		public string this[int index] {
 			get {
@@ -35,13 +27,8 @@ namespace FastColoredTextBoxNS {
 			}
 		}
 
-		public void Add(string item) {
-			throw new NotImplementedException();
-		}
-
-		public void Clear() {
-			throw new NotImplementedException();
-		}
+		public void Add(string item) => throw new NotImplementedException();
+		public void Clear() => throw new NotImplementedException();
 
 		public bool Contains(string item) {
 			for (int i = 0; i < ts.Count; i++)
@@ -56,17 +43,9 @@ namespace FastColoredTextBoxNS {
 				array[i + arrayIndex] = ts[i].Text;
 		}
 
-		public int Count {
-			get { return ts.Count; }
-		}
-
-		public bool IsReadOnly {
-			get { return true; }
-		}
-
-		public bool Remove(string item) {
-			throw new NotImplementedException();
-		}
+		public int Count => ts.Count;
+		public bool IsReadOnly => true;
+		public bool Remove(string item) => throw new NotImplementedException();
 
 		public IEnumerator<string> GetEnumerator() {
 			for (int i = 0; i < ts.Count; i++)

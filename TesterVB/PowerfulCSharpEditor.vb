@@ -5,6 +5,8 @@ Imports System.Linq
 Imports System.Text.RegularExpressions
 Imports System.Threading
 Imports FarsiLibrary.Win
+Imports FastColoredTextBoxNS.Text
+Imports FastColoredTextBoxNS.Types
 
 '-----------------------------------------------------------------------------------------------------
 ' Note: this sample is deprecated. See project Tester for newest code samples.

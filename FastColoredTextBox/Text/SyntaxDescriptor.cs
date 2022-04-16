@@ -1,8 +1,9 @@
-﻿using System;
+﻿using FastColoredTextBoxNS.Types;
+using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
-namespace FastColoredTextBoxNS {
+namespace FastColoredTextBoxNS.Text {
 	public class SyntaxDescriptor : IDisposable {
 		public char leftBracket = '(';
 		public char rightBracket = ')';

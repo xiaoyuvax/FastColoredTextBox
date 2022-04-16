@@ -7,7 +7,7 @@ using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace FastColoredTextBoxNS {
+namespace FastColoredTextBoxNS.Text {
 	public static class EncodingDetector {
 		const long _defaultHeuristicSampleSize = 0x10000; //completely arbitrary - inappropriate for high numbers of files / high speed requirements
 
@@ -142,8 +142,8 @@ namespace FastColoredTextBoxNS {
 			//  The thresholds here used (less than 20% nulls where you expect non-nulls, and more than
 			//  60% nulls where you do expect nulls) are completely arbitrary.
 
-			if (((evenBinaryNullsInSample * 2.0) / SampleBytes.Length) < 0.2
-				&& ((oddBinaryNullsInSample * 2.0) / SampleBytes.Length) > 0.6
+			if (evenBinaryNullsInSample * 2.0 / SampleBytes.Length < 0.2
+				&& oddBinaryNullsInSample * 2.0 / SampleBytes.Length > 0.6
 				)
 				return Encoding.Unicode;
 
@@ -154,8 +154,8 @@ namespace FastColoredTextBoxNS {
 			//  The thresholds here used (less than 20% nulls where you expect non-nulls, and more than
 			//  60% nulls where you do expect nulls) are completely arbitrary.
 
-			if (((oddBinaryNullsInSample * 2.0) / SampleBytes.Length) < 0.2
-				&& ((evenBinaryNullsInSample * 2.0) / SampleBytes.Length) > 0.6
+			if (oddBinaryNullsInSample * 2.0 / SampleBytes.Length < 0.2
+				&& evenBinaryNullsInSample * 2.0 / SampleBytes.Length > 0.6
 				)
 				return Encoding.BigEndianUnicode;
 
@@ -196,7 +196,7 @@ namespace FastColoredTextBoxNS {
 				//   approx 40%, so the chances of hitting this threshold by accident in random data are 
 				//   VERY low). 
 
-				if ((suspiciousUTF8SequenceCount * 500000.0 / SampleBytes.Length >= 1) //suspicious sequences
+				if (suspiciousUTF8SequenceCount * 500000.0 / SampleBytes.Length >= 1 //suspicious sequences
 					&& (
 						   //all suspicious, so cannot evaluate proportion of US-Ascii
 						   SampleBytes.Length - suspiciousUTF8BytesTotal == 0
@@ -214,13 +214,13 @@ namespace FastColoredTextBoxNS {
 			if (testByte == 0x0A //lf
 				|| testByte == 0x0D //cr
 				|| testByte == 0x09 //tab
-				|| (testByte >= 0x20 && testByte <= 0x2F) //common punctuation
-				|| (testByte >= 0x30 && testByte <= 0x39) //digits
-				|| (testByte >= 0x3A && testByte <= 0x40) //common punctuation
-				|| (testByte >= 0x41 && testByte <= 0x5A) //capital letters
-				|| (testByte >= 0x5B && testByte <= 0x60) //common punctuation
-				|| (testByte >= 0x61 && testByte <= 0x7A) //lowercase letters
-				|| (testByte >= 0x7B && testByte <= 0x7E) //common punctuation
+				|| testByte >= 0x20 && testByte <= 0x2F //common punctuation
+				|| testByte >= 0x30 && testByte <= 0x39 //digits
+				|| testByte >= 0x3A && testByte <= 0x40 //common punctuation
+				|| testByte >= 0x41 && testByte <= 0x5A //capital letters
+				|| testByte >= 0x5B && testByte <= 0x60 //common punctuation
+				|| testByte >= 0x61 && testByte <= 0x7A //lowercase letters
+				|| testByte >= 0x7B && testByte <= 0x7E //common punctuation
 				)
 				return true;
 			else

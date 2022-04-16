@@ -1,6 +1,7 @@
-﻿namespace Tester
-{
-    partial class RulerSample
+﻿using FastColoredTextBoxNS.Text;
+
+namespace Tester {
+	partial class RulerSample
     {
         /// <summary>
         /// Required designer variable.
@@ -47,7 +48,7 @@
             this.fctb.Font = new System.Drawing.Font("Consolas", 9.75F);
             this.fctb.IndentBackColor = System.Drawing.SystemColors.Control;
             this.fctb.IsReplaceMode = false;
-            this.fctb.Language = FastColoredTextBoxNS.Language.CSharp;
+            this.fctb.Language = Language.CSharp;
             this.fctb.LeftBracket = '(';
             this.fctb.LeftPadding = 15;
             this.fctb.Location = new System.Drawing.Point(0, 24);

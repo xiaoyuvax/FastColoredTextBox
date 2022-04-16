@@ -1,5 +1,4 @@
-﻿using FastColoredTextBoxNS;
-using FastColoredTextBoxNS.Types;
+﻿using FastColoredTextBoxNS.Types;
 using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;

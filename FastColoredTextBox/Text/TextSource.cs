@@ -1,4 +1,5 @@
-﻿using FastColoredTextBoxNS.Types;
+﻿using FastColoredTextBoxNS.Input;
+using FastColoredTextBoxNS.Types;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -6,7 +7,7 @@ using System.Drawing;
 using System.IO;
 using System.Text;
 
-namespace FastColoredTextBoxNS {
+namespace FastColoredTextBoxNS.Text {
 	/// <summary>
 	/// This class contains the source text (chars and styles).
 	/// It stores a text lines, the manager of commands, undo/redo stack, styles.
@@ -67,10 +68,7 @@ namespace FastColoredTextBoxNS {
 				line.IsChanged = false;
 		}
 
-		public virtual Line CreateLine() {
-			return new Line(GenerateUniqueLineId());
-		}
-
+		public virtual Line CreateLine() => new Line(GenerateUniqueLineId());
 		private void OnCurrentTBChanged() => CurrentTBChanged?.Invoke(this, EventArgs.Empty);
 
 		/// <summary>
@@ -80,11 +78,11 @@ namespace FastColoredTextBoxNS {
 		public TextStyle DefaultStyle { get; set; }
 
 		public TextSource(FastColoredTextBox currentTB) {
-			this.CurrentTB = currentTB;
+			CurrentTB = currentTB;
 			linesAccessor = new LinesAccessor(this);
 			Manager = new CommandManager(this);
 
-			if (Enum.GetUnderlyingType(typeof(StyleIndex)) == typeof(UInt32))
+			if (Enum.GetUnderlyingType(typeof(StyleIndex)) == typeof(uint))
 				Styles = new Style[32];
 			else
 				Styles = new Style[16];
@@ -92,9 +90,7 @@ namespace FastColoredTextBoxNS {
 			InitDefaultStyle();
 		}
 
-		public virtual void InitDefaultStyle() {
-			DefaultStyle = new TextStyle(null, null, FontStyle.Regular);
-		}
+		public virtual void InitDefaultStyle() => DefaultStyle = new TextStyle(null, null, FontStyle.Regular);
 
 		public virtual Line this[int i] {
 			get {
@@ -105,51 +101,26 @@ namespace FastColoredTextBoxNS {
 			}
 		}
 
-		public virtual bool IsLineLoaded(int iLine) {
-			return lines[iLine] != null;
-		}
+		public virtual bool IsLineLoaded(int iLine) => lines[iLine] != null;
 
 		/// <summary>
 		/// Text lines
 		/// </summary>
-		public virtual IList<string> GetLines() {
-			return linesAccessor;
-		}
-
-		public IEnumerator<Line> GetEnumerator() {
-			return lines.GetEnumerator();
-		}
-
-		IEnumerator System.Collections.IEnumerable.GetEnumerator() {
-			return (lines as IEnumerator);
-		}
-
-		public virtual int BinarySearch(Line item, IComparer<Line> comparer) {
-			return lines.BinarySearch(item, comparer);
-		}
-
-		public virtual int GenerateUniqueLineId() {
-			return lastLineUniqueId++;
-		}
+		public virtual IList<string> GetLines() => linesAccessor;
+		public IEnumerator<Line> GetEnumerator() => lines.GetEnumerator();
+		IEnumerator IEnumerable.GetEnumerator() => lines as IEnumerator;
+		public virtual int BinarySearch(Line item, IComparer<Line> comparer) => lines.BinarySearch(item, comparer);
+		public virtual int GenerateUniqueLineId() => lastLineUniqueId++;
 
 		public virtual void InsertLine(int index, Line line) {
 			lines.Insert(index, line);
 			OnLineInserted(index);
 		}
 
-		public virtual void OnLineInserted(int index) {
-			OnLineInserted(index, 1);
-		}
-
+		public virtual void OnLineInserted(int index) => OnLineInserted(index, 1);
 		public virtual void OnLineInserted(int index, int count) => LineInserted?.Invoke(this, new LineInsertedEventArgs(index, count));
-
-		public virtual void RemoveLine(int index) {
-			RemoveLine(index, 1);
-		}
-
-		public virtual bool IsNeedBuildRemovedLineIds {
-			get { return LineRemoved != null; }
-		}
+		public virtual void RemoveLine(int index) => RemoveLine(index, 1);
+		public virtual bool IsNeedBuildRemovedLineIds => LineRemoved != null;
 
 		public virtual void RemoveLine(int index, int count) {
 			List<int> removedLineIds = new List<int>();
@@ -181,44 +152,19 @@ namespace FastColoredTextBoxNS {
 			}
 		}
 
-		public virtual int IndexOf(Line item) {
-			return lines.IndexOf(item);
-		}
-
-		public virtual void Insert(int index, Line item) {
-			InsertLine(index, item);
-		}
-
-		public virtual void RemoveAt(int index) {
-			RemoveLine(index);
-		}
-
-		public virtual void Add(Line item) {
-			InsertLine(Count, item);
-		}
-
-		public virtual void Clear() {
-			RemoveLine(0, Count);
-		}
-
-		public virtual bool Contains(Line item) {
-			return lines.Contains(item);
-		}
-
-		public virtual void CopyTo(Line[] array, int arrayIndex) {
-			lines.CopyTo(array, arrayIndex);
-		}
+		public virtual int IndexOf(Line item) => lines.IndexOf(item);
+		public virtual void Insert(int index, Line item) => InsertLine(index, item);
+		public virtual void RemoveAt(int index) => RemoveLine(index);
+		public virtual void Add(Line item) => InsertLine(Count, item);
+		public virtual void Clear() => RemoveLine(0, Count);
+		public virtual bool Contains(Line item) => lines.Contains(item);
+		public virtual void CopyTo(Line[] array, int arrayIndex) => lines.CopyTo(array, arrayIndex);
 
 		/// <summary>
 		/// Lines count
 		/// </summary>
-		public virtual int Count {
-			get { return lines.Count; }
-		}
-
-		public virtual bool IsReadOnly {
-			get { return false; }
-		}
+		public virtual int Count => lines.Count;
+		public virtual bool IsReadOnly => false;
 
 		public virtual bool Remove(Line item) {
 			int i = IndexOf(item);
@@ -247,21 +193,10 @@ namespace FastColoredTextBoxNS {
 			};
 		}
 
-		public virtual int GetLineLength(int i) {
-			return lines[i].Count;
-		}
-
-		public virtual bool LineHasFoldingStartMarker(int iLine) {
-			return !string.IsNullOrEmpty(lines[iLine].FoldingStartMarker);
-		}
-
-		public virtual bool LineHasFoldingEndMarker(int iLine) {
-			return !string.IsNullOrEmpty(lines[iLine].FoldingEndMarker);
-		}
-
-		public virtual void Dispose() {
-			;
-		}
+		public virtual int GetLineLength(int i) => lines[i].Count;
+		public virtual bool LineHasFoldingStartMarker(int iLine) => !string.IsNullOrEmpty(lines[iLine].FoldingStartMarker);
+		public virtual bool LineHasFoldingEndMarker(int iLine) => !string.IsNullOrEmpty(lines[iLine].FoldingEndMarker);
+		public virtual void Dispose() { }
 
 		public virtual void SaveToFile(string fileName, Encoding enc) {
 			using (StreamWriter sw = new StreamWriter(fileName, false, enc)) {

@@ -1,8 +1,9 @@
-﻿using FastColoredTextBoxNS.Types;
+﻿using FastColoredTextBoxNS.Text;
+using FastColoredTextBoxNS.Types;
 using System;
 using System.Collections.Generic;
 
-namespace FastColoredTextBoxNS {
+namespace FastColoredTextBoxNS.Input {
 	/// <summary>
 	/// Insert single char
 	/// </summary>
@@ -16,9 +17,7 @@ namespace FastColoredTextBoxNS {
 		/// </summary>
 		/// <param name="ts">Underlaying textbox</param>
 		/// <param name="c">Inserting char</param>
-		public InsertCharCommand(TextSource ts, char c) : base(ts) {
-			this.c = c;
-		}
+		public InsertCharCommand(TextSource ts, char c) : base(ts) => this.c = c;
 
 		/// <summary>
 		/// Undo operation
@@ -64,7 +63,7 @@ namespace FastColoredTextBoxNS {
 			if (s.Length == 1)
 				c = s[0];
 
-			if (String.IsNullOrEmpty(s))
+			if (string.IsNullOrEmpty(s))
 				throw new ArgumentOutOfRangeException();
 
 
@@ -105,7 +104,7 @@ namespace FastColoredTextBoxNS {
 					}
 					break;
 				case '\t':
-					int spaceCountNextTabStop = tb.TabLength - (tb.Selection.Start.iChar % tb.TabLength);
+					int spaceCountNextTabStop = tb.TabLength - tb.Selection.Start.iChar % tb.TabLength;
 					if (spaceCountNextTabStop == 0)
 						spaceCountNextTabStop = tb.TabLength;
 
@@ -185,7 +184,7 @@ namespace FastColoredTextBoxNS {
 		/// </summary>
 		/// <param name="ts">Underlaying textbox</param>
 		/// <param name="insertedText">Text for inserting</param>
-		public InsertTextCommand(TextSource ts, string insertedText) : base(ts) => this.InsertedText = insertedText;
+		public InsertTextCommand(TextSource ts, string insertedText) : base(ts) => InsertedText = insertedText;
 
 		/// <summary>
 		/// Undo operation
@@ -421,7 +420,7 @@ namespace FastColoredTextBoxNS {
 
 		public class ReplaceRange {
 			public Range ReplacedRange { get; set; }
-			public String ReplaceText { get; set; }
+			public string ReplaceText { get; set; }
 		}
 
 		/// <summary>
@@ -585,7 +584,7 @@ namespace FastColoredTextBoxNS {
 		private readonly List<UndoableCommand> commandsByRanges = new List<UndoableCommand>();
 
 		public MultiRangeCommand(UndoableCommand command) : base(command.ts) {
-			this.cmd = command;
+			cmd = command;
 			range = ts.CurrentTB.Selection.Clone();
 		}
 

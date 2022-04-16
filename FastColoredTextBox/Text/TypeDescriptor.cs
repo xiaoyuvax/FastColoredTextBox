@@ -2,14 +2,13 @@
 using System.ComponentModel;
 using System.Windows.Forms;
 
-namespace FastColoredTextBoxNS {
+namespace FastColoredTextBoxNS.Text {
 	///
 	/// These classes are required for correct data binding to Text property of FastColoredTextbox
 	/// 
 	class FCTBDescriptionProvider : TypeDescriptionProvider {
 		public FCTBDescriptionProvider(Type type)
-			: base(GetDefaultTypeProvider(type)) {
-		}
+			: base(GetDefaultTypeProvider(type)) { }
 
 		private static TypeDescriptionProvider GetDefaultTypeProvider(Type type) => TypeDescriptor.GetProvider(type);
 
@@ -28,7 +27,7 @@ namespace FastColoredTextBoxNS {
 		}
 
 		public override string GetComponentName() {
-			var ctrl = (instance as Control);
+			var ctrl = instance as Control;
 			return ctrl?.Name;
 		}
 

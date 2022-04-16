@@ -1,3 +1,5 @@
+Imports FastColoredTextBoxNS.Types
+
 Namespace TesterVB
 	Friend Class GifImageStyle
 		Inherits TextStyle

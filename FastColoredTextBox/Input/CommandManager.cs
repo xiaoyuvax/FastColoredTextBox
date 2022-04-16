@@ -1,8 +1,10 @@
-﻿using FastColoredTextBoxNS.Types;
+﻿using FastColoredTextBoxNS.Feature;
+using FastColoredTextBoxNS.Text;
+using FastColoredTextBoxNS.Types;
 using System;
 using System.Collections.Generic;
 
-namespace FastColoredTextBoxNS {
+namespace FastColoredTextBoxNS.Input {
 	public class CommandManager {
 		public static int MaxHistoryLength = 200;
 		readonly LimitedStack<UndoableCommand> history;

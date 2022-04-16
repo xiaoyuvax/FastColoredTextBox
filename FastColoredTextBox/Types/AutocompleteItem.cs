@@ -1,8 +1,7 @@
-﻿using FastColoredTextBoxNS.Types;
-using System;
+﻿using System;
 using System.Drawing;
 
-namespace FastColoredTextBoxNS {
+namespace FastColoredTextBoxNS.Types {
 	/// <summary>
 	/// Item of autocomplete menu
 	/// </summary>
@@ -21,7 +20,7 @@ namespace FastColoredTextBoxNS {
 
 		public AutocompleteItem(string text, int imageIndex)
 			: this(text) {
-			this.ImageIndex = imageIndex;
+			ImageIndex = imageIndex;
 		}
 
 		public AutocompleteItem(string text, int imageIndex, string menuText)

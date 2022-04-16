@@ -1,4 +1,5 @@
 Imports System.ComponentModel
+Imports FastColoredTextBoxNS.Text
 
 Namespace TesterVB
 	Public Class TooltipSample
@@ -49,7 +50,7 @@ Namespace TesterVB
 			Me.Fctb.Dock = System.Windows.Forms.DockStyle.Fill
 			Me.Fctb.Font = New System.Drawing.Font("Consolas", 9.75!)
 			Me.Fctb.IsReplaceMode = False
-			Me.Fctb.Language = FastColoredTextBoxNS.Language.CSharp
+			Me.Fctb.Language = Language.CSharp
 			Me.Fctb.LeftBracket = Global.Microsoft.VisualBasic.ChrW(40)
 			Me.Fctb.Location = New System.Drawing.Point(0, 30)
 			Me.Fctb.Name = "fctb"

@@ -1,6 +1,6 @@
 ﻿Imports System.IO
 Imports System.Text.RegularExpressions
-
+Imports FastColoredTextBoxNS.Text
 
 ''' <summary>
 ''' Note: this example is deprecated. See project Tester for newest code samples.

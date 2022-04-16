@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 
-namespace FastColoredTextBoxNS.Features {
+namespace FastColoredTextBoxNS.Feature {
 	/// <summary>
 	/// Base class for bookmark collection
 	/// </summary>

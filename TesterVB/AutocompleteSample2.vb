@@ -1,4 +1,5 @@
 ﻿Imports System.Text.RegularExpressions
+Imports FastColoredTextBoxNS.Types
 
 Public Class AutocompleteSample2
 

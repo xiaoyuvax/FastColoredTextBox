@@ -1,6 +1,7 @@
 ﻿using FarsiLibrary.Win;
 using FastColoredTextBoxNS;
-using FastColoredTextBoxNS.Features;
+using FastColoredTextBoxNS.Feature;
+using FastColoredTextBoxNS.Text;
 using FastColoredTextBoxNS.Types;
 using System;
 using System.Collections.Generic;

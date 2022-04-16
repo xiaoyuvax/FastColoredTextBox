@@ -1,4 +1,4 @@
-﻿using FastColoredTextBoxNS.Features;
+﻿using FastColoredTextBoxNS.Feature;
 using System;
 using System.Windows.Forms;
 

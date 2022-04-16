@@ -20,7 +20,9 @@
 //
 // #define Styles32
 
-using FastColoredTextBoxNS.Features;
+using FastColoredTextBoxNS.Feature;
+using FastColoredTextBoxNS.Input;
+using FastColoredTextBoxNS.Text;
 using FastColoredTextBoxNS.Types;
 using Microsoft.Win32;
 using System;

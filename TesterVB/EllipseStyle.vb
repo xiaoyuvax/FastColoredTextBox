@@ -1,4 +1,5 @@
 Imports System.Drawing.Drawing2D
+Imports FastColoredTextBoxNS.Types
 
 Namespace TesterVB
 	Friend Class EllipseStyle

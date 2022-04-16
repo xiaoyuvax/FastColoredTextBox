@@ -1,5 +1,5 @@
 ﻿
-Imports FastColoredTextBoxNS.Features
+Imports FastColoredTextBoxNS.Feature
 
 Public Class BookmarksSample
 

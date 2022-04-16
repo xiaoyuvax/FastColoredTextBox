@@ -1,5 +1,6 @@
 Imports System.ComponentModel
 Imports System.Text
+Imports FastColoredTextBoxNS.Types
 
 Namespace TesterVB
 	Public Class VisibleRangeChangedDelayedSample

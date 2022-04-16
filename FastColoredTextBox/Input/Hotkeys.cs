@@ -9,7 +9,7 @@ using System.Windows.Forms;
 using System.Windows.Forms.Design;
 using KEYS = System.Windows.Forms.Keys;
 
-namespace FastColoredTextBoxNS.Features {
+namespace FastColoredTextBoxNS.Input {
 	/// <summary>
 	/// Dictionary of shortcuts for FCTB
 	/// </summary>

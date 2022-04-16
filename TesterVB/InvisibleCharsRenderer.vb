@@ -1,3 +1,5 @@
+Imports FastColoredTextBoxNS.Types
+
 Namespace TesterVB
 	Public Class InvisibleCharsRenderer
 		Inherits Style

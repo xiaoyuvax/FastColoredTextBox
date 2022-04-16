@@ -1,6 +1,7 @@
-﻿namespace Tester
-{
-    partial class ReadOnlyBlocksSample
+﻿using FastColoredTextBoxNS.Text;
+
+namespace Tester {
+	partial class ReadOnlyBlocksSample
     {
         /// <summary>
         /// Required designer variable.
@@ -55,7 +56,7 @@
             this.fctb.Dock = System.Windows.Forms.DockStyle.Fill;
             this.fctb.Font = new System.Drawing.Font("Consolas", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.fctb.IsReplaceMode = false;
-            this.fctb.Language = FastColoredTextBoxNS.Language.HTML;
+            this.fctb.Language = Language.HTML;
             this.fctb.LeftBracket = '<';
             this.fctb.LeftBracket2 = '(';
             this.fctb.Location = new System.Drawing.Point(0, 63);

@@ -1,6 +1,7 @@
-﻿namespace Tester
-{
-    partial class BookmarksSample
+﻿using FastColoredTextBoxNS.Text;
+
+namespace Tester {
+	partial class BookmarksSample
     {
         /// <summary>
         /// Required designer variable.
@@ -95,7 +96,7 @@
             this.fctb.Dock = System.Windows.Forms.DockStyle.Fill;
             this.fctb.Font = new System.Drawing.Font("Consolas", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.fctb.IsReplaceMode = false;
-            this.fctb.Language = FastColoredTextBoxNS.Language.CSharp;
+            this.fctb.Language = Language.CSharp;
             this.fctb.LeftBracket = '(';
             this.fctb.LeftPadding = 17;
             this.fctb.Location = new System.Drawing.Point(0, 63);

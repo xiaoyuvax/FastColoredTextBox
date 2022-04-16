@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 
-namespace FastColoredTextBoxNS.Features {
+namespace FastColoredTextBoxNS.Feature {
 	/// <summary>
 	/// Collection of Hints.
 	/// This is temporary buffer for currently displayed hints.

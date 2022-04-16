@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 
-namespace FastColoredTextBoxNS {
+namespace FastColoredTextBoxNS.Text {
 	/// <summary>
 	/// This class contains the source text (chars and styles).
 	/// It stores a text lines, the manager of commands, undo/redo stack, styles.
@@ -52,8 +52,8 @@ namespace FastColoredTextBoxNS {
 
 			int count = 0;
 			for (int i = 0; i < Count; i++)
-				if (base.lines[i] != null && !base.lines[i].IsChanged && Math.Abs(i - iFinishVisibleLine) > margin) {
-					base.lines[i] = null;
+				if (lines[i] != null && !lines[i].IsChanged && Math.Abs(i - iFinishVisibleLine) > margin) {
+					lines[i] = null;
 					count++;
 				}
 #if debug
@@ -76,7 +76,7 @@ namespace FastColoredTextBoxNS {
 			enc = DefineEncoding(enc, fs);
 			//first line
 			sourceFileLinePositions.Add((int)fs.Position);
-			base.lines.Add(null);
+			lines.Add(null);
 			//other lines
 			sourceFileLinePositions.Capacity = (int)(length / 7 + 1000);
 
@@ -90,12 +90,12 @@ namespace FastColoredTextBoxNS {
 				if (b == 10)// \n
 				{
 					sourceFileLinePositions.Add((int)fs.Position);
-					base.lines.Add(null);
+					lines.Add(null);
 				} else
 				if (prev == 13)// \r (Mac format)
 				{
-					sourceFileLinePositions.Add((int)prevPos);
-					base.lines.Add(null);
+					sourceFileLinePositions.Add(prevPos);
+					lines.Add(null);
 					SaveEOL = "\r";
 				}
 
@@ -103,8 +103,8 @@ namespace FastColoredTextBoxNS {
 			}
 
 			if (prev == 13) {
-				sourceFileLinePositions.Add((int)prevPos);
-				base.lines.Add(null);
+				sourceFileLinePositions.Add(prevPos);
+				lines.Add(null);
 			}
 
 			if (length > 2000000)
@@ -112,14 +112,14 @@ namespace FastColoredTextBoxNS {
 
 			Line[] temp = new Line[100];
 
-			var c = base.lines.Count;
-			base.lines.AddRange(temp);
-			base.lines.TrimExcess();
-			base.lines.RemoveRange(c, temp.Length);
+			var c = lines.Count;
+			lines.AddRange(temp);
+			lines.TrimExcess();
+			lines.RemoveRange(c, temp.Length);
 
 
 			int[] temp2 = new int[100];
-			c = base.lines.Count;
+			c = lines.Count;
 			sourceFileLinePositions.AddRange(temp2);
 			sourceFileLinePositions.TrimExcess();
 			sourceFileLinePositions.RemoveRange(c, temp.Length);
@@ -242,7 +242,7 @@ namespace FastColoredTextBoxNS {
 			//binding to new file
 			sourceFileLinePositions = newLinePos;
 			fs = new FileStream(fileName, FileMode.Open);
-			this.fileEncoding = enc;
+			fileEncoding = enc;
 		}
 
 		private string ReadLine(StreamReader sr, int i) {
@@ -264,7 +264,7 @@ namespace FastColoredTextBoxNS {
 
 		public override Line this[int i] {
 			get {
-				if (base.lines[i] != null)
+				if (lines[i] != null)
 					return lines[i];
 				else
 					LoadLineFromSourceFile(i);
@@ -296,7 +296,7 @@ namespace FastColoredTextBoxNS {
 
 			foreach (var c in s)
 				line.Add(new StyledChar(c));
-			base.lines[i] = line;
+			lines[i] = line;
 
 			if (CurrentTB.WordWrap)
 				OnRecalcWordWrap(new TextChangedEventArgs(i, i));
@@ -317,10 +317,10 @@ namespace FastColoredTextBoxNS {
 		}
 
 		public override int GetLineLength(int i) {
-			if (base.lines[i] == null)
+			if (lines[i] == null)
 				return 0;
 			else
-				return base.lines[i].Count;
+				return lines[i].Count;
 		}
 
 		public override bool LineHasFoldingStartMarker(int iLine) {
@@ -359,9 +359,9 @@ namespace FastColoredTextBoxNS {
 		public string DisplayedLineText { get; set; }
 
 		public LineNeededEventArgs(string sourceLineText, int displayedLineIndex) {
-			this.SourceLineText = sourceLineText;
-			this.DisplayedLineIndex = displayedLineIndex;
-			this.DisplayedLineText = sourceLineText;
+			SourceLineText = sourceLineText;
+			DisplayedLineIndex = displayedLineIndex;
+			DisplayedLineText = sourceLineText;
 		}
 	}
 
@@ -379,10 +379,10 @@ namespace FastColoredTextBoxNS {
 		public string SavedText { get; set; }
 
 		public LinePushedEventArgs(string sourceLineText, int displayedLineIndex, string displayedLineText) {
-			this.SourceLineText = sourceLineText;
-			this.DisplayedLineIndex = displayedLineIndex;
-			this.DisplayedLineText = displayedLineText;
-			this.SavedText = displayedLineText;
+			SourceLineText = sourceLineText;
+			DisplayedLineIndex = displayedLineIndex;
+			DisplayedLineText = displayedLineText;
+			SavedText = displayedLineText;
 		}
 	}
 

@@ -1,5 +1,5 @@
-﻿using FastColoredTextBoxNS;
-using System.Windows.Forms;
+﻿using System.Windows.Forms;
+using FastColoredTextBoxNS.Types;
 
 namespace Tester {
 	public partial class ReadOnlyBlocksSample : Form {

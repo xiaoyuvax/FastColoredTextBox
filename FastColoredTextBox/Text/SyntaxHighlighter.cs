@@ -7,7 +7,7 @@ using System.IO;
 using System.Text.RegularExpressions;
 using System.Xml;
 
-namespace FastColoredTextBoxNS {
+namespace FastColoredTextBoxNS.Text {
 	public class SyntaxHighlighter : IDisposable {
 		//styles
 		protected static readonly Platform platformType = PlatformType.GetOperationSystemPlatform();
@@ -197,7 +197,7 @@ namespace FastColoredTextBoxNS {
 		}
 
 		public virtual void AutoIndentNeeded(object sender, AutoIndentEventArgs args) {
-			var tb = (sender as FastColoredTextBox);
+			var tb = sender as FastColoredTextBox;
 			Language language = tb.Language;
 			switch (language) {
 				case Language.CSharp:
@@ -470,9 +470,9 @@ namespace FastColoredTextBoxNS {
 			if (s.StartsWith("#")) {
 				if (s.Length <= 7)
 					return Color.FromArgb(255,
-										  Color.FromArgb(Int32.Parse(s.Substring(1), NumberStyles.AllowHexSpecifier)));
+										  Color.FromArgb(int.Parse(s.Substring(1), NumberStyles.AllowHexSpecifier)));
 				else
-					return Color.FromArgb(Int32.Parse(s.Substring(1), NumberStyles.AllowHexSpecifier));
+					return Color.FromArgb(int.Parse(s.Substring(1), NumberStyles.AllowHexSpecifier));
 			} else
 				return Color.FromName(s);
 		}

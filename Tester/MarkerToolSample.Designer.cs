@@ -1,4 +1,4 @@
-﻿using FastColoredTextBoxNS.Features;
+﻿using FastColoredTextBoxNS.Feature;
 
 namespace Tester {
 	partial class MarkerToolSample

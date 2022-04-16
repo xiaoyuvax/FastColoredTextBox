@@ -1,4 +1,5 @@
 Imports System.ComponentModel
+Imports FastColoredTextBoxNS.Types
 
 Namespace TesterVB
 	Public Class LoggerSample

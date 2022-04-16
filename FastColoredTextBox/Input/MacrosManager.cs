@@ -5,7 +5,7 @@ using System.Threading;
 using System.Windows.Forms;
 using System.Xml;
 
-namespace FastColoredTextBoxNS {
+namespace FastColoredTextBoxNS.Input {
 	/// <summary>
 	/// This class records, stores and executes the macros.
 	/// </summary>
@@ -63,24 +63,17 @@ namespace FastColoredTextBoxNS {
 		/// <summary>
 		/// Adds the char to current macro
 		/// </summary>
-		public void AddCharToMacros(char c, Keys modifiers) {
-			macro.Add(new KeyValuePair<char, Keys>(c, modifiers));
-		}
+		public void AddCharToMacros(char c, Keys modifiers) => macro.Add(new KeyValuePair<char, Keys>(c, modifiers));
 
 		/// <summary>
 		/// Adds keyboard key to current macro
 		/// </summary>
-		public void AddKeyToMacros(Keys keyData) {
-			macro.Add(keyData);
-		}
+		public void AddKeyToMacros(Keys keyData) => macro.Add(keyData);
 
 		/// <summary>
 		/// Clears last recorded macro
 		/// </summary>
-		public void ClearMacros() {
-			macro.Clear();
-		}
-
+		public void ClearMacros() => macro.Clear();
 
 		internal void ProcessKey(Keys keyData) {
 			if (IsRecording)

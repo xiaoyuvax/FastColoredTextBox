@@ -1,6 +1,7 @@
-﻿namespace Tester
-{
-    partial class SplitSample
+﻿using FastColoredTextBoxNS.Text;
+
+namespace Tester {
+	partial class SplitSample
     {
         /// <summary>
         /// Required designer variable.
@@ -93,7 +94,7 @@
             this.fctbMaster.Dock = System.Windows.Forms.DockStyle.Fill;
             this.fctbMaster.Font = new System.Drawing.Font("Consolas", 9.75F);
             this.fctbMaster.IsReplaceMode = false;
-            this.fctbMaster.Language = FastColoredTextBoxNS.Language.CSharp;
+            this.fctbMaster.Language = Language.CSharp;
             this.fctbMaster.LeftBracket = '(';
             this.fctbMaster.LeftBracket2 = '{';
             this.fctbMaster.Location = new System.Drawing.Point(0, 93);
@@ -133,7 +134,7 @@
             this.fctbSlave.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.fctbSlave.Font = new System.Drawing.Font("Consolas", 9.75F);
             this.fctbSlave.IsReplaceMode = false;
-            this.fctbSlave.Language = FastColoredTextBoxNS.Language.CSharp;
+            this.fctbSlave.Language = Language.CSharp;
             this.fctbSlave.LeftBracket = '(';
             this.fctbSlave.LeftBracket2 = '{';
             this.fctbSlave.Location = new System.Drawing.Point(0, 304);

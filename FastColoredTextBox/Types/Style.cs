@@ -1,11 +1,11 @@
-﻿using FastColoredTextBoxNS.Features;
-using FastColoredTextBoxNS.Types;
+﻿using FastColoredTextBoxNS.Feature;
+using FastColoredTextBoxNS.Text;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 
-namespace FastColoredTextBoxNS {
+namespace FastColoredTextBoxNS.Types {
 	/// <summary>
 	/// Style of chars
 	/// </summary>
@@ -84,9 +84,9 @@ namespace FastColoredTextBoxNS {
 		public StringFormat stringFormat;
 
 		public TextStyle(Brush foreBrush, Brush backgroundBrush, FontStyle fontStyle) {
-			this.ForeBrush = foreBrush;
-			this.BackgroundBrush = backgroundBrush;
-			this.FontStyle = fontStyle;
+			ForeBrush = foreBrush;
+			BackgroundBrush = backgroundBrush;
+			FontStyle = fontStyle;
 			stringFormat = new StringFormat(StringFormatFlags.MeasureTrailingSpaces);
 		}
 
@@ -221,8 +221,8 @@ namespace FastColoredTextBoxNS {
 		}
 
 		public SelectionStyle(Brush backgroundBrush, Brush foregroundBrush = null) {
-			this.BackgroundBrush = backgroundBrush;
-			this.ForegroundBrush = foregroundBrush;
+			BackgroundBrush = backgroundBrush;
+			ForegroundBrush = foregroundBrush;
 		}
 
 		public override void Draw(Graphics gr, Point position, Range range) {
@@ -255,7 +255,7 @@ namespace FastColoredTextBoxNS {
 		public Brush BackgroundBrush { get; set; }
 
 		public MarkerStyle(Brush backgroundBrush) {
-			this.BackgroundBrush = backgroundBrush;
+			BackgroundBrush = backgroundBrush;
 			IsExportable = true;
 		}
 

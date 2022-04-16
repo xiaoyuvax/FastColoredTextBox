@@ -1,6 +1,7 @@
-﻿namespace Tester
-{
-    partial class SyntaxHighlightingByXmlDescription
+﻿using FastColoredTextBoxNS.Text;
+
+namespace Tester {
+	partial class SyntaxHighlightingByXmlDescription
     {
         /// <summary>
         /// Required designer variable.
@@ -31,7 +32,7 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SyntaxHighlightingByXmlDescription));
             this.label1 = new System.Windows.Forms.Label();
             this.fctb = new FastColoredTextBoxNS.FastColoredTextBox();
-            FastColoredTextBoxNS.SyntaxHighlighter syntaxHighlighter1 = new FastColoredTextBoxNS.SyntaxHighlighter(fctb);
+			SyntaxHighlighter syntaxHighlighter1 = new SyntaxHighlighter(fctb);
             this.SuspendLayout();
             // 
             // label1

@@ -1,5 +1,6 @@
 Imports System.ComponentModel
 Imports System.Text.RegularExpressions
+Imports FastColoredTextBoxNS.Types
 
 Namespace TesterVB
 	Public Class CustomStyleSample
