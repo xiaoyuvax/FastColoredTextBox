@@ -1,5 +1,4 @@
-﻿using FastColoredTextBoxNS.Feature;
-using FastColoredTextBoxNS.Text;
+﻿using FastColoredTextBoxNS.Text;
 using FastColoredTextBoxNS.Types;
 using System;
 using System.Collections.Generic;
