@@ -11,11 +11,7 @@ namespace FastColoredTextBoxNS {
 			: base(GetDefaultTypeProvider(type)) {
 		}
 
-		private static TypeDescriptionProvider GetDefaultTypeProvider(Type type) {
-			return TypeDescriptor.GetProvider(type);
-		}
-
-
+		private static TypeDescriptionProvider GetDefaultTypeProvider(Type type) => TypeDescriptor.GetProvider(type);
 
 		public override ICustomTypeDescriptor GetTypeDescriptor(Type objectType, object instance) {
 			ICustomTypeDescriptor defaultDescriptor = base.GetTypeDescriptor(objectType, instance);
@@ -51,28 +47,11 @@ namespace FastColoredTextBoxNS {
 	}
 
 	class FooTextChangedDescriptor : EventDescriptor {
-		public FooTextChangedDescriptor(MemberDescriptor desc)
-			: base(desc) {
-		}
-
-		public override void AddEventHandler(object component, Delegate value) {
-			(component as FastColoredTextBox).BindingTextChanged += value as EventHandler;
-		}
-
-		public override Type ComponentType {
-			get { return typeof(FastColoredTextBox); }
-		}
-
-		public override Type EventType {
-			get { return typeof(EventHandler); }
-		}
-
-		public override bool IsMulticast {
-			get { return true; }
-		}
-
-		public override void RemoveEventHandler(object component, Delegate value) {
-			(component as FastColoredTextBox).BindingTextChanged -= value as EventHandler;
-		}
+		public FooTextChangedDescriptor(MemberDescriptor desc) : base(desc) { }
+		public override void AddEventHandler(object component, Delegate value) => (component as FastColoredTextBox).BindingTextChanged += value as EventHandler;
+		public override Type ComponentType => typeof(FastColoredTextBox);
+		public override Type EventType => typeof(EventHandler);
+		public override bool IsMulticast => true;
+		public override void RemoveEventHandler(object component, Delegate value) => (component as FastColoredTextBox).BindingTextChanged -= value as EventHandler;
 	}
 }

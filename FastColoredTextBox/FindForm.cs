@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
+using FastColoredTextBoxNS.Types;
 
 namespace FastColoredTextBoxNS {
 	public partial class FindForm : Form {
@@ -13,13 +14,8 @@ namespace FastColoredTextBoxNS {
 			this.tb = tb;
 		}
 
-		private void BtClose_Click(object sender, EventArgs e) {
-			Close();
-		}
-
-		private void BtFindNext_Click(object sender, EventArgs e) {
-			FindNext(tbFind.Text);
-		}
+		private void BtClose_Click(object sender, EventArgs e) => Close();
+		private void BtFindNext_Click(object sender, EventArgs e) => FindNext(tbFind.Text);
 
 		public virtual void FindNext(string pattern) {
 			try {
@@ -95,12 +91,7 @@ namespace FastColoredTextBoxNS {
 			ResetSerach();
 		}
 
-		void ResetSerach() {
-			firstSearch = true;
-		}
-
-		private void CbMatchCase_CheckedChanged(object sender, EventArgs e) {
-			ResetSerach();
-		}
+		void ResetSerach() => firstSearch = true;
+		private void CbMatchCase_CheckedChanged(object sender, EventArgs e) => ResetSerach();
 	}
 }

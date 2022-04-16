@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
+using FastColoredTextBoxNS.Types;
 
 namespace FastColoredTextBoxNS {
 	public partial class ReplaceForm : Form {

@@ -4,6 +4,7 @@ using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
+using FastColoredTextBoxNS.Types;
 
 namespace Tester {
 	public partial class LazyLoadingSample : Form {

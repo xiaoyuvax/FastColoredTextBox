@@ -1,5 +1,6 @@
 Imports System.ComponentModel
 Imports System.Drawing.Drawing2D
+Imports FastColoredTextBoxNS.Features
 
 Namespace TesterVB
     Public Class MarkerToolSample

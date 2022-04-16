@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Drawing;
+using FastColoredTextBoxNS.Types;
 
 namespace FastColoredTextBoxNS {
 	/// <summary>

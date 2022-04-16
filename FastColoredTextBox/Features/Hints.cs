@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
+using FastColoredTextBoxNS.Types;
 
-namespace FastColoredTextBoxNS {
+namespace FastColoredTextBoxNS.Features {
 	/// <summary>
 	/// Collection of Hints.
 	/// This is temporary buffer for currently displayed hints.
@@ -19,14 +20,12 @@ namespace FastColoredTextBoxNS {
 			tb.VisibleRangeChanged += OnTextBoxVisibleRangeChanged;
 		}
 
-		protected virtual void OnTextBoxKeyDown(object sender, System.Windows.Forms.KeyEventArgs e) {
-			if (e.KeyCode == System.Windows.Forms.Keys.Escape && e.Modifiers == System.Windows.Forms.Keys.None)
+		protected virtual void OnTextBoxKeyDown(object sender, KeyEventArgs e) {
+			if (e.KeyCode == Keys.Escape && e.Modifiers == Keys.None)
 				Clear();
 		}
 
-		protected virtual void OnTextBoxTextChanged(object sender, TextChangedEventArgs e) {
-			Clear();
-		}
+		protected virtual void OnTextBoxTextChanged(object sender, TextChangedEventArgs e) => Clear();
 
 		public void Dispose() {
 			tb.TextChanged -= OnTextBoxTextChanged;
@@ -259,9 +258,9 @@ namespace FastColoredTextBoxNS {
 		}
 
 		private Hint(Range range, Control innerControl, string text, bool inline, bool dock) {
-			this.Range = range;
-			this.Inline = inline;
-			this.InnerControl = innerControl;
+			Range = range;
+			Inline = inline;
+			InnerControl = innerControl;
 
 			Init();
 
@@ -334,8 +333,6 @@ namespace FastColoredTextBoxNS {
 			}
 		}
 
-		protected virtual void OnClick(object sender, EventArgs e) {
-			Range.tb.OnHintClick(this);
-		}
+		protected virtual void OnClick(object sender, EventArgs e) => Range.tb.OnHintClick(this);
 	}
 }

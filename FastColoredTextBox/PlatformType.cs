@@ -60,5 +60,4 @@ namespace FastColoredTextBoxNS {
 		X64,
 		Unknown
 	}
-
 }

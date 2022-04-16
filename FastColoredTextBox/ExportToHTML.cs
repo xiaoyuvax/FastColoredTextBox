@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
 using System.Text;
+using FastColoredTextBoxNS.Types;
 
 namespace FastColoredTextBoxNS {
 	/// <summary>
@@ -71,7 +72,7 @@ namespace FastColoredTextBoxNS {
 			//
 			bool hasNonSpace = false;
 			foreach (Place p in r) {
-				Char c = r.tb[p.iLine][p.iChar];
+				StyledChar c = r.tb[p.iLine][p.iChar];
 				if (c.style != currentStyleId) {
 					Flush(sb, tempSB, currentStyleId);
 					currentStyleId = c.style;

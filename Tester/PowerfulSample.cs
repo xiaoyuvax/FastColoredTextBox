@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
+using FastColoredTextBoxNS.Types;
 
 namespace Tester {
 	public partial class PowerfulSample : Form {

@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using FastColoredTextBoxNS.Types;
 
-namespace FastColoredTextBoxNS {
+namespace FastColoredTextBoxNS.Features {
 	/// <summary>
 	/// Base class for bookmark collection
 	/// </summary>
@@ -207,9 +208,9 @@ namespace FastColoredTextBoxNS {
 		}
 
 		public Bookmark(FastColoredTextBox tb, string name, int lineIndex) {
-			this.TB = tb;
-			this.Name = name;
-			this.LineIndex = lineIndex;
+			TB = tb;
+			Name = name;
+			LineIndex = lineIndex;
 			Color = tb.BookmarkColor;
 		}
 

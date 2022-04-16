@@ -9,6 +9,8 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows.Forms;
+using FastColoredTextBoxNS.Types;
+using FastColoredTextBoxNS.Features;
 
 namespace Tester {
 	public partial class PowerfulCSharpEditor : Form {

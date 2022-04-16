@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
+using FastColoredTextBoxNS.Types;
 
 namespace Tester {
 	public partial class HyperlinkSample : Form {

@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
+using FastColoredTextBoxNS.Types;
 
 namespace Tester {
 	public partial class AutocompleteSample2 : Form {

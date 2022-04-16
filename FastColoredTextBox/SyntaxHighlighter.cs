@@ -5,6 +5,7 @@ using System.Globalization;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Xml;
+using FastColoredTextBoxNS.Types;
 
 namespace FastColoredTextBoxNS {
 	public class SyntaxHighlighter : IDisposable {

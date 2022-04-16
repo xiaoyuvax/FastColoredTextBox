@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Text;
 
-namespace FastColoredTextBoxNS {
+namespace FastColoredTextBoxNS.Types {
 	/// <summary>
 	/// Line of text
 	/// </summary>
-	public class Line : IList<Char> {
-		protected List<Char> chars;
+	public class Line : IList<StyledChar> {
+		protected List<StyledChar> chars;
 
 		public string FoldingStartMarker { get; set; }
 		public string FoldingEndMarker { get; set; }
@@ -39,7 +39,7 @@ namespace FastColoredTextBoxNS {
 
 		internal Line(int uid) {
 			this.UniqueId = uid;
-			chars = new List<Char>();
+			chars = new List<StyledChar>();
 		}
 
 		/// <summary>
@@ -49,7 +49,7 @@ namespace FastColoredTextBoxNS {
 			FoldingStartMarker = null;
 			FoldingEndMarker = null;
 			for (int i = 0; i < Count; i++) {
-				Char c = this[i];
+				StyledChar c = this[i];
 				c.style &= ~styleIndex;
 				this[i] = c;
 			}
@@ -61,7 +61,7 @@ namespace FastColoredTextBoxNS {
 		public virtual string Text {
 			get {
 				StringBuilder sb = new StringBuilder(Count);
-				foreach (Char c in this)
+				foreach (StyledChar c in this)
 					sb.Append(c.c);
 				return sb.ToString();
 			}
@@ -90,11 +90,11 @@ namespace FastColoredTextBoxNS {
 			}
 		}
 
-		public int IndexOf(Char item) {
+		public int IndexOf(StyledChar item) {
 			return chars.IndexOf(item);
 		}
 
-		public void Insert(int index, Char item) {
+		public void Insert(int index, StyledChar item) {
 			chars.Insert(index, item);
 		}
 
@@ -102,7 +102,7 @@ namespace FastColoredTextBoxNS {
 			chars.RemoveAt(index);
 		}
 
-		public Char this[int index] {
+		public StyledChar this[int index] {
 			get {
 				return chars[index];
 			}
@@ -111,7 +111,7 @@ namespace FastColoredTextBoxNS {
 			}
 		}
 
-		public void Add(Char item) {
+		public void Add(StyledChar item) {
 			chars.Add(item);
 		}
 
@@ -119,11 +119,11 @@ namespace FastColoredTextBoxNS {
 			chars.Clear();
 		}
 
-		public bool Contains(Char item) {
+		public bool Contains(StyledChar item) {
 			return chars.Contains(item);
 		}
 
-		public void CopyTo(Char[] array, int arrayIndex) {
+		public void CopyTo(StyledChar[] array, int arrayIndex) {
 			chars.CopyTo(array, arrayIndex);
 		}
 
@@ -138,11 +138,11 @@ namespace FastColoredTextBoxNS {
 			get { return false; }
 		}
 
-		public bool Remove(Char item) {
+		public bool Remove(StyledChar item) {
 			return chars.Remove(item);
 		}
 
-		public IEnumerator<Char> GetEnumerator() {
+		public IEnumerator<StyledChar> GetEnumerator() {
 			return chars.GetEnumerator();
 		}
 
@@ -160,7 +160,7 @@ namespace FastColoredTextBoxNS {
 			chars.TrimExcess();
 		}
 
-		public virtual void AddRange(IEnumerable<Char> collection) {
+		public virtual void AddRange(IEnumerable<StyledChar> collection) {
 			chars.AddRange(collection);
 		}
 	}

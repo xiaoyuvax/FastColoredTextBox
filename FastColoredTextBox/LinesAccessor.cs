@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using FastColoredTextBoxNS.Types;
 
 namespace FastColoredTextBoxNS {
 	public class LinesAccessor : IList<string> {

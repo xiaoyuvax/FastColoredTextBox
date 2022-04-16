@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using FastColoredTextBoxNS.Types;
 
 namespace FastColoredTextBoxNS {
 	/// <summary>
@@ -109,12 +110,12 @@ namespace FastColoredTextBoxNS {
 						spaceCountNextTabStop = tb.TabLength;
 
 					for (int i = 0; i < spaceCountNextTabStop; i++)
-						ts[tb.Selection.Start.iLine].Insert(tb.Selection.Start.iChar, new Char(' '));
+						ts[tb.Selection.Start.iLine].Insert(tb.Selection.Start.iChar, new StyledChar(' '));
 
 					tb.Selection.Start = new Place(tb.Selection.Start.iChar + spaceCountNextTabStop, tb.Selection.Start.iLine);
 					break;
 				default:
-					ts[tb.Selection.Start.iLine].Insert(tb.Selection.Start.iChar, new Char(c));
+					ts[tb.Selection.Start.iLine].Insert(tb.Selection.Start.iChar, new StyledChar(c));
 					tb.Selection.Start = new Place(tb.Selection.Start.iChar + 1, tb.Selection.Start.iLine);
 					break;
 			}

@@ -1,20 +1,13 @@
 ﻿using System.Drawing;
 using System.Windows.Forms;
 
-namespace FastColoredTextBoxNS {
+namespace FastColoredTextBoxNS.Features {
 	public class VisualMarker {
 		public readonly Rectangle rectangle;
 
-		public VisualMarker(Rectangle rectangle) {
-			this.rectangle = rectangle;
-		}
-
-		public virtual void Draw(Graphics gr, Pen pen) {
-		}
-
-		public virtual Cursor Cursor {
-			get { return Cursors.Hand; }
-		}
+		public VisualMarker(Rectangle rectangle) => this.rectangle = rectangle;
+		public virtual void Draw(Graphics gr, Pen pen) { }
+		public virtual Cursor Cursor => Cursors.Hand;
 	}
 
 	public class CollapseFoldingMarker : VisualMarker {
@@ -68,7 +61,7 @@ namespace FastColoredTextBoxNS {
 
 		public StyleVisualMarker(Rectangle rectangle, Style style)
 			: base(rectangle) {
-			this.Style = style;
+			Style = style;
 		}
 	}
 
@@ -78,8 +71,8 @@ namespace FastColoredTextBoxNS {
 
 		public VisualMarkerEventArgs(Style style, StyleVisualMarker marker, MouseEventArgs args)
 			: base(args.Button, args.Clicks, args.X, args.Y, args.Delta) {
-			this.Style = style;
-			this.Marker = marker;
+			Style = style;
+			Marker = marker;
 		}
 	}
 }

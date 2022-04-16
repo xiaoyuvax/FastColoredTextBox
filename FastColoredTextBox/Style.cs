@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using FastColoredTextBoxNS.Features;
+using FastColoredTextBoxNS.Types;
 
 namespace FastColoredTextBoxNS {
 	/// <summary>
@@ -21,9 +23,7 @@ namespace FastColoredTextBoxNS {
 		/// <summary>
 		/// Constructor
 		/// </summary>
-		public Style() {
-			IsExportable = true;
-		}
+		public Style() => IsExportable = true;
 
 		/// <summary>
 		/// Renders given range of text
@@ -42,13 +42,8 @@ namespace FastColoredTextBoxNS {
 		/// Shows VisualMarker
 		/// Call this method in Draw method, when you need to show VisualMarker for your style
 		/// </summary>
-		protected virtual void AddVisualMarker(FastColoredTextBox tb, StyleVisualMarker marker) {
-			tb.AddVisualMarker(marker);
-		}
-
-		public static Size GetSizeOfRange(Range range) {
-			return new Size((range.End.iChar - range.Start.iChar) * range.tb.CharWidth, range.tb.CharHeight);
-		}
+		protected virtual void AddVisualMarker(FastColoredTextBox tb, StyleVisualMarker marker) => tb.AddVisualMarker(marker);
+		public static Size GetSizeOfRange(Range range) => new Size((range.End.iChar - range.Start.iChar) * range.tb.CharWidth, range.tb.CharHeight);
 
 		public static GraphicsPath GetRoundedRectangle(Rectangle rect, int d) {
 			GraphicsPath gp = new GraphicsPath();
@@ -62,25 +57,19 @@ namespace FastColoredTextBoxNS {
 			return gp;
 		}
 
-		public virtual void Dispose() {
-			;
-		}
+		public virtual void Dispose() { }
 
 		/// <summary>
 		/// Returns CSS for export to HTML
 		/// </summary>
 		/// <returns></returns>
-		public virtual string GetCSS() {
-			return "";
-		}
+		public virtual string GetCSS() => "";
 
 		/// <summary>
 		/// Returns RTF descriptor for export to RTF
 		/// </summary>
 		/// <returns></returns>
-		public virtual RTFStyleDescriptor GetRTF() {
-			return new RTFStyleDescriptor();
-		}
+		public virtual RTFStyleDescriptor GetRTF() => new RTFStyleDescriptor();
 	}
 
 	/// <summary>
@@ -322,9 +311,7 @@ namespace FastColoredTextBoxNS {
 	public class WavyLineStyle : Style {
 		private Pen Pen { get; set; }
 
-		public WavyLineStyle(int alpha, Color color) {
-			Pen = new Pen(Color.FromArgb(alpha, color));
-		}
+		public WavyLineStyle(int alpha, Color color) => Pen = new Pen(Color.FromArgb(alpha, color));
 
 		public override void Draw(Graphics gr, Point pos, Range range) {
 			var size = GetSizeOfRange(range);
@@ -363,12 +350,8 @@ namespace FastColoredTextBoxNS {
 	/// </summary>
 	/// <remarks>You can inherite this style to add visual effects of readonly text</remarks>
 	public class ReadOnlyStyle : Style {
-		public ReadOnlyStyle() {
-			IsExportable = false;
-		}
+		public ReadOnlyStyle() => IsExportable = false;
 
-		public override void Draw(Graphics gr, Point position, Range range) {
-			//
-		}
+		public override void Draw(Graphics gr, Point position, Range range) { }
 	}
 }

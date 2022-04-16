@@ -35,7 +35,9 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows.Forms;
 using System.Windows.Forms.Design;
+using FastColoredTextBoxNS.Types;
 using Timer = System.Windows.Forms.Timer;
+using FastColoredTextBoxNS.Features;
 
 namespace FastColoredTextBoxNS {
 	/// <summary>
@@ -1217,11 +1219,23 @@ namespace FastColoredTextBoxNS {
 			}
 		}
 
+		/// <summary>
+		/// Change this property if you want to customize your find form
+		/// </summary>
 		[Browsable(false)]
 		public new FindForm FindForm { get; set; }
 
+		/// <summary>
+		/// Change this property if you want to customize your replace form
+		/// </summary>
 		[Browsable(false)]
 		public ReplaceForm ReplaceForm { get; set; }
+
+		/// <summary>
+		/// Change this property if you want to customize your goto form
+		/// </summary>
+		[Browsable(false)]
+		public GoToForm GoToForm { get; set; }
 
 		/// <summary>
 		/// Do not change this property
@@ -1245,7 +1259,7 @@ namespace FastColoredTextBoxNS {
 		/// Gets or sets char and styleId for given place
 		/// This property does not fire OnTextChanged event
 		/// </summary>
-		public Char this[Place place] {
+		public StyledChar this[Place place] {
 			get { return lines[place.iLine][place.iChar]; }
 			set { lines[place.iLine][place.iChar] = value; }
 		}
@@ -1253,9 +1267,7 @@ namespace FastColoredTextBoxNS {
 		/// <summary>
 		/// Gets Line
 		/// </summary>
-		public Line this[int iLine] {
-			get { return lines[iLine]; }
-		}
+		public Line this[int iLine] { get { return lines[iLine]; } }
 
 		/// <summary>
 		/// Text of control
@@ -2225,6 +2237,32 @@ namespace FastColoredTextBoxNS {
 			ReplaceForm.tbFind.SelectAll();
 			ReplaceForm.Show();
 			ReplaceForm.Focus();
+		}
+
+		/// <summary>
+		/// Shows GoTo dialog
+		/// </summary>
+		public virtual void ShowGoToDialog() => ShowGoToDialog(0);
+
+		/// <summary>
+		/// Shows GoTo dialog form
+		/// </summary>
+		public void ShowGoToDialog(int goToLine) {
+			if (GoToForm == null)
+				GoToForm = new GoToForm();
+
+			GoToForm.TotalLineCount = LinesCount;
+
+			if (goToLine < 1)
+				GoToForm.SelectedLineNumber = Selection.Start.iLine + 1;
+			else 
+				GoToForm.SelectedLineNumber = goToLine;
+
+			if (GoToForm.ShowDialog() != DialogResult.OK) {
+				return;
+			}
+
+			SetSelectedLine(GoToForm.SelectedLineNumber);
 		}
 
 		/// <summary>
@@ -5739,7 +5777,7 @@ namespace FastColoredTextBoxNS {
 			if (iLine < 0 || iLine >= lines.Count)
 				throw new ArgumentOutOfRangeException("Line index out of range");
 			var sb = new StringBuilder(lines[iLine].Count);
-			foreach (Char c in lines[iLine])
+			foreach (StyledChar c in lines[iLine])
 				sb.Append(c.c);
 			return sb.ToString();
 		}
@@ -6761,7 +6799,7 @@ window.status = ""#print"";
 		/// Open text file (with automatic encoding and language detector)
 		/// </summary>
 		public void OpenFile(string fileName) {
-			var extension = fileName.Substring(fileName.LastIndexOf('.'));
+			var extension = fileName.Substring(fileName.LastIndexOf('.') +1);
 			var language = LanguageDetector.StringToLanguage(extension);
 			OpenFile(fileName, language);
 		}
@@ -6782,7 +6820,7 @@ window.status = ""#print"";
 		/// <param name="fileName"></param>
 		/// <param name="enc"></param>
 		public void OpenBindingFile(string fileName, Encoding enc) {
-			var extension = fileName.Substring(fileName.LastIndexOf('.'));
+			var extension = fileName.Substring(fileName.LastIndexOf('.') +1);
 			var language = LanguageDetector.StringToLanguage(extension);
 			var fts = new FileTextSource(this);
 			try {
@@ -6842,22 +6880,6 @@ window.status = ""#print"";
 		/// Returns VisibleState of the line
 		/// </summary>
 		public VisibleState GetVisibleState(int iLine) => LineInfos[iLine].VisibleState;
-
-		/// <summary>
-		/// Shows Goto dialog form
-		/// </summary>
-		public void ShowGoToDialog() {
-			var form = new GoToForm {
-				TotalLineCount = LinesCount,
-				SelectedLineNumber = Selection.Start.iLine + 1
-			};
-
-			if (form.ShowDialog() != DialogResult.OK) {
-				return;
-			}
-
-			SetSelectedLine(form.SelectedLineNumber);
-		}
 
 		/// <summary>
 		/// Set current line number and make it visible

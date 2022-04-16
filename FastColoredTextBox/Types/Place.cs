@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace FastColoredTextBoxNS {
+namespace FastColoredTextBoxNS.Types {
 	/// <summary>
 	/// Line index and char index
 	/// </summary>

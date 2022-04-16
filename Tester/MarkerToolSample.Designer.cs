@@ -1,6 +1,7 @@
-﻿namespace Tester
-{
-    partial class MarkerToolSample
+﻿using FastColoredTextBoxNS.Features;
+
+namespace Tester {
+	partial class MarkerToolSample
     {
         /// <summary>
         /// Required designer variable.
@@ -144,7 +145,7 @@
             this.fctb.WordWrap = true;
             this.fctb.Zoom = 100;
             this.fctb.SelectionChangedDelayed += new System.EventHandler(this.Fctb_SelectionChangedDelayed);
-            this.fctb.VisualMarkerClick += new System.EventHandler<FastColoredTextBoxNS.VisualMarkerEventArgs>(this.Fctb_VisualMarkerClick);
+            this.fctb.VisualMarkerClick += new System.EventHandler<VisualMarkerEventArgs>(this.Fctb_VisualMarkerClick);
             this.fctb.PaintLine += new System.EventHandler<FastColoredTextBoxNS.PaintLineEventArgs>(this.Fctb_PaintLine);
             this.fctb.Resize += new System.EventHandler(this.Fctb_Resize);
             // 

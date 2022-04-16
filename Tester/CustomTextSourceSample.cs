@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
+using FastColoredTextBoxNS.Types;
 
 namespace Tester {
 	public partial class CustomTextSourceSample : Form {
@@ -137,7 +138,7 @@ namespace Tester {
 				s = sourceString.Substring(sourceStringLinePositions[i], sourceStringLinePositions[i + 1] - sourceStringLinePositions[i] - 1);
 
 			foreach (var c in s)
-				line.Add(new FastColoredTextBoxNS.Char(c));
+				line.Add(new StyledChar(c));
 
 			base.lines[i] = line;
 
