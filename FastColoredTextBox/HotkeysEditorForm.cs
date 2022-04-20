@@ -7,7 +7,7 @@ using System.Windows.Forms;
 
 namespace FastColoredTextBoxNS {
 	public partial class HotkeysEditorForm : Form {
-		readonly BindingList<HotkeyWrapper> wrappers = new BindingList<HotkeyWrapper>();
+		readonly BindingList<HotkeyWrapper> wrappers = new();
 
 		public HotkeysEditorForm(HotkeysMapping hotkeys) {
 			InitializeComponent();
@@ -66,7 +66,7 @@ namespace FastColoredTextBoxNS {
 		}
 
 		private void BtResore_Click(object sender, EventArgs e) {
-			HotkeysMapping h = new HotkeysMapping();
+			HotkeysMapping h = new();
 			h.InitDefault();
 			BuildWrappers(h);
 		}
@@ -87,7 +87,7 @@ namespace FastColoredTextBoxNS {
 		}
 
 		private string GetUnAssignedActions() {
-			StringBuilder sb = new StringBuilder();
+			StringBuilder sb = new();
 			var dic = new Dictionary<FCTBAction, FCTBAction>();
 
 			foreach (var w in wrappers)
@@ -106,7 +106,7 @@ namespace FastColoredTextBoxNS {
 
 	internal class HotkeyWrapper {
 		public HotkeyWrapper(Keys keyData, FCTBAction action) {
-			KeyEventArgs a = new KeyEventArgs(keyData);
+			KeyEventArgs a = new(keyData);
 			Ctrl = a.Control;
 			Shift = a.Shift;
 			Alt = a.Alt;

@@ -162,11 +162,10 @@ namespace FastColoredTextBoxNS {
 				e.Graphics.ResetTransform();
 				e.Graphics.SmoothingMode = SmoothingMode.None;
 
-				using (var brush = new SolidBrush(Color.FromArgb(200, ForeColor))) {
-					var rect = new RectangleF(ClientSize.Width - 3, ClientSize.Height * sp1, 2,
-											  ClientSize.Height * (sp2 - sp1));
-					e.Graphics.FillRectangle(brush, rect);
-				}
+				using var brush = new SolidBrush(Color.FromArgb(200, ForeColor));
+				var rect = new RectangleF(ClientSize.Width - 3, ClientSize.Height * sp1, 2,
+										  ClientSize.Height * (sp2 - sp1));
+				e.Graphics.FillRectangle(brush, rect);
 			}
 
 			needRepaint = false;
@@ -196,7 +195,7 @@ namespace FastColoredTextBoxNS {
 			var p0 = target.PlaceToPoint(startPlace);
 			p0 = new Point(0, p0.Y + (int)(point.Y / zoom));
 			var pp = target.PointToPlace(p0);
-			target.DoRangeVisible(new Range(target, pp, pp), true);
+			target.DoRangeVisible(new TextSelectionRange(target, pp, pp), true);
 			BeginInvoke((MethodInvoker)OnScroll);
 		}
 

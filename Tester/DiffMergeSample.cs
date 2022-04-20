@@ -62,7 +62,7 @@ namespace Tester {
 			}
 
 			if (curLine < tb.LinesCount)
-				tb.Selection = new Range(tb, 0, curLine, 0, curLine);
+				tb.Selection = new TextSelectionRange(tb, 0, curLine, 0, curLine);
 			//
 			EndUpdate();
 		}
@@ -158,7 +158,7 @@ namespace Tester {
 			/// </summary>
 			public void RunDiff() {
 				if (!_matrixCreated) {
-					Stopwatch sw = new Stopwatch();
+					Stopwatch sw = new();
 					sw.Start();
 					CalculatePreSkip();
 					CalculatePostSkip();
@@ -385,7 +385,7 @@ namespace Tester {
 		/// </summary>
 		public class Lines : List<Line>, IEquatable<Lines> {
 			//эта строка нужна для хранения строк, вставленных в самом начале, до первой строки исходного файла
-			private Line fictiveLine = new Line("===fictive line===") { state = DiffType.Deleted };
+			private Line fictiveLine = new("===fictive line===") { state = DiffType.Deleted };
 
 			public Lines() {
 			}
@@ -411,7 +411,7 @@ namespace Tester {
 			/// Load from file
 			/// </summary>
 			public static Lines Load(string fileName, Encoding enc = null) {
-				Lines lines = new Lines();
+				Lines lines = new();
 				foreach (var line in File.ReadAllLines(fileName, enc ?? Encoding.Default))
 					lines.Add(new Line(line));
 
@@ -422,7 +422,7 @@ namespace Tester {
 			/// Merge lines
 			/// </summary>
 			public void Merge(Lines lines) {
-				SimpleDiff<Line> diff = new SimpleDiff<Line>(this, lines);
+				SimpleDiff<Line> diff = new(this, lines);
 				int iLine = -1;
 
 				diff.LineUpdate += (o, e) => {
@@ -449,7 +449,7 @@ namespace Tester {
 			/// Clone
 			/// </summary>
 			public Lines Clone() {
-				Lines result = new Lines(this.Count);
+				Lines result = new(this.Count);
 				foreach (var line in this)
 					result.Add(new Line(line.line));
 
@@ -479,7 +479,7 @@ namespace Tester {
 			/// Transform tree to list
 			/// </summary>
 			public Lines Expand(int from, int to) {
-				Lines result = new Lines();
+				Lines result = new();
 				for (int i = from; i <= to; i++) {
 					if (this[i].state != DiffType.Deleted)
 						result.Add(this[i]);
@@ -488,6 +488,14 @@ namespace Tester {
 				}
 
 				return result;
+			}
+
+			public override bool Equals(object obj) {
+				return Equals(obj as Lines);
+			}
+
+			public override int GetHashCode() {
+				throw new NotImplementedException();
 			}
 		}
 

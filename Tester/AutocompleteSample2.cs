@@ -31,7 +31,7 @@ namespace Tester {
 		}
 
 		private void BuildAutocompleteMenu() {
-			List<AutocompleteItem> items = new List<AutocompleteItem>();
+			List<AutocompleteItem> items = new();
 
 			foreach (var item in snippets)
 				items.Add(new SnippetAutocompleteItem(item) { ImageIndex = 1 });
@@ -132,7 +132,7 @@ namespace Tester {
 
 			public override string GetTextForReplace() {
 				//extend range
-				Range r = Parent.Fragment;
+				TextSelectionRange r = Parent.Fragment;
 				r.Start = enterPlace;
 				r.End = r.End;
 				//insert line break

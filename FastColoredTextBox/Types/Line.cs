@@ -60,7 +60,7 @@ namespace FastColoredTextBoxNS.Types {
 		/// </summary>
 		public virtual string Text {
 			get {
-				StringBuilder sb = new StringBuilder(Count);
+				StringBuilder sb = new(Count);
 				foreach (StyledChar c in this)
 					sb.Append(c.c);
 				return sb.ToString();

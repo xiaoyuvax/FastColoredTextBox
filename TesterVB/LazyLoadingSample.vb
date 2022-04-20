@@ -2,6 +2,7 @@ Imports System.ComponentModel
 Imports System.IO
 Imports System.Text
 Imports System.Text.RegularExpressions
+Imports FastColoredTextBoxNS.Types
 
 Namespace TesterVB
 
@@ -173,7 +174,7 @@ Namespace TesterVB
 		Private Sub HighlightVisibleRange()
 			Dim startLine As Integer = Math.Max(0, Me.fctb.VisibleRange.Start.iLine - 2000)
 			Dim endLine As Integer = Math.Min(Me.fctb.LinesCount - 1, Me.fctb.VisibleRange.[End].iLine + 2000)
-			Dim range As New Range(Me.fctb, 0, startLine, 0, endLine)
+			Dim range As New TextSelectionRange(Me.fctb, 0, startLine, 0, endLine)
 			range.ClearFoldingMarkers()
 			range.SetFoldingMarkers("N\d\d00", "N\d\d99")
 			range.ClearStyle(StyleIndex.All)

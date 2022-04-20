@@ -15,7 +15,7 @@ namespace Tester {
 		}
 
 		private void GenerateText() {
-			Random rnd = new Random();
+			Random rnd = new();
 
 			fctb.BeginUpdate();
 			fctb.Selection.BeginUpdate();
@@ -35,14 +35,14 @@ namespace Tester {
 	}
 
 	internal class ReadOnlyFCTB : FastColoredTextBox {
-		readonly TextStyle linkStyle = new TextStyle(Brushes.Blue, null, FontStyle.Underline);
-		readonly TextStyle visitedLinkStyle = new TextStyle(Brushes.Brown, null, FontStyle.Underline);
-		readonly TextStyle boldStyle = new TextStyle(Brushes.Navy, null, FontStyle.Bold);
-		readonly List<BlockDesc> blockDescs = new List<BlockDesc>();
+		readonly TextStyle linkStyle = new(Brushes.Blue, null, FontStyle.Underline);
+		readonly TextStyle visitedLinkStyle = new(Brushes.Brown, null, FontStyle.Underline);
+		readonly TextStyle boldStyle = new(Brushes.Navy, null, FontStyle.Bold);
+		readonly List<BlockDesc> blockDescs = new();
 
 		Point lastMouseCoord;
 		Place lastPlace;
-		readonly Place emptyPlace = new Place(-1, -1);
+		readonly Place emptyPlace = new(-1, -1);
 
 		public ReadOnlyFCTB() {
 			ReadOnly = true;
@@ -105,7 +105,7 @@ namespace Tester {
 		protected override void OnMouseDown(MouseEventArgs e) {
 			var desc = GetDesc(lastPlace);
 			if (desc != null && !string.IsNullOrEmpty(desc.URL)) {
-				var r = new Range(this, desc.Start, desc.End);
+				var r = new TextSelectionRange(this, desc.Start, desc.End);
 				r.ClearStyle(linkStyle);
 				r.SetStyle(visitedLinkStyle);
 				BeginInvoke(new MethodInvoker(() => Process.Start(desc.URL)));

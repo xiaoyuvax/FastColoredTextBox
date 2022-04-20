@@ -11,7 +11,7 @@ namespace FastColoredTextBoxNS.Feature {
 	/// </summary>
 	public class Hints : ICollection<Hint>, IDisposable {
 		readonly FastColoredTextBox tb;
-		readonly List<Hint> items = new List<Hint>();
+		readonly List<Hint> items = new();
 
 		public Hints(FastColoredTextBox tb) {
 			this.tb = tb;
@@ -31,6 +31,7 @@ namespace FastColoredTextBoxNS.Feature {
 			tb.TextChanged -= OnTextBoxTextChanged;
 			tb.KeyDown -= OnTextBoxKeyDown;
 			tb.VisibleRangeChanged -= OnTextBoxVisibleRangeChanged;
+			GC.SuppressFinalize(this);
 		}
 
 		void OnTextBoxVisibleRangeChanged(object sender, EventArgs e) {
@@ -180,7 +181,7 @@ namespace FastColoredTextBoxNS.Feature {
 		/// <summary>
 		/// Linked range
 		/// </summary>
-		public Range Range { get; set; }
+		public TextSelectionRange Range { get; set; }
 		/// <summary>
 		/// Backcolor
 		/// </summary>
@@ -257,7 +258,7 @@ namespace FastColoredTextBoxNS.Feature {
 			Range.tb.Invalidate();
 		}
 
-		private Hint(Range range, Control innerControl, string text, bool inline, bool dock) {
+		private Hint(TextSelectionRange range, Control innerControl, string text, bool inline, bool dock) {
 			Range = range;
 			Inline = inline;
 			InnerControl = innerControl;
@@ -275,7 +276,7 @@ namespace FastColoredTextBoxNS.Feature {
 		/// <param name="text">Text for simple hint</param>
 		/// <param name="inline">Inlining. If True then hint will moves apart text</param>
 		/// <param name="dock">Docking. If True then hint will fill whole line</param>
-		public Hint(Range range, string text, bool inline, bool dock)
+		public Hint(TextSelectionRange range, string text, bool inline, bool dock)
 			: this(range, null, text, inline, dock) {
 		}
 
@@ -284,7 +285,7 @@ namespace FastColoredTextBoxNS.Feature {
 		/// </summary>
 		/// <param name="range">Linked range</param>
 		/// <param name="text">Text for simple hint</param>
-		public Hint(Range range, string text)
+		public Hint(TextSelectionRange range, string text)
 			: this(range, null, text, true, true) {
 		}
 
@@ -295,7 +296,7 @@ namespace FastColoredTextBoxNS.Feature {
 		/// <param name="innerControl">Inner control</param>
 		/// <param name="inline">Inlining. If True then hint will moves apart text</param>
 		/// <param name="dock">Docking. If True then hint will fill whole line</param>
-		public Hint(Range range, Control innerControl, bool inline, bool dock)
+		public Hint(TextSelectionRange range, Control innerControl, bool inline, bool dock)
 			: this(range, innerControl, null, inline, dock) {
 		}
 
@@ -304,7 +305,7 @@ namespace FastColoredTextBoxNS.Feature {
 		/// </summary>
 		/// <param name="range">Linked range</param>
 		/// <param name="innerControl">Inner control</param>
-		public Hint(Range range, Control innerControl)
+		public Hint(TextSelectionRange range, Control innerControl)
 			: this(range, innerControl, null, true, true) {
 		}
 

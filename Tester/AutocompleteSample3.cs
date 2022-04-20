@@ -46,7 +46,7 @@ namespace Tester {
 			var parts = text.Split('.');
 			if (parts.Length < 2)
 				yield break;
-			var className = parts[parts.Length - 2];
+			var className = parts[^2];
 
 			//find type for given className
 			var type = FindTypeByName(className);
@@ -69,7 +69,7 @@ namespace Tester {
 				};
 		}
 
-		Type FindTypeByName(string name) {
+		static Type FindTypeByName(string name) {
 			Assembly[] assemblies = AppDomain.CurrentDomain.GetAssemblies();
 			foreach (var a in assemblies) {
 				foreach (var t in a.GetTypes())

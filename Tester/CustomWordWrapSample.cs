@@ -8,7 +8,7 @@ namespace Tester {
 			InitializeComponent();
 		}
 
-		private readonly Regex regex = new Regex(@"&&|&|\|\||\|");
+		private readonly Regex regex = new(@"&&|&|\|\||\|");
 
 		private void Fctb_WordWrapNeeded(object sender, WordWrapNeededEventArgs e) {
 			//var max = (fctb.ClientSize.Width - fctb.LeftIndent)/fctb.CharWidth;

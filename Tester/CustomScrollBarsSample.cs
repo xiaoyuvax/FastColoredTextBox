@@ -19,7 +19,7 @@ namespace Tester {
 		/// <summary>
 		/// This method for MyScrollBar
 		/// </summary>
-		private void AdjustScrollbar(MyScrollBar scrollBar, int max, int value) {
+		private static void AdjustScrollbar(MyScrollBar scrollBar, int max, int value) {
 			scrollBar.Maximum = max;
 			scrollBar.Visible = max > 0;
 			scrollBar.Value = Math.Min(scrollBar.Maximum, value);
@@ -28,7 +28,7 @@ namespace Tester {
 		/// <summary>
 		/// This method for System.Windows.Forms.ScrollBar and inherited classes
 		/// </summary>
-		private void AdjustScrollbar(ScrollBar scrollBar, int max, int value, int clientSize) {
+		private static void AdjustScrollbar(ScrollBar scrollBar, int max, int value, int clientSize) {
 			scrollBar.LargeChange = clientSize / 3;
 			scrollBar.SmallChange = clientSize / 11;
 			scrollBar.Maximum = max + scrollBar.LargeChange;
@@ -140,8 +140,8 @@ namespace Tester {
 			using (var brush = new SolidBrush(thumbColor))
 				e.Graphics.FillRectangle(brush, thumbRect);
 
-			using (var pen = new Pen(borderColor))
-				e.Graphics.DrawRectangle(pen, new Rectangle(0, 0, Width - 1, Height - 1));
+			using var pen = new Pen(borderColor);
+			e.Graphics.DrawRectangle(pen, new Rectangle(0, 0, Width - 1, Height - 1));
 		}
 	}
 

@@ -9,11 +9,9 @@ using System.Windows.Forms;
 
 namespace Tester {
 	public partial class CustomTextSourceSample2 : Form {
-		public CustomTextSourceSample2() {
-			InitializeComponent();
-		}
+		public CustomTextSourceSample2() => InitializeComponent();
 
-		private string CreateBigString() {
+		private static string CreateBigString() {
 			var sb = new StringBuilder();
 			var counter = 1;
 
@@ -41,7 +39,7 @@ namespace Tester {
 	}
 
 	public class TextSourceWithLineFiltering : TextSource {
-		readonly List<int> toSourceIndex = new List<int>();
+		readonly List<int> toSourceIndex = new();
 		private string _lineFilterRegex;
 
 		public string LineFilterRegex {

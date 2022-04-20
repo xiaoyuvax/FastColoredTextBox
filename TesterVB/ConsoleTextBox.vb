@@ -1,4 +1,5 @@
 Imports System.Threading
+Imports FastColoredTextBoxNS.Types
 
 Namespace TesterVB
 	Public Class ConsoleTextBox
@@ -44,7 +45,7 @@ Namespace TesterVB
 				Me.IsReadLineMode = False
 				MyBase.ClearUndo()
 			End Try
-			Return New Range(Me, Me.StartReadPlace, MyBase.Range.[End]).Text.TrimEnd(New Char() {vbCr, vbLf})
+			Return New TextSelectionRange(Me, Me.StartReadPlace, MyBase.Range.[End]).Text.TrimEnd(New Char() {vbCr, vbLf})
 		End Function
 
 		Public Overrides Sub OnTextChanging(ByRef text As String)

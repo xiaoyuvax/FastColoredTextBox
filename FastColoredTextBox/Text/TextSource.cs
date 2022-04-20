@@ -13,7 +13,7 @@ namespace FastColoredTextBoxNS.Text {
 	/// It stores a text lines, the manager of commands, undo/redo stack, styles.
 	/// </summary>
 	public class TextSource : IList<Line>, IDisposable {
-		readonly protected List<Line> lines = new List<Line>();
+		readonly protected List<Line> lines = new();
 		protected LinesAccessor linesAccessor;
 		int lastLineUniqueId;
 		public CommandManager Manager { get; set; }
@@ -68,7 +68,7 @@ namespace FastColoredTextBoxNS.Text {
 				line.IsChanged = false;
 		}
 
-		public virtual Line CreateLine() => new Line(GenerateUniqueLineId());
+		public virtual Line CreateLine() => new(GenerateUniqueLineId());
 		private void OnCurrentTBChanged() => CurrentTBChanged?.Invoke(this, EventArgs.Empty);
 
 		/// <summary>
@@ -123,7 +123,7 @@ namespace FastColoredTextBoxNS.Text {
 		public virtual bool IsNeedBuildRemovedLineIds => LineRemoved != null;
 
 		public virtual void RemoveLine(int index, int count) {
-			List<int> removedLineIds = new List<int>();
+			List<int> removedLineIds = new();
 			//
 			if (count > 0)
 				if (IsNeedBuildRemovedLineIds)
@@ -196,15 +196,16 @@ namespace FastColoredTextBoxNS.Text {
 		public virtual int GetLineLength(int i) => lines[i].Count;
 		public virtual bool LineHasFoldingStartMarker(int iLine) => !string.IsNullOrEmpty(lines[iLine].FoldingStartMarker);
 		public virtual bool LineHasFoldingEndMarker(int iLine) => !string.IsNullOrEmpty(lines[iLine].FoldingEndMarker);
-		public virtual void Dispose() { }
+		public virtual void Dispose() {
+			GC.SuppressFinalize(this);
+		}
 
 		public virtual void SaveToFile(string fileName, Encoding enc) {
-			using (StreamWriter sw = new StreamWriter(fileName, false, enc)) {
-				for (int i = 0; i < Count - 1; i++)
-					sw.WriteLine(lines[i].Text);
+			using StreamWriter sw = new(fileName, false, enc);
+			for (int i = 0; i < Count - 1; i++)
+				sw.WriteLine(lines[i].Text);
 
-				sw.Write(lines[Count - 1].Text);
-			}
+			sw.Write(lines[Count - 1].Text);
 		}
 	}
 }

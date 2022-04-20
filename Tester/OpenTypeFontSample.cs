@@ -25,22 +25,21 @@ namespace Tester {
 
 		#region Build OpenType font list
 
-		readonly List<ENUMLOGFONTEX> fontList = new List<ENUMLOGFONTEX>();
+		readonly List<ENUMLOGFONTEX> fontList = new();
 
 		protected override void OnLoad(EventArgs e) {
 			//build list of OpenType fonts
-			LOGFONT lf = new LOGFONT();
+			LOGFONT lf = new();
 
 			IntPtr plogFont = Marshal.AllocHGlobal(Marshal.SizeOf(lf));
 			Marshal.StructureToPtr(lf, plogFont, true);
 
 			try {
 				fontList.Clear();
-				using (Graphics G = CreateGraphics()) {
-					IntPtr P = G.GetHdc();
-					EnumFontFamiliesEx(P, plogFont, Callback, IntPtr.Zero, 0);
-					G.ReleaseHdc(P);
-				}
+				using Graphics G = CreateGraphics();
+				IntPtr P = G.GetHdc();
+				_ = EnumFontFamiliesEx(P, plogFont, Callback, IntPtr.Zero, 0);
+				G.ReleaseHdc(P);
 			} finally {
 				Marshal.DestroyStructure(plogFont, typeof(LOGFONT));
 			}
@@ -130,51 +129,50 @@ namespace Tester {
 		public OpenTypeFontStyle(FastColoredTextBox fctb, LOGFONT font) : base(null, null, FontStyle.Regular) {
 			this.font = font;
 			//measure font
-			using (var gr = fctb.CreateGraphics()) {
-				var HDC = gr.GetHdc();
+			using var gr = fctb.CreateGraphics();
+			var HDC = gr.GetHdc();
 
-				var fontHandle = CreateFontIndirect(font);
-				var f = SelectObject(HDC, fontHandle);
+			var fontHandle = CreateFontIndirect(font);
+			var f = SelectObject(HDC, fontHandle);
 
-				var measureSize = new Size(0, 0);
+			var measureSize = new Size(0, 0);
 
-				try {
-					GetTextExtentPoint(HDC, "M", 1, ref measureSize);
-				} finally {
-					DeleteObject(SelectObject(HDC, f));
-					gr.ReleaseHdc(HDC);
-				}
-
-				fctb.CharWidth = measureSize.Width;
-				fctb.CharHeight = measureSize.Height + fctb.LineInterval;
-				fctb.NeedRecalc(true, true);
+			try {
+				GetTextExtentPoint(HDC, "M", 1, ref measureSize);
+			} finally {
+				DeleteObject(SelectObject(HDC, f));
+				gr.ReleaseHdc(HDC);
 			}
+
+			fctb.CharWidth = measureSize.Width;
+			fctb.CharHeight = measureSize.Height + fctb.LineInterval;
+			fctb.NeedRecalc(true, true);
 		}
 
 		[DllImport("gdi32.dll", CharSet = CharSet.Auto)]
-		public static extern IntPtr CreateFontIndirect([In, MarshalAs(UnmanagedType.LPStruct)] LOGFONT lplf);
-		[DllImport("gdi32.dll")]
+		private static extern IntPtr CreateFontIndirect([In, MarshalAs(UnmanagedType.LPStruct)] LOGFONT lplf);
+		[DllImport("gdi32.dll", CharSet = CharSet.Unicode)]
 		static extern bool TextOut(IntPtr hdc, int nXStart, int nYStart, string lpString, int cbString);
-		[DllImport("gdi32.dll")]
+		[DllImport("gdi32.dll", CharSet = CharSet.Unicode)]
 		static extern bool GetTextExtentPoint(IntPtr hdc, string lpString, int cbString, ref Size lpSize);
 		[DllImport("gdi32.dll")]
 		static extern IntPtr SelectObject(IntPtr hdc, IntPtr hgdiobj);
 		[DllImport("gdi32.dll")]
 		static extern bool DeleteObject(IntPtr objectHandle);
 		[DllImport("gdi32.dll")]
-		public static extern int SetBkColor(IntPtr hDC, int crColor);
+		private static extern int SetBkColor(IntPtr hDC, int crColor);
 		[DllImport("gdi32.dll")]
 		static extern uint SetTextColor(IntPtr hdc, int crColor);
 
 
-		public override void Draw(Graphics gr, Point position, Range range) {
+		public override void Draw(Graphics gr, Point position, TextSelectionRange range) {
 			//create font
 			IntPtr HDC = gr.GetHdc();
 			var fontHandle = CreateFontIndirect(font);
 			var f = SelectObject(HDC, fontHandle);
 			//set foreground and background colors
-			SetTextColor(HDC, ColorTranslator.ToWin32(range.tb.ForeColor));
-			SetBkColor(HDC, ColorTranslator.ToWin32(range.tb.BackColor));
+			_ = SetTextColor(HDC, ColorTranslator.ToWin32(range.tb.ForeColor));
+			_ = SetBkColor(HDC, ColorTranslator.ToWin32(range.tb.BackColor));
 
 
 			//draw background

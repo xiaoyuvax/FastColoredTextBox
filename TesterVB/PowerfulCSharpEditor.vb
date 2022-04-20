@@ -1,7 +1,6 @@
 Imports System.ComponentModel
 Imports System.Drawing.Drawing2D
 Imports System.IO
-Imports System.Linq
 Imports System.Text.RegularExpressions
 Imports System.Threading
 Imports FarsiLibrary.Win
@@ -130,7 +129,7 @@ Namespace TesterVB
 			End Sub
 
 			Public Overrides Function Compare(fragmentText As String) As CompareResult
-				Dim r As Range = MyBase.Parent.Fragment.Clone()
+				Dim r As TextSelectionRange = MyBase.Parent.Fragment.Clone()
 				Dim result As CompareResult
 				While r.Start.iChar > 0
 					If r.CharBeforeStart = "}" Then
@@ -145,7 +144,7 @@ Namespace TesterVB
 			End Function
 
 			Public Overrides Function GetTextForReplace() As String
-				Dim r As Range = MyBase.Parent.Fragment
+				Dim r As TextSelectionRange = MyBase.Parent.Fragment
 				Dim [end] As Place = r.[End]
 				r.Start = Me.enterPlace
 				r.[End] = r.[End]
@@ -972,8 +971,8 @@ Namespace TesterVB
 		Private Sub PopupMenu_Opening(sender As Object, e As CancelEventArgs)
 			Dim iGreenStyle As Integer = Me.CurrentTB.GetStyleIndex(Me.CurrentTB.SyntaxHighlighter.GreenStyle)
 			If iGreenStyle >= 0 AndAlso Me.CurrentTB.Selection.Start.iChar > 0 Then
-				Dim c As FastColoredTextBoxNS.Char = Me.CurrentTB(Me.CurrentTB.Selection.Start.iLine)(Me.CurrentTB.Selection.Start.iChar - 1)
-				Dim greenStyleIndex As StyleIndex = Range.ToStyleIndex(iGreenStyle)
+				Dim c As StyledChar = Me.CurrentTB(Me.CurrentTB.Selection.Start.iLine)(Me.CurrentTB.Selection.Start.iChar - 1)
+				Dim greenStyleIndex As StyleIndex = TextSelectionRange.ToStyleIndex(iGreenStyle)
 				If CUShort(c.style And greenStyleIndex) <> 0 Then
 					e.Cancel = True
 				End If
@@ -1030,7 +1029,7 @@ Namespace TesterVB
 		Private Sub Tb_MouseMove(sender As Object, e As MouseEventArgs)
 			Dim tb As FastColoredTextBox = TryCast(sender, FastColoredTextBox)
 			Dim place As Place = tb.PointToPlace(e.Location)
-			Dim r As New Range(tb, place, place)
+			Dim r As New TextSelectionRange(tb, place, place)
 			Dim text As String = r.GetFragment("[a-zA-Z]").Text
 			Me.LbWordUnderMouse.Text = text
 		End Sub
@@ -1060,14 +1059,14 @@ Namespace TesterVB
 			End If
 			tb.VisibleRange.ClearStyle(New Style() {tb.Styles(0)})
 			If tb.Selection.IsEmpty Then
-				Dim fragment As Range = tb.Selection.GetFragment("\w")
+				Dim fragment As TextSelectionRange = tb.Selection.GetFragment("\w")
 				Dim text As String = fragment.Text
 				If text.Length <> 0 Then
-					Dim ranges As Range() = tb.VisibleRange.GetRanges("\b" + text + "\b").ToArray()
+					Dim ranges As TextSelectionRange() = tb.VisibleRange.GetRanges("\b" + text + "\b").ToArray()
 					If ranges.Length > 1 Then
-						Dim array As Range() = ranges
+						Dim array As TextSelectionRange() = ranges
 						For i As Integer = 0 To array.Length - 1
-							Dim r As Range = array(i)
+							Dim r As TextSelectionRange = array(i)
 							r.SetStyle(tb.Styles(0))
 						Next
 					End If
@@ -1084,7 +1083,7 @@ Namespace TesterVB
 			Me.HighlightInvisibleChars(e.ChangedRange)
 		End Sub
 
-		Private Sub HighlightInvisibleChars(range As Range)
+		Private Sub HighlightInvisibleChars(range As TextSelectionRange)
 			range.ClearStyle(New Style() {Me.invisibleCharsStyle})
 			If Me.BtInvisibleChars.Checked Then
 				range.SetStyle(Me.invisibleCharsStyle, ".$|.\r\n|\s")
@@ -1116,7 +1115,7 @@ Namespace TesterVB
 								item.title = item.title.Substring(ii).Trim()
 								item.type = PowerfulCSharpEditor.ExplorerItemType.[Event]
 							Else
-								If item.title.Contains("(") Then
+								If item.title.Contains("("c) Then
 									Dim parts As String() = item.title.Split(New Char() {"("})
 									item.title = parts(0).Substring(parts(0).LastIndexOf(" ")).Trim() + "(" + parts(1)
 									item.type = PowerfulCSharpEditor.ExplorerItemType.Method
@@ -1288,13 +1287,13 @@ Namespace TesterVB
 
 		Private Sub TbFind_KeyPress(sender As Object, e As KeyPressEventArgs) Handles TbFind.KeyPress
 			If e.KeyChar = vbCr AndAlso Me.CurrentTB IsNot Nothing Then
-				Dim r As Range = If(Me.tbFindChanged, Me.CurrentTB.Range.Clone(), Me.CurrentTB.Selection.Clone())
+				Dim r As TextSelectionRange = If(Me.tbFindChanged, Me.CurrentTB.Range.Clone(), Me.CurrentTB.Selection.Clone())
 				Me.tbFindChanged = False
 				r.[End] = New Place(Me.CurrentTB(Me.CurrentTB.LinesCount - 1).Count, Me.CurrentTB.LinesCount - 1)
 				Dim pattern As String = Regex.Escape(Me.TbFind.Text)
-				Using enumerator As IEnumerator(Of Range) = r.GetRanges(pattern).GetEnumerator()
+				Using enumerator As IEnumerator(Of TextSelectionRange) = r.GetRanges(pattern).GetEnumerator()
 					If enumerator.MoveNext() Then
-						Dim found As Range = enumerator.Current
+						Dim found As TextSelectionRange = enumerator.Current
 						found.Inverse()
 						Me.CurrentTB.Selection = found
 						Me.CurrentTB.DoSelectionVisible()

@@ -31,7 +31,7 @@ namespace Tester {
 			//expand visible range (+- margin)
 			var startLine = Math.Max(0, fctb.VisibleRange.Start.iLine - margin);
 			var endLine = Math.Min(fctb.LinesCount - 1, fctb.VisibleRange.End.iLine + margin);
-			var range = new Range(fctb, 0, startLine, 0, endLine);
+			var range = new TextSelectionRange(fctb, 0, startLine, 0, endLine);
 			//clear folding markers
 			range.ClearFoldingMarkers();
 			//set markers for folding
@@ -52,10 +52,10 @@ namespace Tester {
 		}
 
 		private void CreateTestFileToolStripMenuItem_Click(object sender, EventArgs e) {
-			Random rnd = new Random();
+			Random rnd = new();
 
 			if (sfd.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-				using (StreamWriter sw = new StreamWriter(sfd.FileName, false, Encoding.Default)) {
+				using (StreamWriter sw = new(sfd.FileName, false, Encoding.Default)) {
 					//create large test file
 					for (int j = 0; j < 130; j++) {
 						sw.WriteLine("\r\n--====" + j + "=====--\r\n");

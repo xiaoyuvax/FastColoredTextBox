@@ -23,9 +23,9 @@ namespace FastColoredTextBoxNS.Text {
 		public readonly Style BlackStyle = new TextStyle(Brushes.Black, null, FontStyle.Regular);
 		//
 		protected readonly Dictionary<string, SyntaxDescriptor> descByXMLfileNames =
-			new Dictionary<string, SyntaxDescriptor>();
+			new();
 
-		protected readonly List<Style> resilientStyles = new List<Style>(5);
+		protected readonly List<Style> resilientStyles = new(5);
 
 		protected Regex CSharpAttributeRegex,
 					  CSharpClassNameRegex;
@@ -137,6 +137,7 @@ namespace FastColoredTextBoxNS.Text {
 		public void Dispose() {
 			foreach (SyntaxDescriptor desc in descByXMLfileNames.Values)
 				desc.Dispose();
+			GC.SuppressFinalize(this);
 		}
 
 		#endregion
@@ -144,7 +145,7 @@ namespace FastColoredTextBoxNS.Text {
 		/// <summary>
 		/// Highlights syntax for given language
 		/// </summary>
-		public virtual void HighlightSyntax(Language language, Range range) {
+		public virtual void HighlightSyntax(Language language, TextSelectionRange range) {
 			switch (language) {
 				case Language.CSharp:
 					CSharpSyntaxHighlight(range);
@@ -181,7 +182,7 @@ namespace FastColoredTextBoxNS.Text {
 		/// <summary>
 		/// Highlights syntax for given XML description file
 		/// </summary>
-		public virtual void HighlightSyntax(string XMLdescriptionFile, Range range) {
+		public virtual void HighlightSyntax(string XMLdescriptionFile, TextSelectionRange range) {
 			if (!descByXMLfileNames.TryGetValue(XMLdescriptionFile, out SyntaxDescriptor desc)) {
 				var doc = new XmlDocument();
 				string file = XMLdescriptionFile;
@@ -470,14 +471,14 @@ namespace FastColoredTextBoxNS.Text {
 			if (s.StartsWith("#")) {
 				if (s.Length <= 7)
 					return Color.FromArgb(255,
-										  Color.FromArgb(int.Parse(s.Substring(1), NumberStyles.AllowHexSpecifier)));
+										  Color.FromArgb(int.Parse(s[1..], NumberStyles.AllowHexSpecifier)));
 				else
-					return Color.FromArgb(int.Parse(s.Substring(1), NumberStyles.AllowHexSpecifier));
+					return Color.FromArgb(int.Parse(s[1..], NumberStyles.AllowHexSpecifier));
 			} else
 				return Color.FromName(s);
 		}
 
-		public void HighlightSyntax(SyntaxDescriptor desc, Range range) {
+		public void HighlightSyntax(SyntaxDescriptor desc, TextSelectionRange range) {
 			//set style order
 			range.tb.ClearStylesBuffer();
 			for (int i = 0; i < desc.styles.Count; i++)
@@ -507,14 +508,14 @@ namespace FastColoredTextBoxNS.Text {
 			RestoreBrackets(range.tb, oldBrackets);
 		}
 
-		protected void RestoreBrackets(FastColoredTextBox tb, char[] oldBrackets) {
+		protected static void RestoreBrackets(FastColoredTextBox tb, char[] oldBrackets) {
 			tb.LeftBracket = oldBrackets[0];
 			tb.RightBracket = oldBrackets[1];
 			tb.LeftBracket2 = oldBrackets[2];
 			tb.RightBracket2 = oldBrackets[3];
 		}
 
-		protected char[] RememberBrackets(FastColoredTextBox tb) => new[] { tb.LeftBracket, tb.RightBracket, tb.LeftBracket2, tb.RightBracket2 };
+		protected static char[] RememberBrackets(FastColoredTextBox tb) => new[] { tb.LeftBracket, tb.RightBracket, tb.LeftBracket2, tb.RightBracket2 };
 
 		protected void InitCShaprRegex() {
 			//CSharpStringRegex = new Regex( @"""""|@""""|''|@"".*?""|(?<!@)(?<range>"".*?[^\\]"")|'.*?[^\\]'", RegexCompiledOption);
@@ -647,7 +648,7 @@ namespace FastColoredTextBoxNS.Text {
 		/// Highlights C# code
 		/// </summary>
 		/// <param name="range"></param>
-		public virtual void CSharpSyntaxHighlight(Range range) {
+		public virtual void CSharpSyntaxHighlight(TextSelectionRange range) {
 			range.tb.CommentPrefix = "//";
 			range.tb.LeftBracket = '(';
 			range.tb.RightBracket = ')';
@@ -681,7 +682,7 @@ namespace FastColoredTextBoxNS.Text {
 			range.SetStyle(KeywordStyle, CSharpKeywordRegex);
 
 			//find document comments
-			foreach (Range r in range.GetRanges(@"^\s*///.*$", RegexOptions.Multiline)) {
+			foreach (TextSelectionRange r in range.GetRanges(@"^\s*///.*$", RegexOptions.Multiline)) {
 				//remove C# highlighting from this fragment
 				r.ClearStyle(StyleIndex.All);
 				//do XML highlighting
@@ -690,12 +691,12 @@ namespace FastColoredTextBoxNS.Text {
 				//
 				r.SetStyle(CommentStyle);
 				//tags
-				foreach (Range rr in r.GetRanges(HTMLTagContentRegex)) {
+				foreach (TextSelectionRange rr in r.GetRanges(HTMLTagContentRegex)) {
 					rr.ClearStyle(StyleIndex.All);
 					rr.SetStyle(CommentTagStyle);
 				}
 				//prefix '///'
-				foreach (Range rr in r.GetRanges(@"^\s*///", RegexOptions.Multiline)) {
+				foreach (TextSelectionRange rr in r.GetRanges(@"^\s*///", RegexOptions.Multiline)) {
 					rr.ClearStyle(StyleIndex.All);
 					rr.SetStyle(CommentTagStyle);
 				}
@@ -725,7 +726,7 @@ namespace FastColoredTextBoxNS.Text {
 		/// Highlights VB code
 		/// </summary>
 		/// <param name="range"></param>
-		public virtual void VBSyntaxHighlight(Range range) {
+		public virtual void VBSyntaxHighlight(TextSelectionRange range) {
 			range.tb.CommentPrefix = "'";
 			range.tb.LeftBracket = '(';
 			range.tb.RightBracket = ')';
@@ -794,7 +795,7 @@ namespace FastColoredTextBoxNS.Text {
 		/// Highlights HTML code
 		/// </summary>
 		/// <param name="range"></param>
-		public virtual void HTMLSyntaxHighlight(Range range) {
+		public virtual void HTMLSyntaxHighlight(TextSelectionRange range) {
 			range.tb.CommentPrefix = null;
 			range.tb.LeftBracket = '<';
 			range.tb.RightBracket = '>';
@@ -862,7 +863,7 @@ namespace FastColoredTextBoxNS.Text {
 		/// Highlights XML code
 		/// </summary>
 		/// <param name="range"></param>
-		public virtual void XMLSyntaxHighlight(Range range) {
+		public virtual void XMLSyntaxHighlight(TextSelectionRange range) {
 			range.tb.CommentPrefix = null;
 			range.tb.LeftBracket = '<';
 			range.tb.RightBracket = '>';
@@ -910,7 +911,7 @@ namespace FastColoredTextBoxNS.Text {
 			XmlFolding(range);
 		}
 
-		private void XmlFolding(Range range) {
+		private void XmlFolding(TextSelectionRange range) {
 			var stack = new Stack<XmlFoldingTag>();
 			var id = 0;
 			var fctb = range.tb;
@@ -973,7 +974,7 @@ namespace FastColoredTextBoxNS.Text {
 		/// Highlights SQL code
 		/// </summary>
 		/// <param name="range"></param>
-		public virtual void SQLSyntaxHighlight(Range range) {
+		public virtual void SQLSyntaxHighlight(TextSelectionRange range) {
 			range.tb.CommentPrefix = "--";
 			range.tb.LeftBracket = '(';
 			range.tb.RightBracket = ')';
@@ -1039,7 +1040,7 @@ namespace FastColoredTextBoxNS.Text {
 		/// Highlights PHP code
 		/// </summary>
 		/// <param name="range"></param>
-		public virtual void PHPSyntaxHighlight(Range range) {
+		public virtual void PHPSyntaxHighlight(TextSelectionRange range) {
 			range.tb.CommentPrefix = "//";
 			range.tb.LeftBracket = '(';
 			range.tb.RightBracket = ')';
@@ -1098,7 +1099,7 @@ namespace FastColoredTextBoxNS.Text {
 		/// Highlights JavaScript code
 		/// </summary>
 		/// <param name="range"></param>
-		public virtual void JScriptSyntaxHighlight(Range range) {
+		public virtual void JScriptSyntaxHighlight(TextSelectionRange range) {
 			range.tb.CommentPrefix = "//";
 			range.tb.LeftBracket = '(';
 			range.tb.RightBracket = ')';
@@ -1156,7 +1157,7 @@ namespace FastColoredTextBoxNS.Text {
 		/// Highlights Lua code
 		/// </summary>
 		/// <param name="range"></param>
-		public virtual void LuaSyntaxHighlight(Range range) {
+		public virtual void LuaSyntaxHighlight(TextSelectionRange range) {
 			range.tb.CommentPrefix = "--";
 			range.tb.LeftBracket = '(';
 			range.tb.RightBracket = ')';
@@ -1226,7 +1227,7 @@ namespace FastColoredTextBoxNS.Text {
 		/// Highlights JSON code
 		/// </summary>
 		/// <param name="range"></param>
-		public virtual void JSONSyntaxHighlight(Range range) {
+		public virtual void JSONSyntaxHighlight(TextSelectionRange range) {
 			range.tb.LeftBracket = '[';
 			range.tb.RightBracket = ']';
 			range.tb.LeftBracket2 = '{';
@@ -1381,19 +1382,20 @@ namespace FastColoredTextBoxNS.Text {
 		/// Converts a string like "lua" or "csharp" to a Language
 		/// </summary>
 		public static Language StringToLanguage(string language) {
-			switch (language.Trim().ToLower()) {
-				case "lua": return Language.Lua;
-				case "html": return Language.HTML;
-				case "xml": return Language.XML;
-				case "sql": return Language.SQL;
-				case "vb": return Language.VB;
-				case "cs": return Language.CSharp;
-				case "csharp": return Language.CSharp;
-				case "java": return Language.CSharp;
-				case "js": return Language.JS;
-				case "php": return Language.PHP;
-				default: return Language.Custom;
+			return language.Trim().ToLower() switch {
+				"lua" => Language.Lua,
+				"html" => Language.HTML,
+				"xml" => Language.XML,
+				"sql" => Language.SQL,
+				"vb" => Language.VB,
+				"cs" => Language.CSharp,
+				"csharp" => Language.CSharp,
+				"java" => Language.CSharp,
+				"js" => Language.JS,
+				"php" => Language.PHP,
+				_ => Language.Custom,
 			};
+			;
 		}
 	}
 

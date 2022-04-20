@@ -8,17 +8,17 @@ namespace Tester {
 	public partial class Sandbox : Form {
 		public Sandbox() => InitializeComponent();
 		private void Button1_Click(object sender, EventArgs e) => fctb.SelectedText = "new line value";
-		private readonly ColorStyle colorStyle = new ColorStyle(Brushes.Black, Brushes.White, FontStyle.Regular);
+		private readonly ColorStyle colorStyle = new(Brushes.Black, Brushes.White, FontStyle.Regular);
 		private void Fctb_TextChanged(object sender, TextChangedEventArgs e) => e.ChangedRange.SetStyle(colorStyle, @"Color\.\w+");
 	}
 
 	class ColorStyle : TextStyle {
 		public ColorStyle(Brush foreBrush, Brush backgroundBrush, FontStyle fontStyle) : base(foreBrush, backgroundBrush, fontStyle) { }
 
-		public override void Draw(Graphics gr, Point position, Range range) {
+		public override void Draw(Graphics gr, Point position, TextSelectionRange range) {
 			//get color name
 			var parts = range.Text.Split('.');
-			var colorName = parts[parts.Length - 1];
+			var colorName = parts[^1];
 			var color = Color.FromName(colorName);
 			(BackgroundBrush as SolidBrush).Color = color;
 			base.Draw(gr, position, range);

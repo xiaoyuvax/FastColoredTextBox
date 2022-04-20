@@ -12,9 +12,8 @@ namespace FastColoredTextBoxNS.Text {
 		const long _defaultHeuristicSampleSize = 0x10000; //completely arbitrary - inappropriate for high numbers of files / high speed requirements
 
 		public static Encoding DetectTextFileEncoding(string InputFilename) {
-			using (FileStream textfileStream = File.OpenRead(InputFilename)) {
-				return DetectTextFileEncoding(textfileStream);
-			}
+			using FileStream textfileStream = File.OpenRead(InputFilename);
+			return DetectTextFileEncoding(textfileStream);
 		}
 
 		public static Encoding DetectTextFileEncoding(FileStream InputFileStream) {
@@ -165,7 +164,7 @@ namespace FastColoredTextBoxNS.Text {
 			//  http://www.w3.org/International/questions/qa-forms-utf-8
 			//  adapted here for C#.
 			string potentiallyMangledString = Encoding.ASCII.GetString(SampleBytes);
-			Regex UTF8Validator = new Regex(@"\A("
+			Regex UTF8Validator = new(@"\A("
 				+ @"[\x09\x0A\x0D\x20-\x7E]"
 				+ @"|[\xC2-\xDF][\x80-\xBF]"
 				+ @"|\xE0[\xA0-\xBF][\x80-\xBF]"

@@ -8,7 +8,7 @@ namespace FastColoredTextBoxNS.Types {
 	/// <summary>
 	/// Diapason of text chars
 	/// </summary>
-	public class Range : IEnumerable<Place> {
+	public class TextSelectionRange : IEnumerable<Place> {
 		Place start;
 		Place end;
 		public readonly FastColoredTextBox tb;
@@ -22,7 +22,7 @@ namespace FastColoredTextBoxNS.Types {
 		/// <summary>
 		/// Constructor
 		/// </summary>
-		public Range(FastColoredTextBox tb) => this.tb = tb;
+		public TextSelectionRange(FastColoredTextBox tb) => this.tb = tb;
 
 		/// <summary>
 		/// Return true if no selected text
@@ -48,7 +48,7 @@ namespace FastColoredTextBoxNS.Types {
 		/// <summary>
 		/// Constructor
 		/// </summary>
-		public Range(FastColoredTextBox tb, int iStartChar, int iStartLine, int iEndChar, int iEndLine)
+		public TextSelectionRange(FastColoredTextBox tb, int iStartChar, int iStartLine, int iEndChar, int iEndLine)
 			: this(tb) {
 			start = new Place(iStartChar, iStartLine);
 			end = new Place(iEndChar, iEndLine);
@@ -57,7 +57,7 @@ namespace FastColoredTextBoxNS.Types {
 		/// <summary>
 		/// Constructor
 		/// </summary>
-		public Range(FastColoredTextBox tb, Place start, Place end)
+		public TextSelectionRange(FastColoredTextBox tb, Place start, Place end)
 			: this(tb) {
 			this.start = start;
 			this.end = end;
@@ -66,7 +66,7 @@ namespace FastColoredTextBoxNS.Types {
 		/// <summary>
 		/// Constructor. Creates range of the line
 		/// </summary>
-		public Range(FastColoredTextBox tb, int iLine)
+		public TextSelectionRange(FastColoredTextBox tb, int iLine)
 			: this(tb) {
 			start = new Place(0, iLine);
 			end = new Place(tb[iLine].Count, iLine);
@@ -99,18 +99,18 @@ namespace FastColoredTextBoxNS.Types {
 		/// </summary>
 		/// <param name="range"></param>
 		/// <returns></returns>
-		public virtual Range GetIntersectionWith(Range range) {
+		public virtual TextSelectionRange GetIntersectionWith(TextSelectionRange range) {
 			if (ColumnSelectionMode)
 				return GetIntersectionWith_ColumnSelectionMode(range);
 
-			Range r1 = this.Clone();
-			Range r2 = range.Clone();
+			TextSelectionRange r1 = this.Clone();
+			TextSelectionRange r2 = range.Clone();
 			r1.Normalize();
 			r2.Normalize();
 			Place newStart = r1.Start > r2.Start ? r1.Start : r2.Start;
 			Place newEnd = r1.End < r2.End ? r1.End : r2.End;
 			if (newEnd < newStart)
-				return new Range(tb, start, start);
+				return new TextSelectionRange(tb, start, start);
 			return tb.GetRange(newStart, newEnd);
 		}
 
@@ -119,9 +119,9 @@ namespace FastColoredTextBoxNS.Types {
 		/// </summary>
 		/// <param name="range"></param>
 		/// <returns></returns>
-		public Range GetUnionWith(Range range) {
-			Range r1 = this.Clone();
-			Range r2 = range.Clone();
+		public TextSelectionRange GetUnionWith(TextSelectionRange range) {
+			TextSelectionRange r1 = this.Clone();
+			TextSelectionRange r2 = range.Clone();
 			r1.Normalize();
 			r2.Normalize();
 			Place newStart = r1.Start < r2.Start ? r1.Start : r2.Start;
@@ -190,7 +190,7 @@ namespace FastColoredTextBoxNS.Types {
 				int toChar = ToX;
 				if (fromLine < 0) return null;
 				//
-				StringBuilder sb = new StringBuilder();
+				StringBuilder sb = new();
 				for (int y = fromLine; y <= toLine; y++) {
 					int fromX = y == fromLine ? fromChar : 0;
 					int toX = y == toLine ? Math.Min(tb[y].Count - 1, toChar - 1) : tb[y].Count - 1;
@@ -249,7 +249,7 @@ namespace FastColoredTextBoxNS.Types {
 			int fromChar = FromX;
 			int toChar = ToX;
 
-			StringBuilder sb = new StringBuilder((toLine - fromLine) * 50);
+			StringBuilder sb = new((toLine - fromLine) * 50);
 			charIndexToPlace = new List<Place>(sb.Capacity);
 			if (fromLine >= 0) {
 				for (int y = fromLine; y <= toLine; y++) {
@@ -305,7 +305,7 @@ namespace FastColoredTextBoxNS.Types {
 			var pos = tb.PlaceToPosition(Start) - charsCount;
 			if (pos < 0) pos = 0;
 
-			return new Range(tb, tb.PositionToPlace(pos), Start).Text;
+			return new TextSelectionRange(tb, tb.PositionToPlace(pos), Start).Text;
 		}
 
 		/// <summary>
@@ -319,8 +319,8 @@ namespace FastColoredTextBoxNS.Types {
 		/// Clone range
 		/// </summary>
 		/// <returns></returns>
-		public Range Clone() {
-			return (Range)MemberwiseClone();
+		public TextSelectionRange Clone() {
+			return (TextSelectionRange)MemberwiseClone();
 		}
 
 		/// <summary>
@@ -783,7 +783,7 @@ namespace FastColoredTextBoxNS.Types {
 		/// </summary>
 		/// <param name="regexPattern">Regex pattern</param>
 		/// <returns>Enumeration of ranges</returns>
-		public IEnumerable<Range> GetRanges(string regexPattern) {
+		public IEnumerable<TextSelectionRange> GetRanges(string regexPattern) {
 			return GetRanges(regexPattern, RegexOptions.None);
 		}
 
@@ -793,15 +793,15 @@ namespace FastColoredTextBoxNS.Types {
 		/// <param name="regexPattern">Regex pattern</param>
 		/// <param name="options">Regex options</param>
 		/// <returns>Enumeration of ranges</returns>
-		public IEnumerable<Range> GetRanges(string regexPattern, RegexOptions options) {
+		public IEnumerable<TextSelectionRange> GetRanges(string regexPattern, RegexOptions options) {
 			//get text
 			GetText(out string text, out List<Place> charIndexToPlace);
 
 			//create regex
-			Regex regex = new Regex(regexPattern, options);
+			Regex regex = new(regexPattern, options);
 
 			foreach (Match m in regex.Matches(text)) {
-				Range r = new Range(this.tb);
+				TextSelectionRange r = new(tb);
 				//try get 'range' group, otherwise use group 0
 				Group group = m.Groups["range"];
 				if (!group.Success)
@@ -820,7 +820,7 @@ namespace FastColoredTextBoxNS.Types {
 		/// </summary>
 		/// <param name="regexPattern">Regex pattern</param>
 		/// <returns>Enumeration of ranges</returns>
-		public IEnumerable<Range> GetRangesByLines(string regexPattern, RegexOptions options) {
+		public IEnumerable<TextSelectionRange> GetRangesByLines(string regexPattern, RegexOptions options) {
 			var regex = new Regex(regexPattern, options);
 			foreach (var r in GetRangesByLines(regex))
 				yield return r;
@@ -833,7 +833,7 @@ namespace FastColoredTextBoxNS.Types {
 		/// </summary>
 		/// <param name="regex">Regex</param>
 		/// <returns>Enumeration of ranges</returns>
-		public IEnumerable<Range> GetRangesByLines(Regex regex) {
+		public IEnumerable<TextSelectionRange> GetRangesByLines(Regex regex) {
 			Normalize();
 
 			var fts = tb.TextSource as FileTextSource; //<----!!!! ugly
@@ -843,7 +843,7 @@ namespace FastColoredTextBoxNS.Types {
 				//
 				bool isLineLoaded = fts == null || fts.IsLineLoaded(iLine);
 				//
-				var r = new Range(tb, new Place(0, iLine), new Place(tb[iLine].Count, iLine));
+				var r = new TextSelectionRange(tb, new Place(0, iLine), new Place(tb[iLine].Count, iLine));
 				if (iLine == Start.iLine || iLine == End.iLine)
 					r = r.GetIntersectionWith(this);
 
@@ -863,10 +863,10 @@ namespace FastColoredTextBoxNS.Types {
 		/// <param name="regexPattern">Regex pattern</param>
 		/// <param name="options">Regex options</param>
 		/// <returns>Enumeration of ranges</returns>
-		public IEnumerable<Range> GetRangesByLinesReversed(string regexPattern, RegexOptions options) {
+		public IEnumerable<TextSelectionRange> GetRangesByLinesReversed(string regexPattern, RegexOptions options) {
 			Normalize();
 			//create regex
-			Regex regex = new Regex(regexPattern, options);
+			Regex regex = new(regexPattern, options);
 			//
 			var fts = tb.TextSource as FileTextSource; //<----!!!! ugly
 
@@ -875,11 +875,11 @@ namespace FastColoredTextBoxNS.Types {
 				//
 				bool isLineLoaded = fts == null || fts.IsLineLoaded(iLine);
 				//
-				var r = new Range(tb, new Place(0, iLine), new Place(tb[iLine].Count, iLine));
+				var r = new TextSelectionRange(tb, new Place(0, iLine), new Place(tb[iLine].Count, iLine));
 				if (iLine == Start.iLine || iLine == End.iLine)
 					r = r.GetIntersectionWith(this);
 
-				var list = new List<Range>();
+				var list = new List<TextSelectionRange>();
 
 				foreach (var foundRange in r.GetRanges(regex))
 					list.Add(foundRange);
@@ -896,12 +896,12 @@ namespace FastColoredTextBoxNS.Types {
 		/// Finds ranges for given regex
 		/// </summary>
 		/// <returns>Enumeration of ranges</returns>
-		public IEnumerable<Range> GetRanges(Regex regex) {
+		public IEnumerable<TextSelectionRange> GetRanges(Regex regex) {
 			//get text
 			GetText(out string text, out List<Place> charIndexToPlace);
 
 			foreach (Match m in regex.Matches(text)) {
-				Range r = new Range(this.tb);
+				TextSelectionRange r = new(tb);
 				//try get 'range' group, otherwise use group 0
 				Group group = m.Groups["range"];
 				if (!group.Success)
@@ -1073,7 +1073,7 @@ namespace FastColoredTextBoxNS.Types {
 		/// </summary>
 		/// <param name="allowedSymbolsPattern">Allowed chars pattern for fragment</param>
 		/// <returns>Range of found fragment</returns>
-		public Range GetFragment(string allowedSymbolsPattern) {
+		public TextSelectionRange GetFragment(string allowedSymbolsPattern) {
 			return GetFragment(allowedSymbolsPattern, RegexOptions.None);
 		}
 
@@ -1082,10 +1082,10 @@ namespace FastColoredTextBoxNS.Types {
 		/// </summary>
 		/// <param name="style">Allowed style for fragment</param>
 		/// <returns>Range of found fragment</returns>
-		public Range GetFragment(Style style, bool allowLineBreaks) {
+		public TextSelectionRange GetFragment(Style style, bool allowLineBreaks) {
 			var mask = tb.GetStyleIndexMask(new Style[] { style });
 			//
-			Range r = new Range(tb) {
+			TextSelectionRange r = new(tb) {
 				Start = Start
 			};
 			//go left, check style
@@ -1111,7 +1111,7 @@ namespace FastColoredTextBoxNS.Types {
 			} while (r.GoRightThroughFolded());
 			Place endFragment = r.Start;
 
-			return new Range(tb, startFragment, endFragment);
+			return new TextSelectionRange(tb, startFragment, endFragment);
 		}
 
 		/// <summary>
@@ -1119,11 +1119,11 @@ namespace FastColoredTextBoxNS.Types {
 		/// </summary>
 		/// <param name="allowedSymbolsPattern">Allowed chars pattern for fragment</param>
 		/// <returns>Range of found fragment</returns>
-		public Range GetFragment(string allowedSymbolsPattern, RegexOptions options) {
-			Range r = new Range(tb) {
+		public TextSelectionRange GetFragment(string allowedSymbolsPattern, RegexOptions options) {
+			TextSelectionRange r = new(tb) {
 				Start = Start
 			};
-			Regex regex = new Regex(allowedSymbolsPattern, options);
+			Regex regex = new(allowedSymbolsPattern, options);
 			//go left, check symbols
 			while (r.GoLeftThroughFolded()) {
 				if (!regex.IsMatch(r.CharAfterStart.ToString())) {
@@ -1141,15 +1141,15 @@ namespace FastColoredTextBoxNS.Types {
 			} while (r.GoRightThroughFolded());
 			Place endFragment = r.Start;
 
-			return new Range(tb, startFragment, endFragment);
+			return new TextSelectionRange(tb, startFragment, endFragment);
 		}
 
-		bool IsIdentifierChar(char c) {
+		static bool IsIdentifierChar(char c) {
 			return char.IsLetterOrDigit(c) || c == '_';
 		}
 
-		bool IsSpaceChar(char c) {
-			return c == ' ' || c == '\t';
+		static bool IsSpaceChar(char c) {
+			return char.IsWhiteSpace(c);
 		}
 
 		public void GoWordLeft(bool shift) {
@@ -1160,7 +1160,7 @@ namespace FastColoredTextBoxNS.Types {
 				return;
 			}
 
-			Range range = this.Clone();//to OnSelectionChanged disable
+			TextSelectionRange range = this.Clone();//to OnSelectionChanged disable
 			bool wasSpace = false;
 			while (IsSpaceChar(range.CharBeforeStart)) {
 				wasSpace = true;
@@ -1188,7 +1188,7 @@ namespace FastColoredTextBoxNS.Types {
 				return;
 			}
 
-			Range range = this.Clone();//to OnSelectionChanged disable
+			TextSelectionRange range = this.Clone();//to OnSelectionChanged disable
 
 			bool wasNewLine = false;
 
@@ -1267,7 +1267,7 @@ namespace FastColoredTextBoxNS.Types {
 			}
 		}
 
-		public IEnumerable<Range> GetSubRanges(bool includeEmpty) {
+		public IEnumerable<TextSelectionRange> GetSubRanges(bool includeEmpty) {
 			if (!ColumnSelectionMode) {
 				yield return this;
 				yield break;
@@ -1278,7 +1278,7 @@ namespace FastColoredTextBoxNS.Types {
 				if (rect.iStartChar > tb[y].Count && !includeEmpty)
 					continue;
 
-				var r = new Range(tb, rect.iStartChar, y, Math.Min(rect.iEndChar, tb[y].Count), y);
+				var r = new TextSelectionRange(tb, rect.iStartChar, y, Math.Min(rect.iEndChar, tb[y].Count), y);
 				yield return r;
 			}
 		}
@@ -1392,26 +1392,26 @@ namespace FastColoredTextBoxNS.Types {
 
 		public IEnumerable<Place> GetPlacesCyclic(Place startPlace, bool backward = false) {
 			if (backward) {
-				var r = new Range(this.tb, startPlace, startPlace);
+				var r = new TextSelectionRange(this.tb, startPlace, startPlace);
 				while (r.GoLeft() && r.start >= Start) {
 					if (r.Start.iChar < tb[r.Start.iLine].Count)
 						yield return r.Start;
 				}
 
-				r = new Range(this.tb, End, End);
+				r = new TextSelectionRange(this.tb, End, End);
 				while (r.GoLeft() && r.start >= startPlace) {
 					if (r.Start.iChar < tb[r.Start.iLine].Count)
 						yield return r.Start;
 				}
 			} else {
-				var r = new Range(this.tb, startPlace, startPlace);
+				var r = new TextSelectionRange(this.tb, startPlace, startPlace);
 				if (startPlace < End)
 					do {
 						if (r.Start.iChar < tb[r.Start.iLine].Count)
 							yield return r.Start;
 					} while (r.GoRight());
 
-				r = new Range(this.tb, Start, Start);
+				r = new TextSelectionRange(this.tb, Start, Start);
 				if (r.Start < startPlace)
 					do {
 						if (r.Start.iChar < tb[r.Start.iLine].Count)
@@ -1422,14 +1422,14 @@ namespace FastColoredTextBoxNS.Types {
 
 		#region ColumnSelectionMode
 
-		private Range GetIntersectionWith_ColumnSelectionMode(Range range) {
+		private TextSelectionRange GetIntersectionWith_ColumnSelectionMode(TextSelectionRange range) {
 			if (range.Start.iLine != range.End.iLine)
-				return new Range(tb, Start, Start);
+				return new TextSelectionRange(tb, Start, Start);
 			var rect = Bounds;
 			if (range.Start.iLine < rect.iStartLine || range.Start.iLine > rect.iEndLine)
-				return new Range(tb, Start, Start);
+				return new TextSelectionRange(tb, Start, Start);
 
-			return new Range(tb, rect.iStartChar, range.Start.iLine, rect.iEndChar, range.Start.iLine).GetIntersectionWith(range);
+			return new TextSelectionRange(tb, rect.iStartChar, range.Start.iLine, rect.iEndChar, range.Start.iLine).GetIntersectionWith(range);
 		}
 
 		private bool GoRightThroughFolded_ColumnSelectionMode() {
@@ -1470,7 +1470,7 @@ namespace FastColoredTextBoxNS.Types {
 
 		private string Text_ColumnSelectionMode {
 			get {
-				StringBuilder sb = new StringBuilder();
+				StringBuilder sb = new();
 				var bounds = Bounds;
 				if (bounds.iStartLine < 0) return "";
 				//

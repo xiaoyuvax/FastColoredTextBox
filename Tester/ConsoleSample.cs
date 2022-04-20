@@ -2,7 +2,6 @@
 using FastColoredTextBoxNS.Types;
 using System;
 using System.ComponentModel;
-using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
 
@@ -89,7 +88,7 @@ namespace Tester {
 				ClearUndo();
 			}
 
-			return new Range(this, StartReadPlace, Range.End).Text.TrimEnd('\r', '\n');
+			return new TextSelectionRange(this, StartReadPlace, Range.End).Text.TrimEnd('\r', '\n');
 		}
 
 		public override void OnTextChanging(ref string text) {
@@ -110,7 +109,7 @@ namespace Tester {
 					}
 
 				if (text != null && text.Contains('\n')) {
-					text = text.Substring(0, text.IndexOf('\n') + 1);
+					text = text[..(text.IndexOf('\n') + 1)];
 					IsReadLineMode = false;
 				}
 			}

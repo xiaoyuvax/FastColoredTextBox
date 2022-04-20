@@ -41,17 +41,11 @@ namespace FastColoredTextBoxNS {
 				GetSystemInfo(ref sysInfo);
 			}
 
-			switch (sysInfo.wProcessorArchitecture) {
-				case PROCESSOR_ARCHITECTURE_IA64:
-				case PROCESSOR_ARCHITECTURE_AMD64:
-					return Platform.X64;
-
-				case PROCESSOR_ARCHITECTURE_INTEL:
-					return Platform.X86;
-
-				default:
-					return Platform.Unknown;
-			}
+			return sysInfo.wProcessorArchitecture switch {
+				PROCESSOR_ARCHITECTURE_IA64 or PROCESSOR_ARCHITECTURE_AMD64 => Platform.X64,
+				PROCESSOR_ARCHITECTURE_INTEL => Platform.X86,
+				_ => Platform.Unknown,
+			};
 		}
 	}
 

@@ -12,10 +12,10 @@ namespace FastColoredTextBoxNS.Text {
 	/// It stores a text lines, the manager of commands, undo/redo stack, styles.
 	/// </summary>
 	public class FileTextSource : TextSource, IDisposable {
-		List<int> sourceFileLinePositions = new List<int>();
+		List<int> sourceFileLinePositions = new();
 		FileStream fs;
 		Encoding fileEncoding;
-		readonly System.Windows.Forms.Timer timer = new System.Windows.Forms.Timer();
+		readonly System.Windows.Forms.Timer timer = new();
 
 		/// <summary>
 		/// Occurs when need to display line in the textbox
@@ -82,7 +82,7 @@ namespace FastColoredTextBoxNS.Text {
 
 			int prev = 0;
 			int prevPos = 0;
-			BinaryReader br = new BinaryReader(fs, enc);
+			BinaryReader br = new(fs, enc);
 			while (fs.Position < length) {
 				prevPos = (int)fs.Position;
 				var b = br.ReadChar();
@@ -190,9 +190,9 @@ namespace FastColoredTextBoxNS.Text {
 			var dir = Path.GetDirectoryName(fileName);
 			var tempFileName = Path.Combine(dir, Path.GetFileNameWithoutExtension(fileName) + ".tmp");
 
-			StreamReader sr = new StreamReader(fs, fileEncoding);
-			using (FileStream tempFs = new FileStream(tempFileName, FileMode.Create))
-			using (StreamWriter sw = new StreamWriter(tempFs, enc)) {
+			StreamReader sr = new(fs, fileEncoding);
+			using (FileStream tempFs = new(tempFileName, FileMode.Create))
+			using (StreamWriter sw = new(tempFs, enc)) {
 				sw.Flush();
 
 				for (int i = 0; i < Count; i++) {
@@ -279,7 +279,7 @@ namespace FastColoredTextBoxNS.Text {
 		private void LoadLineFromSourceFile(int i) {
 			var line = CreateLine();
 			fs.Seek(sourceFileLinePositions[i], SeekOrigin.Begin);
-			StreamReader sr = new StreamReader(fs, fileEncoding);
+			StreamReader sr = new(fs, fileEncoding);
 
 			var s = sr.ReadLine();
 			if (s == null)
@@ -342,6 +342,7 @@ namespace FastColoredTextBoxNS.Text {
 				fs.Dispose();
 
 			timer.Dispose();
+			GC.SuppressFinalize(this);
 		}
 
 		internal void UnloadLine(int iLine) {

@@ -94,7 +94,7 @@ Namespace TesterVB
 		Private Sub Log(text As String, style As Style)
 			Me.fctb.BeginUpdate()
 			Me.fctb.Selection.BeginUpdate()
-			Dim userSelection As Range = Me.fctb.Selection.Clone()
+			Dim userSelection As TextSelectionRange = Me.fctb.Selection.Clone()
 			Me.fctb.Selection.Start = If(Me.fctb.LinesCount > 0, New Place(Me.fctb(Me.fctb.LinesCount - 1).Count, Me.fctb.LinesCount - 1), New Place(0, 0))
 			Me.fctb.InsertText(text, style)
 			If Not userSelection.IsEmpty OrElse userSelection.Start.iLine < Me.fctb.LinesCount - 2 Then

@@ -5,9 +5,9 @@ using System.Windows.Forms;
 
 namespace Tester {
 	public partial class LoggerSample : Form {
-		readonly TextStyle infoStyle = new TextStyle(Brushes.Black, null, FontStyle.Regular);
-		readonly TextStyle warningStyle = new TextStyle(Brushes.BurlyWood, null, FontStyle.Regular);
-		readonly TextStyle errorStyle = new TextStyle(Brushes.Red, null, FontStyle.Regular);
+		readonly TextStyle infoStyle = new(Brushes.Black, null, FontStyle.Regular);
+		readonly TextStyle warningStyle = new(Brushes.BurlyWood, null, FontStyle.Regular);
+		readonly TextStyle errorStyle = new(Brushes.Red, null, FontStyle.Regular);
 
 		public LoggerSample() {
 			InitializeComponent();

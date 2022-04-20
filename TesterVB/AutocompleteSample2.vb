@@ -155,7 +155,7 @@ Public Class AutocompleteSample2
 
 		Public Overrides Function GetTextForReplace() As String
 			'extend range
-			Dim r As Range = Parent.Fragment
+			Dim r As TextSelectionRange = Parent.Fragment
 			Dim [end] As Place = r.[End]
 			r.Start = enterPlace
 			r.[End] = r.[End]

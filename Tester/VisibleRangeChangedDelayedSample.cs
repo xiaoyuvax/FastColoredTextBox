@@ -20,7 +20,7 @@ namespace Tester {
 <a id=""ctl00_TopNavBar_ArticleQuestion"" class=""fly highlight"" href=""#_comments"">Ask a Question about this article</a></li>
 <li class=""heading"">Quick Answers</li>
 <li><a id=""ctl00_TopNavBar_QAAsk"" class=""fly"" href=""/Questions/ask.aspx"">Ask a Question</a></li>";
-			StringBuilder sb = new StringBuilder();
+			StringBuilder sb = new();
 			for (int i = 0; i < 50000; i++)
 				sb.AppendLine(html4line);
 
@@ -35,7 +35,7 @@ namespace Tester {
 		//highlight only visible area of text
 		private void Fctb_VisibleRangeChangedDelayed(object sender, EventArgs e) => HTMLSyntaxHighlight(fctb.VisibleRange);
 
-		private void HTMLSyntaxHighlight(Range range) {
+		private void HTMLSyntaxHighlight(TextSelectionRange range) {
 			//clear style of changed range
 			range.ClearStyle(BlueStyle, MaroonStyle, RedStyle);
 			//tag brackets highlighting

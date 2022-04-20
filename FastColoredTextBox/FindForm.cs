@@ -12,7 +12,7 @@ namespace FastColoredTextBoxNS {
 			this.tb = tb;
 		}
 
-		private bool SearchRange(string pattern, Range range, RegexOptions opt) {
+		private bool SearchRange(string pattern, TextSelectionRange range, RegexOptions opt) {
 			foreach (var r in range.GetRangesByLines(pattern, opt)) {
 				tb.Selection = r;
 				tb.DoSelectionVisible();
@@ -23,7 +23,7 @@ namespace FastColoredTextBoxNS {
 			return false;
 		}
 
-		private bool SearchRangeReversed(string pattern, Range range, RegexOptions opt) {
+		private bool SearchRangeReversed(string pattern, TextSelectionRange range, RegexOptions opt) {
 			foreach (var r in range.GetRangesByLinesReversed(pattern, opt)) {
 				tb.Selection = r;
 				tb.DoSelectionVisible();
@@ -42,11 +42,11 @@ namespace FastColoredTextBoxNS {
 				if (cbWholeWord.Checked)
 					pattern = "\\b" + pattern + "\\b";
 
-				Range selectedRange = tb.Selection.Clone();
+				TextSelectionRange selectedRange = tb.Selection.Clone();
 				selectedRange.Normalize();
 
 				// Search range after selection
-				Range searchRange = new Range(tb) {
+				TextSelectionRange searchRange = new(tb) {
 					Start = selectedRange.End,
 					End = new Place(tb.GetLineLength(tb.LinesCount - 1), tb.LinesCount - 1)
 				};
@@ -69,11 +69,11 @@ namespace FastColoredTextBoxNS {
 				if (cbWholeWord.Checked)
 					pattern = "\\b" + pattern + "\\b";
 
-				Range selectedRange = tb.Selection.Clone();
+				TextSelectionRange selectedRange = tb.Selection.Clone();
 				selectedRange.Normalize();
 
 				// Search range before selection
-				Range searchRange = new Range(tb) {
+				TextSelectionRange searchRange = new(tb) {
 					Start = new Place(0, 0),
 					End = selectedRange.Start
 				};

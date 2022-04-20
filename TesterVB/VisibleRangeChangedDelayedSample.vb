@@ -78,7 +78,7 @@ Namespace TesterVB
 			Me.HTMLSyntaxHighlight(Me.fctb.VisibleRange)
 		End Sub
 
-		Private Sub HTMLSyntaxHighlight(range As Range)
+		Private Sub HTMLSyntaxHighlight(range As TextSelectionRange)
 			range.ClearStyle(New Style() {Me.BlueStyle, Me.MaroonStyle, Me.RedStyle})
 			range.SetStyle(Me.BlueStyle, "<|/>|</|>")
 			range.SetStyle(Me.MaroonStyle, "<(?<range>[!\w]+)")

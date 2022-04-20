@@ -5,7 +5,7 @@ using System.Windows.Forms;
 
 namespace Tester {
 	public partial class HyperlinkSample : Form {
-		readonly TextStyle blueStyle = new TextStyle(Brushes.Blue, null, FontStyle.Underline);
+		readonly TextStyle blueStyle = new(Brushes.Blue, null, FontStyle.Underline);
 
 		public HyperlinkSample() => InitializeComponent();
 

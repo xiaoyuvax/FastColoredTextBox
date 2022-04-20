@@ -16,7 +16,7 @@ namespace FastColoredTextBoxNS {
 	public class AutocompleteMenu : ToolStripDropDown, IDisposable {
 		readonly AutocompleteListView listView;
 		public ToolStripControlHost host;
-		public Range Fragment { get; internal set; }
+		public TextSelectionRange Fragment { get; internal set; }
 
 		/// <summary>
 		/// Regex pattern for serach fragment around caret
@@ -197,8 +197,8 @@ namespace FastColoredTextBoxNS {
 		AutocompleteMenu Menu { get { return Parent as AutocompleteMenu; } }
 		int oldItemCount = 0;
 		readonly FastColoredTextBox tb;
-		internal ToolTip toolTip = new ToolTip();
-		readonly Timer timer = new Timer();
+		internal ToolTip toolTip = new();
+		readonly Timer timer = new();
 
 		internal bool AllowTabKey { get; set; }
 		public ImageList ImageList { get; set; }
@@ -323,7 +323,7 @@ namespace FastColoredTextBoxNS {
 			DoAutocomplete(false);
 		}
 
-		void ResetTimer(System.Windows.Forms.Timer timer) {
+		static void ResetTimer(Timer timer) {
 			timer.Stop();
 			timer.Start();
 		}
@@ -345,7 +345,7 @@ namespace FastColoredTextBoxNS {
 			AutoScrollMinSize -= new Size(1, 0);
 			AutoScrollMinSize += new Size(1, 0);
 			//get fragment around caret
-			Range fragment = tb.Selection.GetFragment(Menu.SearchPattern);
+			TextSelectionRange fragment = tb.Selection.GetFragment(Menu.SearchPattern);
 			string text = fragment.Text;
 			//calc screen point for popup menu
 			Point point = tb.PlaceToPoint(fragment.End);
@@ -372,7 +372,7 @@ namespace FastColoredTextBoxNS {
 			//show popup menu
 			if (Count > 0) {
 				if (!Menu.Visible) {
-					CancelEventArgs args = new CancelEventArgs();
+					CancelEventArgs args = new();
 					Menu.OnOpening(args);
 					if (!args.Cancel)
 						Menu.Show(tb, point);
@@ -509,7 +509,7 @@ namespace FastColoredTextBoxNS {
 			tb.TextSource.Manager.BeginAutoUndoCommands();
 			try {
 				AutocompleteItem item = FocussedItem;
-				SelectingEventArgs args = new SelectingEventArgs() {
+				SelectingEventArgs args = new() {
 					Item = item,
 					SelectedIndex = FocussedItemIndex
 				};
@@ -529,7 +529,7 @@ namespace FastColoredTextBoxNS {
 
 				Menu.Close();
 				//
-				SelectedEventArgs args2 = new SelectedEventArgs() {
+				SelectedEventArgs args2 = new() {
 					Item = item,
 					Tb = Menu.Fragment.tb
 				};
@@ -540,7 +540,7 @@ namespace FastColoredTextBoxNS {
 			}
 		}
 
-		private void DoAutocomplete(AutocompleteItem item, Range fragment) {
+		private static void DoAutocomplete(AutocompleteItem item, TextSelectionRange fragment) {
 			string newText = item.GetTextForReplace();
 
 			//replace text of fragment
@@ -661,7 +661,7 @@ namespace FastColoredTextBoxNS {
 		}
 
 		public void SetAutocompleteItems(ICollection<string> items) {
-			List<AutocompleteItem> list = new List<AutocompleteItem>(items.Count);
+			List<AutocompleteItem> list = new(items.Count);
 			foreach (var item in items)
 				list.Add(new AutocompleteItem(item));
 			SetAutocompleteItems(list);

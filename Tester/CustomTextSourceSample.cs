@@ -13,7 +13,7 @@ namespace Tester {
 			InitializeComponent();
 		}
 
-		private string CreateExtraLargeString() {
+		private static string CreateExtraLargeString() {
 			var sb = new StringBuilder();
 			var dt = DateTime.Now;
 			for (int i = 0; i < 500000; i++) {
@@ -48,9 +48,9 @@ namespace Tester {
 	/// Text source for displaying readonly text, given as string.
 	/// </summary>
 	public class StringTextSource : TextSource, IDisposable {
-		readonly List<int> sourceStringLinePositions = new List<int>();
+		readonly List<int> sourceStringLinePositions = new();
 		string sourceString;
-		readonly Timer timer = new Timer();
+		readonly Timer timer = new();
 
 		public StringTextSource(FastColoredTextBox tb)
 			: base(tb) {
@@ -134,7 +134,7 @@ namespace Tester {
 
 			string s;
 			if (i == Count - 1)
-				s = sourceString.Substring(sourceStringLinePositions[i]);
+				s = sourceString[sourceStringLinePositions[i]..];
 			else
 				s = sourceString.Substring(sourceStringLinePositions[i], sourceStringLinePositions[i + 1] - sourceStringLinePositions[i] - 1);
 
@@ -179,6 +179,7 @@ namespace Tester {
 
 		public override void Dispose() {
 			timer.Dispose();
+			GC.SuppressFinalize(this);
 		}
 
 		internal void UnloadLine(int iLine) {

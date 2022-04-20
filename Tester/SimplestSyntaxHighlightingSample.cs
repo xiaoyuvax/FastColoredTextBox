@@ -6,7 +6,7 @@ using System.Windows.Forms;
 namespace Tester {
 	public partial class SimplestSyntaxHighlightingSample : Form {
 		//Create style for highlighting
-		readonly TextStyle brownStyle = new TextStyle(Brushes.Brown, null, FontStyle.Regular);
+		readonly TextStyle brownStyle = new(Brushes.Brown, null, FontStyle.Regular);
 
 		public SimplestSyntaxHighlightingSample() => InitializeComponent();
 

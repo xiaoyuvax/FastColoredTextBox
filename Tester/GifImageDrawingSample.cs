@@ -69,7 +69,7 @@ namespace Tester {
 		void OnFrameChanged(object sender, EventArgs args) {
 		}
 
-		public override void Draw(Graphics gr, Point position, Range range) {
+		public override void Draw(Graphics gr, Point position, TextSelectionRange range) {
 			string text = range.Text;
 			int iChar = range.Start.iChar;
 
@@ -81,8 +81,8 @@ namespace Tester {
 						if (k > 1)
 							k = 1f;
 						//
-						text = text.Substring(pair.Key.Length);
-						RectangleF rect = new RectangleF(position.X + range.tb.CharWidth * pair.Key.Length / 2 - pair.Value.Width * k / 2, position.Y, pair.Value.Width * k, pair.Value.Height * k);
+						text = text[pair.Key.Length..];
+						RectangleF rect = new(position.X + range.tb.CharWidth * pair.Key.Length / 2 - pair.Value.Width * k / 2, position.Y, pair.Value.Width * k, pair.Value.Height * k);
 						gr.DrawImage(pair.Value, rect);
 						position.Offset(range.tb.CharWidth * pair.Key.Length, 0);
 						replaced = true;
@@ -91,10 +91,10 @@ namespace Tester {
 					}
 				}
 				if (!replaced && text.Length > 0) {
-					Range r = new Range(range.tb, iChar, range.Start.iLine, iChar + 1, range.Start.iLine);
+					TextSelectionRange r = new(range.tb, iChar, range.Start.iLine, iChar + 1, range.Start.iLine);
 					base.Draw(gr, position, r);
 					position.Offset(range.tb.CharWidth, 0);
-					text = text.Substring(1);
+					text = text[1..];
 				}
 			}
 		}

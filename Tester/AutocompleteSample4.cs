@@ -52,8 +52,8 @@ namespace Tester {
 			if (i < 0)
 				firstPart = text;
 			else {
-				firstPart = text.Substring(0, i);
-				lastPart = text.Substring(i + 1);
+				firstPart = text[..i];
+				lastPart = text[(i + 1)..];
 			}
 		}
 
@@ -66,8 +66,8 @@ namespace Tester {
 				//if (firstPart.ToLower().Contains(fragmentText.ToLower()))
 				//  return CompareResult.Visible;
 			} else {
-				var fragmentFirstPart = fragmentText.Substring(0, i);
-				var fragmentLastPart = fragmentText.Substring(i + 1);
+				var fragmentFirstPart = fragmentText[..i];
+				var fragmentLastPart = fragmentText[(i + 1)..];
 
 
 				if (firstPart != fragmentFirstPart)

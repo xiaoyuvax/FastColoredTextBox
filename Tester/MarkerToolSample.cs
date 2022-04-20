@@ -9,12 +9,12 @@ using System.Windows.Forms;
 namespace Tester {
 	public partial class MarkerToolSample : Form {
 		//Shortcut style
-		readonly ShortcutStyle shortCutStyle = new ShortcutStyle(Pens.Maroon);
+		readonly ShortcutStyle shortCutStyle = new(Pens.Maroon);
 
 		//Marker styles
-		readonly MarkerStyle YellowStyle = new MarkerStyle(new SolidBrush(Color.FromArgb(180, Color.Yellow)));
-		readonly MarkerStyle RedStyle = new MarkerStyle(new SolidBrush(Color.FromArgb(180, Color.Red)));
-		readonly MarkerStyle GreenStyle = new MarkerStyle(new SolidBrush(Color.FromArgb(180, Color.Green)));
+		readonly MarkerStyle YellowStyle = new(new SolidBrush(Color.FromArgb(180, Color.Yellow)));
+		readonly MarkerStyle RedStyle = new(new SolidBrush(Color.FromArgb(180, Color.Red)));
+		readonly MarkerStyle GreenStyle = new(new SolidBrush(Color.FromArgb(180, Color.Green)));
 
 		public MarkerToolSample() {
 			InitializeComponent();
@@ -29,7 +29,7 @@ namespace Tester {
 
 		private void Fctb_SelectionChangedDelayed(object sender, EventArgs e) {
 			//here we draw shortcut for selection area
-			Range selection = fctb.Selection;
+			TextSelectionRange selection = fctb.Selection;
 			//clear previous shortcuts
 			fctb.VisibleRange.ClearStyle(shortCutStyle);
 			//create shortcuts

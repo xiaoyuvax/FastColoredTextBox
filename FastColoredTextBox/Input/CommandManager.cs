@@ -5,9 +5,9 @@ using System.Collections.Generic;
 
 namespace FastColoredTextBoxNS.Input {
 	public class CommandManager {
-		public static int MaxHistoryLength = 200;
+		public const int MaxHistoryLength = 200;
 		readonly LimitedStack<UndoableCommand> history;
-		readonly Stack<UndoableCommand> redoStack = new Stack<UndoableCommand>();
+		readonly Stack<UndoableCommand> redoStack = new();
 		public TextSource TextSource { get; private set; }
 		public bool UndoRedoStackIsEnabled { get; set; }
 
@@ -153,7 +153,7 @@ namespace FastColoredTextBoxNS.Input {
 		public Place Start { get; set; }
 		public Place End { get; set; }
 
-		public RangeInfo(Range r) {
+		public RangeInfo(TextSelectionRange r) {
 			Start = r.Start;
 			End = r.End;
 		}

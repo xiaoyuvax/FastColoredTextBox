@@ -10,7 +10,7 @@ Namespace TesterVB
 			Me.pen = pen
 		End Sub
 
-		Public Overrides Sub Draw(gr As Graphics, position As Point, range As Range)
+		Public Overrides Sub Draw(gr As Graphics, position As Point, range As TextSelectionRange)
 			Dim tb As FastColoredTextBox = range.tb
 			Using brush As Brush = New SolidBrush(Me.pen.Color)
 				For Each place As Place In CType(range, IEnumerable(Of Place))

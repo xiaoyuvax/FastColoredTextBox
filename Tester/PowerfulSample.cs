@@ -13,13 +13,13 @@ namespace Tester {
 		string lang = "CSharp (custom highlighter)";
 
 		//styles
-		readonly TextStyle BlueStyle = new TextStyle(Brushes.LightBlue, null, FontStyle.Regular);
-		readonly TextStyle BoldStyle = new TextStyle(null, null, FontStyle.Bold | FontStyle.Underline);
-		readonly TextStyle GrayStyle = new TextStyle(Brushes.Gray, null, FontStyle.Regular);
-		readonly TextStyle MagentaStyle = new TextStyle(Brushes.Magenta, null, FontStyle.Regular);
-		readonly TextStyle GreenStyle = new TextStyle(Brushes.Green, null, FontStyle.Italic);
-		readonly TextStyle BrownStyle = new TextStyle(Brushes.Brown, null, FontStyle.Italic);
-		readonly MarkerStyle SameWordsStyle = new MarkerStyle(new SolidBrush(Color.FromArgb(40, Color.Gray)));
+		readonly TextStyle BlueStyle = new(Brushes.LightBlue, null, FontStyle.Regular);
+		readonly TextStyle BoldStyle = new(null, null, FontStyle.Bold | FontStyle.Underline);
+		readonly TextStyle GrayStyle = new(Brushes.Gray, null, FontStyle.Regular);
+		readonly TextStyle MagentaStyle = new(Brushes.Magenta, null, FontStyle.Regular);
+		readonly TextStyle GreenStyle = new(Brushes.Green, null, FontStyle.Italic);
+		readonly TextStyle BrownStyle = new(Brushes.Brown, null, FontStyle.Italic);
+		readonly MarkerStyle SameWordsStyle = new(new SolidBrush(Color.FromArgb(40, Color.Gray)));
 
 		public PowerfulSample() => InitializeComponent();
 
@@ -143,7 +143,7 @@ namespace Tester {
 		private void DecreaseIndentTabToolStripMenuItem_Click(object sender, EventArgs e) => fctb.DecreaseIndent();
 
 		private void HTMLToolStripMenuItem1_Click(object sender, EventArgs e) {
-			SaveFileDialog sfd = new SaveFileDialog {
+			SaveFileDialog sfd = new() {
 				Filter = "HTML with <PRE> tag|*.html|HTML without <PRE> tag|*.html"
 			};
 			if (sfd.ShowDialog() == DialogResult.OK) {
@@ -154,7 +154,7 @@ namespace Tester {
 				}
 				if (sfd.FilterIndex == 2) {
 
-					ExportToHTML exporter = new ExportToHTML {
+					ExportToHTML exporter = new() {
 						UseBr = true,
 						UseNbsp = false,
 						UseForwardNbsp = true,
@@ -189,8 +189,8 @@ namespace Tester {
 
 		const int maxBracketSearchIterations = 2000;
 
-		void GoLeftBracket(FastColoredTextBox tb, char leftBracket, char rightBracket) {
-			Range range = tb.Selection.Clone();//need to clone because we will move caret
+		static void GoLeftBracket(FastColoredTextBox tb, char leftBracket, char rightBracket) {
+			TextSelectionRange range = tb.Selection.Clone();//need to clone because we will move caret
 			int counter = 0;
 			int maxIterations = maxBracketSearchIterations;
 			while (range.GoLeftThroughFolded())//move caret left
@@ -210,7 +210,7 @@ namespace Tester {
 			tb.Invalidate();
 		}
 
-		void GoRightBracket(FastColoredTextBox tb, char leftBracket, char rightBracket) {
+		static void GoRightBracket(FastColoredTextBox tb, char leftBracket, char rightBracket) {
 			var range = tb.Selection.Clone();//need clone because we will move caret
 			int counter = 0;
 			int maxIterations = maxBracketSearchIterations;
@@ -272,7 +272,7 @@ namespace Tester {
 
 		private void MiPrint_Click(object sender, EventArgs e) => fctb.Print(new PrintDialogSettings() { ShowPrintPreviewDialog = true });
 
-		readonly Random rnd = new Random();
+		readonly Random rnd = new();
 
 		private void MiChangeColors_Click(object sender, EventArgs e) {
 			var styles = new Style[] { fctb.SyntaxHighlighter.BlueBoldStyle, fctb.SyntaxHighlighter.BlueStyle, fctb.SyntaxHighlighter.BoldStyle, fctb.SyntaxHighlighter.BrownStyle, fctb.SyntaxHighlighter.GrayStyle, fctb.SyntaxHighlighter.GreenStyle, fctb.SyntaxHighlighter.MagentaStyle, fctb.SyntaxHighlighter.MaroonStyle, fctb.SyntaxHighlighter.RedStyle };
@@ -299,7 +299,7 @@ namespace Tester {
 		}
 
 		private void RTFToolStripMenuItem_Click(object sender, EventArgs e) {
-			SaveFileDialog sfd = new SaveFileDialog {
+			SaveFileDialog sfd = new() {
 				Filter = "RTF|*.rtf"
 			};
 			if (sfd.ShowDialog() == DialogResult.OK) {

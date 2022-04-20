@@ -9,7 +9,7 @@ namespace FastColoredTextBoxNS {
 	/// However we would still need to indentify the font somehow
 	/// </summary>
 	static class CharSizeCache {
-		static readonly Dictionary<string, SizeF> cache = new Dictionary<string, SizeF>();
+		static readonly Dictionary<string, SizeF> cache = new();
 		internal static SizeF GetCharSize(Font font, char c) {
 			var key = GetKey(font, c);
 			if (!cache.ContainsKey(key)) {

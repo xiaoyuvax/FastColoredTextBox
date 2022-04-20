@@ -23,7 +23,7 @@ namespace FastColoredTextBoxNS {
 			} catch (Exception ex) { MessageBox.Show(ex.Message); }
 		}
 
-		public List<Range> FindAll(string pattern) {
+		public List<TextSelectionRange> FindAll(string pattern) {
 			var opt = cbMatchCase.Checked ? RegexOptions.None : RegexOptions.IgnoreCase;
 			if (!cbRegex.Checked)
 				pattern = Regex.Escape(pattern);
@@ -32,7 +32,7 @@ namespace FastColoredTextBoxNS {
 			//
 			var range = tb.Selection.IsEmpty ? tb.Range.Clone() : tb.Selection.Clone();
 			//
-			var list = new List<Range>();
+			var list = new List<TextSelectionRange>();
 			foreach (var r in range.GetRangesByLines(pattern, opt))
 				list.Add(r);
 
@@ -46,7 +46,7 @@ namespace FastColoredTextBoxNS {
 			if (cbWholeWord.Checked)
 				pattern = "\\b" + pattern + "\\b";
 			//
-			Range range = tb.Selection.Clone();
+			TextSelectionRange range = tb.Selection.Clone();
 			range.Normalize();
 			//
 			if (firstSearch) {

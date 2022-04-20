@@ -19,18 +19,18 @@ namespace FastColoredTextBoxNS.Text {
 		public bool UseOriginalFont { get; set; }
 
 		FastColoredTextBox tb;
-		readonly Dictionary<Color, int> colorTable = new Dictionary<Color, int>();
+		readonly Dictionary<Color, int> colorTable = new();
 
 		public ExportToRTF() => UseOriginalFont = true;
 
 		public string GetRtf(FastColoredTextBox tb) {
 			this.tb = tb;
-			Range sel = new Range(tb);
+			TextSelectionRange sel = new(tb);
 			sel.SelectAll();
 			return GetRtf(sel);
 		}
 
-		public string GetRtf(Range r) {
+		public string GetRtf(TextSelectionRange r) {
 			tb = r.tb;
 			var styles = new Dictionary<StyleIndex, object>();
 			var sb = new StringBuilder();
@@ -98,7 +98,7 @@ namespace FastColoredTextBoxNS.Text {
 
 			//
 			if (UseOriginalFont) {
-				sb.Insert(0, string.Format(@"{{\fonttbl{{\f0\fmodern {0};}}}}{{\fs{1} ",
+				_ = sb.Insert(0, string.Format(@"{{\fonttbl{{\f0\fmodern {0};}}}}{{\fs{1} ",
 								tb.Font.Name, (int)(2 * tb.Font.SizeInPoints), tb.CharHeight));
 				sb.AppendLine(@"}");
 			}
@@ -112,7 +112,7 @@ namespace FastColoredTextBoxNS.Text {
 		}
 
 		private RTFStyleDescriptor GetRtfDescriptor(StyleIndex styleIndex) {
-			List<Style> styles = new List<Style>();
+			List<Style> styles = new();
 			//find text renderer
 			TextStyle textStyle = null;
 			int mask = 1;
@@ -169,7 +169,7 @@ namespace FastColoredTextBoxNS.Text {
 			if (tags.Length > 0)
 				sb.AppendFormat(@"{{{0} {1}}}", tags, tempSB.ToString());
 			else
-				sb.Append(tempSB.ToString());
+				sb.Append(tempSB);
 			tempSB.Length = 0;
 		}
 

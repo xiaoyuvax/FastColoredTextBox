@@ -81,7 +81,7 @@ namespace FastColoredTextBoxNS.Input {
 			switch (c) {
 				case '\n':
 					if (!ts.CurrentTB.AllowInsertRemoveLines)
-						throw new ArgumentOutOfRangeException("Cant insert this char in ColumnRange mode");
+						throw new Exception("Cant insert this char in ColumnRange mode");
 					if (ts.Count == 0)
 						InsertLine(ts);
 					InsertLine(ts);
@@ -92,7 +92,7 @@ namespace FastColoredTextBoxNS.Input {
 						return;
 					if (tb.Selection.Start.iChar == 0) {
 						if (!ts.CurrentTB.AllowInsertRemoveLines)
-							throw new ArgumentOutOfRangeException("Cant insert this char in ColumnRange mode");
+							throw new Exception("Cant insert this char in ColumnRange mode");
 						if (tb.LineInfos[tb.Selection.Start.iLine - 1].VisibleState != VisibleState.Visible)
 							tb.ExpandBlock(tb.Selection.Start.iLine - 1);
 						deletedChar = '\n';
@@ -239,8 +239,8 @@ namespace FastColoredTextBoxNS.Input {
 	/// </summary>
 	public class ReplaceTextCommand : UndoableCommand {
 		string insertedText;
-		readonly List<Range> ranges;
-		readonly List<string> prevText = new List<string>();
+		readonly List<TextSelectionRange> ranges;
+		readonly List<string> prevText = new();
 
 		/// <summary>
 		/// Constructor
@@ -248,7 +248,7 @@ namespace FastColoredTextBoxNS.Input {
 		/// <param name="ts">Underlaying textbox</param>
 		/// <param name="ranges">List of ranges for replace</param>
 		/// <param name="insertedText">Text for inserting</param>
-		public ReplaceTextCommand(TextSource ts, List<Range> ranges, string insertedText)
+		public ReplaceTextCommand(TextSource ts, List<TextSelectionRange> ranges, string insertedText)
 			: base(ts) {
 			//sort ranges by place
 			ranges.Sort((r1, r2) => {
@@ -283,7 +283,7 @@ namespace FastColoredTextBoxNS.Input {
 			tb.EndUpdate();
 
 			if (ranges.Count > 0)
-				ts.OnTextChanged(ranges[0].Start.iLine, ranges[ranges.Count - 1].End.iLine);
+				ts.OnTextChanged(ranges[0].Start.iLine, ranges[^1].End.iLine);
 
 			ts.NeedRecalc(new TextSource.TextChangedEventArgs(0, 1));
 		}
@@ -308,7 +308,7 @@ namespace FastColoredTextBoxNS.Input {
 					InsertTextCommand.InsertText(insertedText, ts);
 			}
 			if (ranges.Count > 0)
-				ts.OnTextChanged(ranges[0].Start.iLine, ranges[ranges.Count - 1].End.iLine);
+				ts.OnTextChanged(ranges[0].Start.iLine, ranges[^1].End.iLine);
 			tb.EndUpdate();
 			tb.Selection.EndUpdate();
 			ts.NeedRecalc(new TextSource.TextChangedEventArgs(0, 1));
@@ -316,7 +316,7 @@ namespace FastColoredTextBoxNS.Input {
 			lastSel = new RangeInfo(tb.Selection);
 		}
 
-		public override UndoableCommand Clone() => new ReplaceTextCommand(ts, new List<Range>(ranges), insertedText);
+		public override UndoableCommand Clone() => new ReplaceTextCommand(ts, new List<TextSelectionRange>(ranges), insertedText);
 
 		internal static void ClearSelected(TextSource ts) {
 			var tb = ts.CurrentTB;
@@ -416,10 +416,10 @@ namespace FastColoredTextBoxNS.Input {
 	/// </summary>
 	public class ReplaceMultipleTextCommand : UndoableCommand {
 		readonly List<ReplaceRange> ranges;
-		readonly List<string> prevText = new List<string>();
+		readonly List<string> prevText = new();
 
 		public class ReplaceRange {
-			public Range ReplacedRange { get; set; }
+			public TextSelectionRange ReplacedRange { get; set; }
 			public string ReplaceText { get; set; }
 		}
 
@@ -496,7 +496,7 @@ namespace FastColoredTextBoxNS.Input {
 	/// </summary>
 	public class RemoveLinesCommand : UndoableCommand {
 		readonly List<int> iLines;
-		readonly List<string> prevText = new List<string>();
+		readonly List<string> prevText = new();
 
 		/// <summary>
 		/// Constructor
@@ -528,7 +528,7 @@ namespace FastColoredTextBoxNS.Input {
 				if (iLine < ts.Count)
 					tb.Selection.SetStartAndEnd(new Place(0, iLine));
 				else
-					tb.Selection.SetStartAndEnd(new Place(ts[ts.Count - 1].Count, ts.Count - 1));
+					tb.Selection.SetStartAndEnd(new Place(ts[^1].Count, ts.Count - 1));
 
 				InsertCharCommand.InsertLine(ts);
 				tb.Selection.SetStartAndEnd(new Place(0, iLine));
@@ -580,8 +580,8 @@ namespace FastColoredTextBoxNS.Input {
 	/// </summary>
 	public class MultiRangeCommand : UndoableCommand {
 		private readonly UndoableCommand cmd;
-		private readonly Range range;
-		private readonly List<UndoableCommand> commandsByRanges = new List<UndoableCommand>();
+		private readonly TextSelectionRange range;
+		private readonly List<UndoableCommand> commandsByRanges = new();
 
 		public MultiRangeCommand(UndoableCommand command) : base(command.ts) {
 			cmd = command;
@@ -686,12 +686,14 @@ namespace FastColoredTextBoxNS.Input {
 		protected override void OnTextChanged(bool invert) { }
 
 		//restore selection
-		public override void Undo() => ts.CurrentTB.Selection = new Range(ts.CurrentTB, lastSel.Start, lastSel.End);
+		public override void Undo() => ts.CurrentTB.Selection = new TextSelectionRange(ts.CurrentTB, lastSel.Start, lastSel.End);
 
 		public override UndoableCommand Clone() {
 			var result = new SelectCommand(ts);
 			if (lastSel != null)
-				result.lastSel = new RangeInfo(new Range(ts.CurrentTB, lastSel.Start, lastSel.End));
+				result.lastSel = new RangeInfo(new
+
+					(ts.CurrentTB, lastSel.Start, lastSel.End));
 			return result;
 		}
 	}

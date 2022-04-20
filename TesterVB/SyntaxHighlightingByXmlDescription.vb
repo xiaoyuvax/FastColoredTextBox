@@ -1,4 +1,5 @@
 Imports System.ComponentModel
+Imports FastColoredTextBoxNS.Text
 
 Namespace TesterVB
 	Public Class SyntaxHighlightingByXmlDescription

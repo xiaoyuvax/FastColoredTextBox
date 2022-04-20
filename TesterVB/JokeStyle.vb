@@ -8,13 +8,13 @@ Namespace TesterVB
 			MyBase.New(Nothing, Nothing, FontStyle.Regular)
 		End Sub
 
-		Public Overrides Sub Draw(gr As Graphics, position As Point, range As Range)
+		Public Overrides Sub Draw(gr As Graphics, position As Point, range As TextSelectionRange)
 			For Each p As Place In CType(range, IEnumerable(Of Place))
 				Dim time As Integer = CInt(DateTime.Now.TimeOfDay.TotalMilliseconds / 2.0)
 				Dim angle As Integer = CInt(CLng(time) Mod 360L)
 				Dim angle2 As Integer = CInt(CLng(time - (p.iChar - range.Start.iChar) * 20) Mod 360L) * 2
 				Dim x As Integer = position.X + (p.iChar - range.Start.iChar) * range.tb.CharWidth
-				Dim r As Range = range.tb.GetRange(p, New Place(p.iChar + 1, p.iLine))
+				Dim r As TextSelectionRange = range.tb.GetRange(p, New Place(p.iChar + 1, p.iLine))
 				Dim point As New Point(x, position.Y + CInt(5.0 + 5.0 * Math.Sin(3.1415926535897931 * CDec(angle2) / 180.0)))
 				gr.ResetTransform()
 				gr.TranslateTransform(CSng(point.X + range.tb.CharWidth / 2), CSng(point.Y + range.tb.CharHeight / 2))

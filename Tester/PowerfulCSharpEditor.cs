@@ -33,10 +33,10 @@ namespace Tester {
 			InitializeComponent();
 
 			//init menu images
-			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(PowerfulCSharpEditor));
-			copyToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("copyToolStripButton.Image")));
-			cutToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("cutToolStripButton.Image")));
-			pasteToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("pasteToolStripButton.Image")));
+			ComponentResourceManager resources = new(typeof(PowerfulCSharpEditor));
+			copyToolStripMenuItem.Image = (Image)resources.GetObject("copyToolStripButton.Image");
+			cutToolStripMenuItem.Image = (Image)resources.GetObject("cutToolStripButton.Image");
+			pasteToolStripMenuItem.Image = (Image)resources.GetObject("pasteToolStripButton.Image");
 		}
 
 
@@ -76,7 +76,7 @@ namespace Tester {
 				tb.ShowFoldingLines = btShowFoldingLines.Checked;
 				tb.HighlightingRangeType = HighlightingRangeType.VisibleRange;
 				//create autocomplete popup menu
-				AutocompleteMenu popupMenu = new AutocompleteMenu(tb);
+				AutocompleteMenu popupMenu = new(tb);
 				popupMenu.Items.ImageList = ilAutocomplete;
 				popupMenu.Opening += new EventHandler<CancelEventArgs>(PopupMenu_Opening);
 				BuildAutocompleteMenu(popupMenu);
@@ -96,7 +96,7 @@ namespace Tester {
 					//current char (before caret)
 					var c = CurrentTB[CurrentTB.Selection.Start.iLine][CurrentTB.Selection.Start.iChar - 1];
 					//green Style
-					var greenStyleIndex = Range.ToStyleIndex(iGreenStyle);
+					var greenStyleIndex = TextSelectionRange.ToStyleIndex(iGreenStyle);
 					//if char contains green style then block popup menu
 					if ((c.style & greenStyleIndex) != 0)
 						e.Cancel = true;
@@ -104,7 +104,7 @@ namespace Tester {
 		}
 
 		private void BuildAutocompleteMenu(AutocompleteMenu popupMenu) {
-			List<AutocompleteItem> items = new List<AutocompleteItem>();
+			List<AutocompleteItem> items = new();
 
 			foreach (var item in snippets)
 				items.Add(new SnippetAutocompleteItem(item) { ImageIndex = 1 });
@@ -127,7 +127,7 @@ namespace Tester {
 		void Tb_MouseMove(object sender, MouseEventArgs e) {
 			var tb = sender as FastColoredTextBox;
 			var place = tb.PointToPlace(e.Location);
-			var r = new Range(tb, place, place);
+			var r = new TextSelectionRange(tb, place, place);
 
 			string text = r.GetFragment("[a-zA-Z]").Text;
 			lbWordUnderMouse.Text = text;
@@ -171,7 +171,7 @@ namespace Tester {
 			if (text.Length == 0)
 				return;
 			//highlight same words
-			Range[] ranges = tb.VisibleRange.GetRanges("\\b" + text + "\\b").ToArray();
+			TextSelectionRange[] ranges = tb.VisibleRange.GetRanges("\\b" + text + "\\b").ToArray();
 
 			if (ranges.Length > 1)
 				foreach (var r in ranges)
@@ -190,53 +190,53 @@ namespace Tester {
 			HighlightInvisibleChars(e.ChangedRange);
 		}
 
-		private void HighlightInvisibleChars(Range range) {
+		private void HighlightInvisibleChars(TextSelectionRange range) {
 			range.ClearStyle(invisibleCharsStyle);
 			if (btInvisibleChars.Checked)
 				range.SetStyle(invisibleCharsStyle, @".$|.\r\n|\s");
 		}
 
-		List<ExplorerItem> explorerList = new List<ExplorerItem>();
+		List<ExplorerItem> explorerList = new();
 
 		private void ReBuildObjectExplorer(string text) {
 			try {
-				List<ExplorerItem> list = new List<ExplorerItem>();
+				List<ExplorerItem> list = new();
 				int lastClassIndex = -1;
 				//find classes, methods and properties
-				Regex regex = new Regex(@"^(?<range>[\w\s]+\b(class|struct|enum|interface)\s+[\w<>,\s]+)|^\s*(public|private|internal|protected)[^\n]+(\n?\s*{|;)?", RegexOptions.Multiline);
+				Regex regex = new(@"^(?<range>[\w\s]+\b(class|struct|enum|interface)\s+[\w<>,\s]+)|^\s*(public|private|internal|protected)[^\n]+(\n?\s*{|;)?", RegexOptions.Multiline);
 				foreach (Match r in regex.Matches(text))
 					try {
 						string s = r.Value;
 						int i = s.IndexOfAny(new char[] { '=', '{', ';' });
 						if (i >= 0)
-							s = s.Substring(0, i);
+							s = s[..i];
 						s = s.Trim();
 
 						var item = new ExplorerItem() { title = s, position = r.Index };
 						if (Regex.IsMatch(item.title, @"\b(class|struct|enum|interface)\b")) {
-							item.title = item.title.Substring(item.title.LastIndexOf(' ')).Trim();
+							item.title = item.title[item.title.LastIndexOf(' ')..].Trim();
 							item.type = ExplorerItemType.Class;
 							list.Sort(lastClassIndex + 1, list.Count - (lastClassIndex + 1), new ExplorerItemComparer());
 							lastClassIndex = list.Count;
 						} else
 							if (item.title.Contains(" event ")) {
 							int ii = item.title.LastIndexOf(' ');
-							item.title = item.title.Substring(ii).Trim();
+							item.title = item.title[ii..].Trim();
 							item.type = ExplorerItemType.Event;
 						} else
-								if (item.title.Contains("(")) {
+								if (item.title.Contains('(')) {
 							var parts = item.title.Split('(');
-							item.title = parts[0].Substring(parts[0].LastIndexOf(' ')).Trim() + "(" + parts[1];
+							item.title = parts[0][parts[0].LastIndexOf(' ')..].Trim() + "(" + parts[1];
 							item.type = ExplorerItemType.Method;
 						} else
 									if (item.title.EndsWith("]")) {
 							var parts = item.title.Split('[');
 							if (parts.Length < 2) continue;
-							item.title = parts[0].Substring(parts[0].LastIndexOf(' ')).Trim() + "[" + parts[1];
+							item.title = parts[0][parts[0].LastIndexOf(' ')..].Trim() + "[" + parts[1];
 							item.type = ExplorerItemType.Method;
 						} else {
 							int ii = item.title.LastIndexOf(' ');
-							item.title = item.title.Substring(ii).Trim();
+							item.title = item.title[ii..].Trim();
 							item.type = ExplorerItemType.Property;
 						}
 						list.Add(item);
@@ -403,7 +403,7 @@ namespace Tester {
 
 		private void TbFind_KeyPress(object sender, KeyPressEventArgs e) {
 			if (e.KeyChar == '\r' && CurrentTB != null) {
-				Range r = tbFindChanged ? CurrentTB.Range.Clone() : CurrentTB.Selection.Clone();
+				TextSelectionRange r = tbFindChanged ? CurrentTB.Range.Clone() : CurrentTB.Selection.Clone();
 				tbFindChanged = false;
 				r.End = new Place(CurrentTB[CurrentTB.LinesCount - 1].Count, CurrentTB.LinesCount - 1);
 				var pattern = Regex.Escape(tbFind.Text);
@@ -422,11 +422,11 @@ namespace Tester {
 		private void ReplaceToolStripMenuItem_Click(object sender, EventArgs e) => CurrentTB.ShowReplaceDialog();
 
 		private void PowerfulCSharpEditor_FormClosing(object sender, FormClosingEventArgs e) {
-			List<FATabStripItem> list = new List<FATabStripItem>();
+			List<FATabStripItem> list = new();
 			foreach (FATabStripItem tab in tsFiles.Items)
 				list.Add(tab);
 			foreach (var tab in list) {
-				TabStripItemClosingEventArgs args = new TabStripItemClosingEventArgs(tab);
+				TabStripItemClosingEventArgs args = new(tab);
 				TsFiles_TabStripItemClosing(args);
 				if (args.Cancel) {
 					e.Cancel = true;
@@ -485,7 +485,7 @@ namespace Tester {
 		DateTime lastNavigatedDateTime = DateTime.Now;
 
 		private bool NavigateBackward() {
-			DateTime max = new DateTime();
+			DateTime max = new();
 			int iLine = -1;
 			FastColoredTextBox tb = null;
 			for (int iTab = 0; iTab < tsFiles.Items.Count; iTab++) {
@@ -617,7 +617,7 @@ namespace Tester {
 
 			public override string GetTextForReplace() {
 				//extend range
-				Range r = Parent.Fragment;
+				TextSelectionRange r = Parent.Fragment;
 				r.Start = enterPlace;
 				r.End = r.End;
 				//insert line break
@@ -741,24 +741,24 @@ namespace Tester {
 			this.pen = pen;
 		}
 
-		public override void Draw(Graphics gr, Point position, Range range) {
+		public override void Draw(Graphics gr, Point position, TextSelectionRange range) {
 			var tb = range.tb;
-			using (Brush brush = new SolidBrush(pen.Color))
-				foreach (var place in range) {
-					switch (tb[place].c) {
-						case ' ':
-							var point = tb.PlaceToPoint(place);
-							point.Offset(tb.CharWidth / 2, tb.CharHeight / 2);
-							gr.DrawLine(pen, point.X, point.Y, point.X + 1, point.Y);
-							break;
-					}
-
-					if (tb[place.iLine].Count - 1 == place.iChar) {
+			using Brush brush = new SolidBrush(pen.Color);
+			foreach (var place in range) {
+				switch (tb[place].c) {
+					case ' ':
 						var point = tb.PlaceToPoint(place);
-						point.Offset(tb.CharWidth, 0);
-						gr.DrawString("¶", tb.Font, brush, point);
-					}
+						point.Offset(tb.CharWidth / 2, tb.CharHeight / 2);
+						gr.DrawLine(pen, point.X, point.Y, point.X + 1, point.Y);
+						break;
 				}
+
+				if (tb[place.iLine].Count - 1 == place.iChar) {
+					var point = tb.PlaceToPoint(place);
+					point.Offset(tb.CharWidth, 0);
+					gr.DrawString("¶", tb.Font, brush, point);
+				}
+			}
 		}
 	}
 
