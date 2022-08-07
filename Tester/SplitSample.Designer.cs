@@ -97,11 +97,13 @@ namespace Tester {
             this.fctbMaster.Language = Language.CSharp;
             this.fctbMaster.LeftBracket = '(';
             this.fctbMaster.LeftBracket2 = '{';
+            this.fctbMaster.LeftBracket3 = '\x0';
             this.fctbMaster.Location = new System.Drawing.Point(0, 93);
             this.fctbMaster.Name = "fctbMaster";
             this.fctbMaster.Paddings = new System.Windows.Forms.Padding(0);
             this.fctbMaster.RightBracket = ')';
             this.fctbMaster.RightBracket2 = '}';
+            this.fctbMaster.RightBracket3 = '\x0';
             this.fctbMaster.SelectionColor = System.Drawing.Color.FromArgb(((int)(((byte)(50)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.fctbMaster.ServiceColors = ((FastColoredTextBoxNS.ServiceColors)(resources.GetObject("fctbMaster.ServiceColors")));
             this.fctbMaster.ShowCaretWhenInactive = true;
@@ -137,11 +139,13 @@ namespace Tester {
             this.fctbSlave.Language = Language.CSharp;
             this.fctbSlave.LeftBracket = '(';
             this.fctbSlave.LeftBracket2 = '{';
+            this.fctbSlave.LeftBracket3 = '\x0';
             this.fctbSlave.Location = new System.Drawing.Point(0, 304);
             this.fctbSlave.Name = "fctbSlave";
             this.fctbSlave.Paddings = new System.Windows.Forms.Padding(0);
             this.fctbSlave.RightBracket = ')';
             this.fctbSlave.RightBracket2 = '}';
+            this.fctbSlave.RightBracket3 = '\x0';
             this.fctbSlave.SelectionColor = System.Drawing.Color.FromArgb(((int)(((byte)(50)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.fctbSlave.ServiceColors = ((FastColoredTextBoxNS.ServiceColors)(resources.GetObject("fctbSlave.ServiceColors")));
             this.fctbSlave.ShowCaretWhenInactive = true;

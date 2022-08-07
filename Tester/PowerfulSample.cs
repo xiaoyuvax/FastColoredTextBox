@@ -53,6 +53,8 @@ namespace Tester {
 			fctb.RightBracket = ')';
 			fctb.LeftBracket2 = '\x0';
 			fctb.RightBracket2 = '\x0';
+			fctb.LeftBracket3 = '\x0';
+			fctb.RightBracket3 = '\x0';
 			//clear style of changed range
 			e.ChangedRange.ClearStyle(BlueStyle, BoldStyle, GrayStyle, MagentaStyle, GreenStyle, BrownStyle);
 

@@ -344,8 +344,8 @@ namespace FastColoredTextBoxNS.Text {
 		}
 
 		/// <summary>
-		/// Uses the given <paramref name="doc"/> to parse a XML description and adds it as syntax descriptor. 
-		/// The syntax descriptor is used for highlighting when 
+		/// Uses the given <paramref name="doc"/> to parse a XML description and adds it as syntax descriptor.
+		/// The syntax descriptor is used for highlighting when
 		/// <list type="bullet">
 		///     <item>Language property of FCTB is set to <see cref="Language.Custom"/></item>
 		///     <item>DescriptionFile property of FCTB has the same value as the method parameter <paramref name="descriptionFileName"/></item>
@@ -359,10 +359,10 @@ namespace FastColoredTextBoxNS.Text {
 		}
 
 		/// <summary>
-		/// Adds the given <paramref name="style"/> as resilient style. A resilient style is additionally available when highlighting is 
-		/// based on a syntax descriptor that has been derived from a XML description file. In the run of the highlighting routine 
-		/// the styles used by the FCTB are always dropped and replaced with the (initial) ones from the syntax descriptor. Resilient styles are 
-		/// added afterwards and can be used anyway. 
+		/// Adds the given <paramref name="style"/> as resilient style. A resilient style is additionally available when highlighting is
+		/// based on a syntax descriptor that has been derived from a XML description file. In the run of the highlighting routine
+		/// the styles used by the FCTB are always dropped and replaced with the (initial) ones from the syntax descriptor. Resilient styles are
+		/// added afterwards and can be used anyway.
 		/// </summary>
 		/// <param name="style">Style to add</param>
 		public virtual void AddResilientStyle(Style style) {
@@ -391,6 +391,15 @@ namespace FastColoredTextBoxNS.Text {
 				} else {
 					desc.leftBracket2 = brackets.Attributes["left2"].Value[0];
 					desc.rightBracket2 = brackets.Attributes["right2"].Value[0];
+				}
+
+				if (brackets.Attributes["left3"] == null || brackets.Attributes["right3"] == null ||
+					brackets.Attributes["left3"].Value == "" || brackets.Attributes["right3"].Value == "") {
+					desc.leftBracket3 = '\x0';
+					desc.rightBracket3 = '\x0';
+				} else {
+					desc.leftBracket3 = brackets.Attributes["left3"].Value[0];
+					desc.rightBracket3 = brackets.Attributes["right3"].Value[0];
 				}
 
 				if (brackets.Attributes["strategy"] == null || brackets.Attributes["strategy"].Value == "")
@@ -493,6 +502,8 @@ namespace FastColoredTextBoxNS.Text {
 			range.tb.RightBracket = desc.rightBracket;
 			range.tb.LeftBracket2 = desc.leftBracket2;
 			range.tb.RightBracket2 = desc.rightBracket2;
+			range.tb.LeftBracket3 = desc.leftBracket3;
+			range.tb.RightBracket3 = desc.rightBracket3;
 			//clear styles of range
 			range.ClearStyle(desc.styles.ToArray());
 			//highlight syntax
@@ -513,9 +524,11 @@ namespace FastColoredTextBoxNS.Text {
 			tb.RightBracket = oldBrackets[1];
 			tb.LeftBracket2 = oldBrackets[2];
 			tb.RightBracket2 = oldBrackets[3];
+			tb.LeftBracket3 = oldBrackets[4];
+			tb.RightBracket3 = oldBrackets[5];
 		}
 
-		protected static char[] RememberBrackets(FastColoredTextBox tb) => new[] { tb.LeftBracket, tb.RightBracket, tb.LeftBracket2, tb.RightBracket2 };
+		protected static char[] RememberBrackets(FastColoredTextBox tb) => new[] { tb.LeftBracket, tb.RightBracket, tb.LeftBracket2, tb.RightBracket2, tb.LeftBracket3, tb.RightBracket3 };
 
 		protected void InitCShaprRegex() {
 			//CSharpStringRegex = new Regex( @"""""|@""""|''|@"".*?""|(?<!@)(?<range>"".*?[^\\]"")|'.*?[^\\]'", RegexCompiledOption);
@@ -544,7 +557,7 @@ namespace FastColoredTextBoxNS.Text {
                                   \\.                         #   else: match an escaped sequence
                                 )
                                 | # OR
-            
+
                                 # match any char except double quote char ("")
                                 [^""]
                               )*
@@ -654,6 +667,8 @@ namespace FastColoredTextBoxNS.Text {
 			range.tb.RightBracket = ')';
 			range.tb.LeftBracket2 = '{';
 			range.tb.RightBracket2 = '}';
+			range.tb.LeftBracket3 = '[';
+			range.tb.RightBracket3 = ']';
 			range.tb.BracketsHighlightStrategy = BracketsHighlightStrategy.Strategy2;
 
 			range.tb.AutoIndentCharsPatterns
@@ -732,6 +747,8 @@ namespace FastColoredTextBoxNS.Text {
 			range.tb.RightBracket = ')';
 			range.tb.LeftBracket2 = '\x0';
 			range.tb.RightBracket2 = '\x0';
+			range.tb.LeftBracket3 = '\x0';
+			range.tb.RightBracket3 = '\x0';
 
 			range.tb.AutoIndentCharsPatterns
 				= @"
@@ -801,6 +818,8 @@ namespace FastColoredTextBoxNS.Text {
 			range.tb.RightBracket = '>';
 			range.tb.LeftBracket2 = '(';
 			range.tb.RightBracket2 = ')';
+			range.tb.LeftBracket3 = '\x0';
+			range.tb.RightBracket3 = '\x0';
 			range.tb.AutoIndentCharsPatterns = @"";
 			//clear style of changed range
 			range.ClearStyle(CommentStyle, TagBracketStyle, TagNameStyle, AttributeStyle, AttributeValueStyle,
@@ -869,6 +888,8 @@ namespace FastColoredTextBoxNS.Text {
 			range.tb.RightBracket = '>';
 			range.tb.LeftBracket2 = '(';
 			range.tb.RightBracket2 = ')';
+			range.tb.LeftBracket3 = '\x0';
+			range.tb.RightBracket3 = '\x0';
 			range.tb.AutoIndentCharsPatterns = @"";
 			//clear style of changed range
 			range.ClearStyle(CommentStyle, XmlTagBracketStyle, XmlTagNameStyle, XmlAttributeStyle, XmlAttributeValueStyle,
@@ -980,6 +1001,8 @@ namespace FastColoredTextBoxNS.Text {
 			range.tb.RightBracket = ')';
 			range.tb.LeftBracket2 = '\x0';
 			range.tb.RightBracket2 = '\x0';
+			range.tb.LeftBracket3 = '\x0';
+			range.tb.RightBracket3 = '\x0';
 
 			range.tb.AutoIndentCharsPatterns = @"";
 			//clear style of changed range
@@ -1046,6 +1069,8 @@ namespace FastColoredTextBoxNS.Text {
 			range.tb.RightBracket = ')';
 			range.tb.LeftBracket2 = '{';
 			range.tb.RightBracket2 = '}';
+			range.tb.LeftBracket3 = '\x0';
+			range.tb.RightBracket3 = '\x0';
 			range.tb.BracketsHighlightStrategy = BracketsHighlightStrategy.Strategy2;
 			//clear style of changed range
 			range.ClearStyle(StringStyle, CommentStyle, NumberStyle, VariableStyle, KeywordStyle, KeywordStyle2,
@@ -1105,6 +1130,8 @@ namespace FastColoredTextBoxNS.Text {
 			range.tb.RightBracket = ')';
 			range.tb.LeftBracket2 = '{';
 			range.tb.RightBracket2 = '}';
+			range.tb.LeftBracket3 = '\x0';
+			range.tb.RightBracket3 = '\x0';
 			range.tb.BracketsHighlightStrategy = BracketsHighlightStrategy.Strategy2;
 
 			range.tb.AutoIndentCharsPatterns
@@ -1163,6 +1190,8 @@ namespace FastColoredTextBoxNS.Text {
 			range.tb.RightBracket = ')';
 			range.tb.LeftBracket2 = '{';
 			range.tb.RightBracket2 = '}';
+			range.tb.LeftBracket3 = '\x0';
+			range.tb.RightBracket3 = '\x0';
 			range.tb.BracketsHighlightStrategy = BracketsHighlightStrategy.Strategy2;
 
 			range.tb.AutoIndentCharsPatterns
@@ -1232,6 +1261,8 @@ namespace FastColoredTextBoxNS.Text {
 			range.tb.RightBracket = ']';
 			range.tb.LeftBracket2 = '{';
 			range.tb.RightBracket2 = '}';
+			range.tb.LeftBracket3 = '\x0';
+			range.tb.RightBracket3 = '\x0';
 			range.tb.BracketsHighlightStrategy = BracketsHighlightStrategy.Strategy2;
 
 			range.tb.AutoIndentCharsPatterns

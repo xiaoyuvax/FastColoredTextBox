@@ -74,11 +74,13 @@
             this.fctb.IsReplaceMode = false;
             this.fctb.LeftBracket = '(';
             this.fctb.LeftBracket2 = '{';
+            this.fctb.LeftBracket3 = '\x0';
             this.fctb.Location = new System.Drawing.Point(0, 42);
             this.fctb.Name = "fctb";
             this.fctb.Paddings = new System.Windows.Forms.Padding(0);
             this.fctb.RightBracket = ')';
-            this.fctb.RightBracket2 = '}';
+            this.fctb.RightBracket2 = '}';            
+			this.fctb.RightBracket3 = '\x0';
             this.fctb.SelectionColor = System.Drawing.Color.FromArgb(((int)(((byte)(50)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.fctb.Size = new System.Drawing.Size(490, 311);
             this.fctb.TabIndex = 3;

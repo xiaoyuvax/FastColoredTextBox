@@ -8,7 +8,7 @@
 //
 //  Email: pavel_torgashov@ukr.net
 //
-//  Copyright (C) Pavel Torgashov, 2011-2016. 
+//  Copyright (C) Pavel Torgashov, 2011-2016.
 
 // #define debug
 
@@ -89,6 +89,7 @@ namespace FastColoredTextBoxNS {
 		private DateTime lastNavigatedDateTime;
 		private TextSelectionRange leftBracketPosition;
 		private TextSelectionRange leftBracketPosition2;
+      private TextSelectionRange leftBracketPosition3;
 		private int leftPadding;
 		private int lineInterval;
 		private Color lineNumberColor;
@@ -112,6 +113,7 @@ namespace FastColoredTextBoxNS {
 		private int preferredLineWidth;
 		private TextSelectionRange rightBracketPosition;
 		private TextSelectionRange rightBracketPosition2;
+      private TextSelectionRange rightBracketPosition3;
 		private bool scrollBars;
 		private Color selectionColor;
 		private Color serviceLinesColor;
@@ -163,6 +165,7 @@ namespace FastColoredTextBoxNS {
 			SelectionColor = Color.Blue;
 			BracketsStyle = new MarkerStyle(new SolidBrush(Color.FromArgb(80, Color.Lime)));
 			BracketsStyle2 = new MarkerStyle(new SolidBrush(Color.FromArgb(60, Color.Red)));
+         BracketsStyle3 = new MarkerStyle(new SolidBrush(Color.FromArgb(60, Color.Blue)));
 			DelayedEventsInterval = 100;
 			DelayedTextChangedInterval = 100;
 			AllowSeveralTextStyleDrawing = false;
@@ -170,6 +173,8 @@ namespace FastColoredTextBoxNS {
 			RightBracket = '\x0';
 			LeftBracket2 = '\x0';
 			RightBracket2 = '\x0';
+			LeftBracket3 = '\x0';
+			RightBracket3 = '\x0';
 			SyntaxHighlighter = new SyntaxHighlighter(this);
 			language = Language.Custom;
 			PreferredLineWidth = 0;
@@ -824,6 +829,12 @@ namespace FastColoredTextBoxNS {
 		[Browsable(false)]
 		public MarkerStyle BracketsStyle2 { get; set; }
 
+      /// <summary>
+      /// Style for alternative brackets highlighting
+      /// </summary>
+      [Browsable(false)]
+      public MarkerStyle BracketsStyle3 { get; set; }
+
 		/// <summary>
 		/// Opening bracket for brackets highlighting.
 		/// Set to '\x0' for disable brackets highlighting.
@@ -855,6 +866,22 @@ namespace FastColoredTextBoxNS {
 		[DefaultValue('\x0')]
 		[Description("Alternative closing bracket for brackets highlighting. Set to '\\x0' for disable brackets highlighting.")]
 		public char RightBracket2 { get; set; }
+
+		/// <summary>
+		/// Another alternative opening bracket for brackets highlighting.
+		/// Set to '\x0' for disable brackets highlighting.
+		/// </summary>
+		[DefaultValue('\x0')]
+		[Description("Alternative opening bracket for brackets highlighting. Set to '\\x0' for disable brackets highlighting.")]
+		public char LeftBracket3 { get; set; }
+
+		/// <summary>
+		/// Another alternative closing bracket for brackets highlighting.
+		/// Set to '\x0' for disable brackets highlighting.
+		/// </summary>
+		[DefaultValue('\x0')]
+		[Description("Alternative closing bracket for brackets highlighting. Set to '\\x0' for disable brackets highlighting.")]
+		public char RightBracket3 { get; set; }
 
 		/// <summary>
 		/// Comment line prefix.
@@ -1018,6 +1045,26 @@ namespace FastColoredTextBoxNS {
 		public TextSelectionRange RightBracketPosition2 {
 			get { return rightBracketPosition2; }
 		}
+
+      /// <summary>
+      /// Position of left highlighted alternative bracket.
+      /// </summary>
+      [Browsable(false)]
+      [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+      public TextSelectionRange LeftBracketPosition3
+      {
+         get { return leftBracketPosition3; }
+      }
+
+      /// <summary>
+      /// Position of right highlighted alternative bracket.
+      /// </summary>
+      [Browsable(false)]
+      [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+      public TextSelectionRange RightBracketPosition3
+      {
+         get { return rightBracketPosition3; }
+      }
 
 		/// <summary>
 		/// Start line index of current highlighted folding area. Return -1 if start of area is not found.
@@ -1760,8 +1807,8 @@ namespace FastColoredTextBoxNS {
 		public event EventHandler VisibleRangeChanged;
 
 		/// <summary>
-		/// TextChangedDelayed event. 
-		/// It occurs after insert, delete, clear, undo and redo operations. 
+		/// TextChangedDelayed event.
+		/// It occurs after insert, delete, clear, undo and redo operations.
 		/// This event occurs with a delay relative to TextChanged, and fires only once.
 		/// </summary>
 		[Browsable(true)]
@@ -2026,7 +2073,7 @@ namespace FastColoredTextBoxNS {
 			}
 			LineInfos.InsertRange(e.Index, temp);
 
-			/* 
+			/*
             for (int i = 0; i < e.Count; i++)
             {
                 LineInfos.Add(new LineInfo(-1) { VisibleState = newState });//<---- needed Insert
@@ -2130,6 +2177,8 @@ namespace FastColoredTextBoxNS {
 				HighlightBrackets(LeftBracket, RightBracket, ref leftBracketPosition, ref rightBracketPosition);
 			if (LeftBracket2 != '\x0' && RightBracket2 != '\x0')
 				HighlightBrackets(LeftBracket2, RightBracket2, ref leftBracketPosition2, ref rightBracketPosition2);
+			if (LeftBracket3 != '\x0' && RightBracket3 != '\x0')
+				HighlightBrackets(LeftBracket3, RightBracket3, ref leftBracketPosition3, ref rightBracketPosition3);
 			//remember last visit time
 			if (Selection.IsEmpty && Selection.Start.iLine < LinesCount) {
 				if (lastNavigatedDateTime != lines[Selection.Start.iLine].LastVisit) {
@@ -2183,9 +2232,9 @@ namespace FastColoredTextBoxNS {
 		}
 
 		/// <summary>
-		/// Checks if the styles buffer has enough space to add one 
-		/// more element. If not, an exception is thrown. Otherwise, 
-		/// the index of a free slot is returned. 
+		/// Checks if the styles buffer has enough space to add one
+		/// more element. If not, an exception is thrown. Otherwise,
+		/// the index of a free slot is returned.
 		/// </summary>
 		/// <returns>Index of free styles buffer slot</returns>
 		/// <exception cref="Exception">If maximum count of styles is exceeded</exception>
@@ -3217,7 +3266,7 @@ namespace FastColoredTextBoxNS {
 
 			base.OnKeyDown(e);
 
-			if (Focused)//??? 
+			if (Focused)//???
 				lastModifiers = e.Modifiers;
 
 			handledChar = false;
@@ -4537,7 +4586,7 @@ namespace FastColoredTextBoxNS {
 				//draw wordwrap strings of line
 				for (int iWordWrapLine = 0; iWordWrapLine < lineInfo.WordWrapStringsCount; iWordWrapLine++) {
 					y = lineInfo.startY + iWordWrapLine * CharHeight - startY;
-					//indent 
+					//indent
 					var indent = iWordWrapLine == 0 ? 0 : lineInfo.wordWrapIndent * CharWidth;
 					//draw chars
 					DrawLineChars(gr, firstChar, lastChar, iLine, iWordWrapLine, -startX + indent, y);
@@ -4728,6 +4777,11 @@ namespace FastColoredTextBoxNS {
 				BracketsStyle2.Draw(e.Graphics, PlaceToPoint(leftBracketPosition2.Start), leftBracketPosition2);
 				BracketsStyle2.Draw(e.Graphics, PlaceToPoint(rightBracketPosition2.Start), rightBracketPosition2);
 			}
+         if (BracketsStyle3 != null && leftBracketPosition3 != null && rightBracketPosition3 != null)
+         {
+            BracketsStyle3.Draw(e.Graphics, PlaceToPoint(leftBracketPosition3.Start), leftBracketPosition3);
+            BracketsStyle3.Draw(e.Graphics, PlaceToPoint(rightBracketPosition3.Start), rightBracketPosition3);
+         }
 			//
 			e.Graphics.SmoothingMode = SmoothingMode.None;
 			//draw folding indicator
@@ -6425,6 +6479,8 @@ namespace FastColoredTextBoxNS {
 			rightBracketPosition = null;
 			leftBracketPosition2 = null;
 			rightBracketPosition2 = null;
+         leftBracketPosition3 = null;
+         rightBracketPosition3 = null;
 		}
 
 		/// <summary>
@@ -7161,7 +7217,7 @@ window.status = ""#print"";
 				middleClickScrollingTimer.Interval = 50;
 				middleClickScrollingTimer.Enabled = true;
 				Capture = true;
-				// Refresh the control 
+				// Refresh the control
 				Refresh();
 				// Disable drawing
 				_ = SendMessage(Handle, WM_SETREDRAW, 0, 0);
@@ -7282,7 +7338,7 @@ window.status = ""#print"";
 
 			// Enable drawing
 			_ = SendMessage(Handle, WM_SETREDRAW, 1, 0);
-			// Refresh the control 
+			// Refresh the control
 			Refresh();
 			// Disable drawing
 			_ = SendMessage(Handle, WM_SETREDRAW, 0, 0);

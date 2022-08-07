@@ -9,6 +9,8 @@ namespace FastColoredTextBoxNS.Text {
 		public char rightBracket = ')';
 		public char leftBracket2 = '{';
 		public char rightBracket2 = '}';
+		public char leftBracket3 = '[';
+		public char rightBracket3 = ']';
 		public BracketsHighlightStrategy bracketsHighlightStrategy = BracketsHighlightStrategy.Strategy2;
 		public readonly List<Style> styles = new();
 		public readonly List<RuleDesc> rules = new();
