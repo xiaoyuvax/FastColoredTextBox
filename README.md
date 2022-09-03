@@ -1,6 +1,8 @@
 FastColoredTextBox
 ==================
 
+This is a fork of the .Net 6 conversion of Pavel's Fast Colored TextBox.  This fork builds on the existing Textbox to add new features, such as unlimited text styling, a blinking text style and text block indentation guides.  (I still have to merge these features into this fork, but they will be present shortly)
+
 Fast Colored TextBox is text editor component for .NET.
 Allows you to create custom text editor with syntax highlighting.
 It works well with small, medium, large and very-very large files.
