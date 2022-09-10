@@ -732,7 +732,7 @@ namespace FastColoredTextBoxNS.Types
       /// <summary>
       /// Set style for given regex pattern
       /// </summary>
-      public void SetStyle(Style style, string regexPattern, RegexOptions options)
+      public void SetStyle(Style style, string regexPattern, RegexOptions options = RegexOptions.None)
       {
          if (Math.Abs(Start.iLine - End.iLine) > 1000)
             options |= SyntaxHighlighter.RegexCompiledOption;
