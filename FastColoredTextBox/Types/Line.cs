@@ -45,15 +45,28 @@ namespace FastColoredTextBoxNS.Types {
 		/// <summary>
 		/// Clears style of chars, delete folding markers
 		/// </summary>
-		public void ClearStyle(StyleIndex styleIndex) {
+		public void ClearStyle(Style style) {
 			FoldingStartMarker = null;
 			FoldingEndMarker = null;
 			for (int i = 0; i < Count; i++) {
 				StyledChar c = this[i];
-				c.style &= ~styleIndex;
+                c.RemoveStyle(style);
 				this[i] = c;
 			}
 		}
+
+      /// <summary>
+      /// Clears all styles from chars, delete folding markers
+      /// </summary>
+      public void ClearAllStyles() {
+         FoldingStartMarker = null;
+         FoldingEndMarker = null;
+         for (int i = 0; i < Count; i++) {
+            StyledChar c = this[i];
+				c.ClearStyles();
+            this[i] = c;
+         }
+      }
 
 		/// <summary>
 		/// Text of the line
@@ -62,7 +75,7 @@ namespace FastColoredTextBoxNS.Types {
 			get {
 				StringBuilder sb = new(Count);
 				foreach (StyledChar c in this)
-					sb.Append(c.c);
+					sb.Append(c.C);
 				return sb.ToString();
 			}
 		}
@@ -82,7 +95,7 @@ namespace FastColoredTextBoxNS.Types {
 			get {
 				int spacesCount = 0;
 				for (int i = 0; i < Count; i++)
-					if (this[i].c == ' ')
+					if (this[i].C == ' ')
 						spacesCount++;
 					else
 						break;

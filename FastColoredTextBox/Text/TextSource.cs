@@ -21,7 +21,7 @@ namespace FastColoredTextBoxNS.Text {
 		/// <summary>
 		/// Styles
 		/// </summary>
-		public readonly Style[] Styles;
+		public readonly StyleManager Styles;
 		/// <summary>
 		/// Occurs when line was inserted/added
 		/// </summary>
@@ -77,15 +77,23 @@ namespace FastColoredTextBoxNS.Text {
 		/// </summary>
 		public TextStyle DefaultStyle { get; set; }
 
+		/// <summary>
+		/// Gets the default read only style.
+		/// </summary>
+		/// <value>The default read only style.</value>
+		public ReadOnlyStyle DefaultReadOnlyStyle { get; } = new ReadOnlyStyle();
+
+      /// <summary>
+      /// Gets the default blinking style.
+      /// </summary>
+      /// <value>The default blinking style.</value>
+      public BlinkingStyle DefaultBlinkingStyle { get; } = new BlinkingStyle();
+
 		public TextSource(FastColoredTextBox currentTB) {
 			CurrentTB = currentTB;
 			linesAccessor = new LinesAccessor(this);
 			Manager = new CommandManager(this);
-
-			if (Enum.GetUnderlyingType(typeof(StyleIndex)) == typeof(uint))
-				Styles = new Style[32];
-			else
-				Styles = new Style[16];
+            Styles = new StyleManager();
 
 			InitDefaultStyle();
 		}
