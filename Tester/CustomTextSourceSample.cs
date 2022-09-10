@@ -37,7 +37,7 @@ namespace Tester {
 
 		private void Fctb_VisibleRangeChanged(object sender, EventArgs e) {
 			var range = fctb.VisibleRange;
-			range.ClearStyle(StyleIndex.All);
+			range.ClearAllStyles();
 			fctb.VisibleRange.SetStyle(fctb.SyntaxHighlighter.BrownStyle, "^.+?  ", RegexOptions.Multiline);
 			fctb.VisibleRange.SetStyle(fctb.SyntaxHighlighter.BlueBoldStyle, @"POST|GET", RegexOptions.Multiline);
 		}

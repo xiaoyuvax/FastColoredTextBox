@@ -90,18 +90,18 @@ namespace Tester {
 		private void PopupMenu_Opening(object sender, CancelEventArgs e) {
 			//---block autocomplete menu for comments
 			//get index of green style (used for comments)
-			var iGreenStyle = CurrentTB.GetStyleIndex(CurrentTB.SyntaxHighlighter.GreenStyle);
-			if (iGreenStyle >= 0)
-				if (CurrentTB.Selection.Start.iChar > 0) {
-					//current char (before caret)
-					var c = CurrentTB[CurrentTB.Selection.Start.iLine][CurrentTB.Selection.Start.iChar - 1];
-					//green Style
-					var greenStyleIndex = TextSelectionRange.ToStyleIndex(iGreenStyle);
-					//if char contains green style then block popup menu
-					if ((c.style & greenStyleIndex) != 0)
-						e.Cancel = true;
-				}
-		}
+         if (!CurrentTB.StyleManager.IsManaged(CurrentTB.SyntaxHighlighter.GreenStyle))
+            return;
+
+         if (CurrentTB.Selection.Start.iChar > 0)
+			{
+            //current char (before caret)
+            var c = CurrentTB[CurrentTB.Selection.Start.iLine][CurrentTB.Selection.Start.iChar - 1];
+            //if char contains green style then block popup menu
+            if (c.HasStyle(CurrentTB.SyntaxHighlighter.GreenStyle))
+               e.Cancel = true;
+			}
+      }
 
 		private void BuildAutocompleteMenu(AutocompleteMenu popupMenu) {
 			List<AutocompleteItem> items = new();
@@ -745,7 +745,7 @@ namespace Tester {
 			var tb = range.tb;
 			using Brush brush = new SolidBrush(pen.Color);
 			foreach (var place in range) {
-				switch (tb[place].c) {
+				switch (tb[place].C) {
 					case ' ':
 						var point = tb.PlaceToPoint(place);
 						point.Offset(tb.CharWidth / 2, tb.CharHeight / 2);

@@ -177,7 +177,7 @@ Namespace TesterVB
 			Dim range As New TextSelectionRange(Me.fctb, 0, startLine, 0, endLine)
 			range.ClearFoldingMarkers()
 			range.SetFoldingMarkers("N\d\d00", "N\d\d99")
-			range.ClearStyle(StyleIndex.All)
+			range.ClearAllStyles()
 			range.SetStyle(Me.fctb.SyntaxHighlighter.BlueStyle, "N\d+")
 			range.SetStyle(Me.fctb.SyntaxHighlighter.RedStyle, "[+\-]?[\d\.]+\d+")
 		End Sub

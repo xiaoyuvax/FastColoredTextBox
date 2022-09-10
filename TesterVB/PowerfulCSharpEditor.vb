@@ -969,11 +969,12 @@ Namespace TesterVB
 		End Sub
 
 		Private Sub PopupMenu_Opening(sender As Object, e As CancelEventArgs)
-			Dim iGreenStyle As Integer = Me.CurrentTB.GetStyleIndex(Me.CurrentTB.SyntaxHighlighter.GreenStyle)
-			If iGreenStyle >= 0 AndAlso Me.CurrentTB.Selection.Start.iChar > 0 Then
+			If Not Me.CurrentTB.StyleManager.IsManaged(Me.CurrentTB.SyntaxHighlighter.GreenStyle) Then
+				Return
+			End If
+			If Me.CurrentTB.Selection.Start.iChar > 0 Then
 				Dim c As StyledChar = Me.CurrentTB(Me.CurrentTB.Selection.Start.iLine)(Me.CurrentTB.Selection.Start.iChar - 1)
-				Dim greenStyleIndex As StyleIndex = TextSelectionRange.ToStyleIndex(iGreenStyle)
-				If CUShort(c.style And greenStyleIndex) <> 0 Then
+				If c.HasStyle(Me.CurrentTB.SyntaxHighlighter.GreenStyle) Then
 					e.Cancel = True
 				End If
 			End If
@@ -1057,7 +1058,7 @@ Namespace TesterVB
 					Me.lastNavigatedDateTime = tb(tb.Selection.Start.iLine).LastVisit
 				End If
 			End If
-			tb.VisibleRange.ClearStyle(New Style() {tb.Styles(0)})
+			tb.VisibleRange.ClearStyle(New Style() {tb.StyleManager.GetStyles()(0)})
 			If tb.Selection.IsEmpty Then
 				Dim fragment As TextSelectionRange = tb.Selection.GetFragment("\w")
 				Dim text As String = fragment.Text
@@ -1067,7 +1068,7 @@ Namespace TesterVB
 						Dim array As TextSelectionRange() = ranges
 						For i As Integer = 0 To array.Length - 1
 							Dim r As TextSelectionRange = array(i)
-							r.SetStyle(tb.Styles(0))
+							r.SetStyle(tb.StyleManager.GetStyles()(0))
 						Next
 					End If
 				End If

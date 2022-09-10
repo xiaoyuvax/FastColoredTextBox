@@ -102,7 +102,7 @@ Public Class PowerfulSample
       lang = CType(sender, ToolStripMenuItem).Text
 
       FastColoredTextBox1.ClearStylesBuffer()
-      FastColoredTextBox1.Range.ClearStyle(StyleIndex.All)
+      FastColoredTextBox1.Range.ClearAllStyles()
       InitStylesPriority()
 
       Select Case lang

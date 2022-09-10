@@ -14,11 +14,10 @@ namespace Tester {
 			e.ChangedRange.SetStyle(blueStyle, @"(http|ftp|https):\/\/[\w\-_]+(\.[\w\-_]+)+([\w\-\.,@?^=%&amp;:/~\+#]*[\w\-\@?^=%&amp;/~\+#])?");
 		}
 
-		bool CharIsHyperlink(Place place) {
-			var mask = fctb.GetStyleIndexMask(new Style[] { blueStyle });
-			if (place.iChar < fctb.GetLineLength(place.iLine))
-				if ((fctb[place].style & mask) != 0)
-					return true;
+		bool CharIsHyperlink(Place place)
+      {
+         if (place.iChar < fctb.GetLineLength(place.iLine))
+            return fctb[place].HasStyle(blueStyle);
 
 			return false;
 		}

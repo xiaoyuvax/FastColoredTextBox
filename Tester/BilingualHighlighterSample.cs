@@ -19,7 +19,7 @@ namespace Tester {
 			//find PHP fragments
 			foreach (var r in tb.GetRanges(@"<\?php.*?\?>", RegexOptions.Singleline)) {
 				//remove HTML highlighting from this fragment
-				r.ClearStyle(StyleIndex.All);
+				r.ClearAllStyles();
 				//do PHP highlighting
 				tb.SyntaxHighlighter.InitStyleSchema(Language.PHP);
 				tb.SyntaxHighlighter.PHPSyntaxHighlight(r);

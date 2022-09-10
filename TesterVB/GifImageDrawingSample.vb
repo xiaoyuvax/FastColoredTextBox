@@ -27,7 +27,7 @@ Namespace TesterVB
 		End Sub
 
 		Private Sub Fctb_TextChanged(sender As Object, e As TextChangedEventArgs)
-			e.ChangedRange.ClearStyle(StyleIndex.All)
+			e.ChangedRange.ClearAllStyles()
 			For Each key As String In Me.style.ImagesByText.Keys
 				Dim pattern As String = Regex.Replace(key, GifImageDrawingSample.RegexSpecSymbolsPattern, "\$0")
 				e.ChangedRange.SetStyle(Me.style, pattern)

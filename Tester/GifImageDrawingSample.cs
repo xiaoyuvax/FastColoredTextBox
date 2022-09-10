@@ -29,7 +29,7 @@ namespace Tester {
 
 		private void Fctb_TextChanged(object sender, FastColoredTextBoxNS.TextChangedEventArgs e) {
 			if (style == null) return;
-			e.ChangedRange.ClearStyle(StyleIndex.All);
+			e.ChangedRange.ClearAllStyles();
 			foreach (var key in style.ImagesByText.Keys) {
 				string pattern = Regex.Replace(key, REGEX_SPEC_SYMBOLS_PATTERN, "\\$0");
 				e.ChangedRange.SetStyle(style, pattern);

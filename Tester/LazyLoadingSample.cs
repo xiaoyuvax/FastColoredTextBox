@@ -37,7 +37,7 @@ namespace Tester {
 			//set markers for folding
 			range.SetFoldingMarkers(@"N\d\d00", @"N\d\d99");
 			//
-			range.ClearStyle(StyleIndex.All);
+			range.ClearAllStyles();
 			range.SetStyle(fctb.SyntaxHighlighter.BlueStyle, @"N\d+");
 			range.SetStyle(fctb.SyntaxHighlighter.RedStyle, @"[+\-]?[\d\.]+\d+");
 		}

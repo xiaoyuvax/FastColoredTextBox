@@ -40,7 +40,7 @@ namespace Tester {
 				fctb.Language = Language.XML;
 
 				fctb.ClearStylesBuffer();
-				fctb.Range.ClearStyle(StyleIndex.All);
+				fctb.Range.ClearAllStyles();
 				InitStylesPriority();
 				fctb.AutoIndentNeeded -= Fctb_AutoIndentNeeded;
 
@@ -94,7 +94,7 @@ namespace Tester {
 			//set language
 			lang = (sender as ToolStripMenuItem).Text;
 			fctb.ClearStylesBuffer();
-			fctb.Range.ClearStyle(StyleIndex.All);
+			fctb.Range.ClearAllStyles();
 			InitStylesPriority();
 			fctb.AutoIndentNeeded -= Fctb_AutoIndentNeeded;
 			//
