@@ -105,6 +105,16 @@ namespace FastColoredTextBoxNS.Types
       }
 
       /// <summary>
+      /// Determines whether this instance defines the specified style.
+      /// </summary>
+      /// <param name="style">The style.</param>
+      /// <returns><c>true</c> if this instance defines the style; <c>false</c> otherwise.</returns>
+      public bool HasStyle(Style style)
+      {
+         return GetStyleIndex(style) != -1;
+      }
+
+      /// <summary>
       /// Removes the specified style.
       /// </summary>
       /// <param name="style">The style.</param>
