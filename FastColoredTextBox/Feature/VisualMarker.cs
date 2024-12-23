@@ -1,79 +1,96 @@
 ﻿using FastColoredTextBoxNS.Types;
-using System.Drawing;
-using System.Windows.Forms;
 
-namespace FastColoredTextBoxNS.Feature {
-	public class VisualMarker {
-		public readonly Rectangle rectangle;
+namespace FastColoredTextBoxNS.Feature
+{
+    public class VisualMarker
+    {
+        public readonly Rectangle rectangle;
 
-		public VisualMarker(Rectangle rectangle) => this.rectangle = rectangle;
-		public virtual void Draw(Graphics gr, Pen pen) { }
-		public virtual Cursor Cursor => Cursors.Hand;
-	}
+        public VisualMarker(Rectangle rectangle) => this.rectangle = rectangle;
 
-	public class CollapseFoldingMarker : VisualMarker {
-		public readonly int iLine;
+        public virtual void Draw(Graphics gr, Pen pen)
+        {
+        }
 
-		public CollapseFoldingMarker(int iLine, Rectangle rectangle)
-			: base(rectangle) {
-			this.iLine = iLine;
-		}
+        public virtual Cursor Cursor => Cursors.Hand;
+    }
 
-		public void Draw(Graphics gr, Pen pen, Brush backgroundBrush, Pen forePen) {
-			//draw minus
-			gr.FillRectangle(backgroundBrush, rectangle);
-			gr.DrawRectangle(pen, rectangle);
-			gr.DrawLine(forePen, rectangle.Left + 2, rectangle.Top + rectangle.Height / 2, rectangle.Right - 2, rectangle.Top + rectangle.Height / 2);
-		}
-	}
+    public class CollapseFoldingMarker : VisualMarker
+    {
+        public readonly int iLine;
 
-	public class ExpandFoldingMarker : VisualMarker {
-		public readonly int iLine;
+        public CollapseFoldingMarker(int iLine, Rectangle rectangle)
+            : base(rectangle)
+        {
+            this.iLine = iLine;
+        }
 
-		public ExpandFoldingMarker(int iLine, Rectangle rectangle)
-			: base(rectangle) {
-			this.iLine = iLine;
-		}
+        public void Draw(Graphics gr, Pen pen, Brush backgroundBrush, Pen forePen)
+        {
+            //draw minus
+            gr.FillRectangle(backgroundBrush, rectangle);
+            gr.DrawRectangle(pen, rectangle);
+            gr.DrawLine(forePen, rectangle.Left + 2, rectangle.Top + rectangle.Height / 2, rectangle.Right - 2, rectangle.Top + rectangle.Height / 2);
+        }
+    }
 
-		public void Draw(Graphics gr, Pen pen, Brush backgroundBrush, Pen forePen) {
-			//draw plus
-			gr.FillRectangle(backgroundBrush, rectangle);
-			gr.DrawRectangle(pen, rectangle);
-			gr.DrawLine(forePen, rectangle.Left + 2, rectangle.Top + rectangle.Height / 2, rectangle.Right - 2, rectangle.Top + rectangle.Height / 2);
-			gr.DrawLine(forePen, rectangle.Left + rectangle.Width / 2, rectangle.Top + 2, rectangle.Left + rectangle.Width / 2, rectangle.Bottom - 2);
-		}
-	}
+    public class ExpandFoldingMarker : VisualMarker
+    {
+        public readonly int iLine;
 
-	public class FoldedAreaMarker : VisualMarker {
-		public readonly int iLine;
+        public ExpandFoldingMarker(int iLine, Rectangle rectangle)
+            : base(rectangle)
+        {
+            this.iLine = iLine;
+        }
 
-		public FoldedAreaMarker(int iLine, Rectangle rectangle)
-			: base(rectangle) {
-			this.iLine = iLine;
-		}
+        public void Draw(Graphics gr, Pen pen, Brush backgroundBrush, Pen forePen)
+        {
+            //draw plus
+            gr.FillRectangle(backgroundBrush, rectangle);
+            gr.DrawRectangle(pen, rectangle);
+            gr.DrawLine(forePen, rectangle.Left + 2, rectangle.Top + rectangle.Height / 2, rectangle.Right - 2, rectangle.Top + rectangle.Height / 2);
+            gr.DrawLine(forePen, rectangle.Left + rectangle.Width / 2, rectangle.Top + 2, rectangle.Left + rectangle.Width / 2, rectangle.Bottom - 2);
+        }
+    }
 
-		public override void Draw(Graphics gr, Pen pen) {
-			gr.DrawRectangle(pen, rectangle);
-		}
-	}
+    public class FoldedAreaMarker : VisualMarker
+    {
+        public readonly int iLine;
 
-	public class StyleVisualMarker : VisualMarker {
-		public Style Style { get; private set; }
+        public FoldedAreaMarker(int iLine, Rectangle rectangle)
+            : base(rectangle)
+        {
+            this.iLine = iLine;
+        }
 
-		public StyleVisualMarker(Rectangle rectangle, Style style)
-			: base(rectangle) {
-			Style = style;
-		}
-	}
+        public override void Draw(Graphics gr, Pen pen)
+        {
+            gr.DrawRectangle(pen, rectangle);
+        }
+    }
 
-	public class VisualMarkerEventArgs : MouseEventArgs {
-		public Style Style { get; private set; }
-		public StyleVisualMarker Marker { get; private set; }
+    public class StyleVisualMarker : VisualMarker
+    {
+        public Style Style { get; private set; }
 
-		public VisualMarkerEventArgs(Style style, StyleVisualMarker marker, MouseEventArgs args)
-			: base(args.Button, args.Clicks, args.X, args.Y, args.Delta) {
-			Style = style;
-			Marker = marker;
-		}
-	}
+        public StyleVisualMarker(Rectangle rectangle, Style style)
+            : base(rectangle)
+        {
+            Style = style;
+        }
+    }
+
+    public class VisualMarkerEventArgs : MouseEventArgs
+    {
+        public Style Style { get; private set; }
+        public StyleVisualMarker Marker { get; private set; }
+
+        public VisualMarkerEventArgs(Style style, StyleVisualMarker marker, MouseEventArgs args)
+            : base(args.Button, args.Clicks, args.X, args.Y, args.Delta)
+        {
+            Style = style;
+            Marker = marker;
+        }
+    }
 }
