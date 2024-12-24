@@ -28,71 +28,81 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
+            components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SimplestSyntaxHighlightingSample));
-            this.label1 = new System.Windows.Forms.Label();
-            this.fctb = new FastColoredTextBoxNS.FastColoredTextBox();
-            ((System.ComponentModel.ISupportInitialize)(this.fctb)).BeginInit();
-            this.SuspendLayout();
+            label1 = new System.Windows.Forms.Label();
+            fctb = new FastColoredTextBoxNS.FastColoredTextBox();
+            ((System.ComponentModel.ISupportInitialize)fctb).BeginInit();
+            SuspendLayout();
             // 
             // label1
             // 
-            this.label1.Dock = System.Windows.Forms.DockStyle.Top;
-            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.label1.Location = new System.Drawing.Point(0, 0);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(498, 45);
-            this.label1.TabIndex = 1;
-            this.label1.Text = "This example shows how to make simplest syntax highlighting.";
+            label1.Dock = System.Windows.Forms.DockStyle.Top;
+            label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, 204);
+            label1.Location = new System.Drawing.Point(0, 0);
+            label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            label1.Name = "label1";
+            label1.Size = new System.Drawing.Size(581, 59);
+            label1.TabIndex = 1;
+            label1.Text = "This example shows how to make simplest syntax highlighting.";
             // 
             // fctb
             // 
-            this.fctb.AutoCompleteBracketsList = new char[] {
-        '(',
-        ')',
-        '{',
-        '}',
-        '[',
-        ']',
-        '\"',
-        '\"',
-        '\'',
-        '\''};
-            this.fctb.AutoScrollMinSize = new System.Drawing.Size(480, 75);
-            this.fctb.BackBrush = null;
-            this.fctb.CharHeight = 15;
-            this.fctb.CharWidth = 7;
-            this.fctb.Cursor = System.Windows.Forms.Cursors.IBeam;
-            this.fctb.DescriptionFile = "";
-            this.fctb.DisabledColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))));
-            this.fctb.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.fctb.Font = new System.Drawing.Font("Consolas", 9.75F);
-            this.fctb.IsReplaceMode = false;
-            this.fctb.Location = new System.Drawing.Point(0, 45);
-            this.fctb.Name = "fctb";
-            this.fctb.Paddings = new System.Windows.Forms.Padding(0);
-            this.fctb.SelectionColor = System.Drawing.Color.FromArgb(((int)(((byte)(50)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.fctb.ServiceColors = ((FastColoredTextBoxNS.ServiceColors)(resources.GetObject("fctb.ServiceColors")));
-            this.fctb.Size = new System.Drawing.Size(498, 216);
-            this.fctb.TabIndex = 0;
-            this.fctb.Text = "<li>Article\r\n<a href=\\\"#_comments\\\">Ask a Question about this article</a></li>\r\n<" +
-    "li class=\\\"heading\\\">Quick Answers</li>\r\n<li><a href=\\\"/Questions/ask.aspx\\\">Ask" +
-    " a Question</a></li>\r\n";
-            this.fctb.Zoom = 100;
-            this.fctb.TextChanged += new System.EventHandler<FastColoredTextBoxNS.TextChangedEventArgs>(this.Fctb_TextChanged);
+            fctb.AutoCompleteBracketsList = new char[]
+    {
+    '(',
+    ')',
+    '{',
+    '}',
+    '[',
+    ']',
+    '"',
+    '"',
+    '\'',
+    '\''
+    };
+            fctb.AutoIndentCharsPatterns = "^\\s*[\\w\\.]+(\\s\\w+)?\\s*(?<range>=)\\s*(?<range>[^;=]+);\r\n^\\s*(case|default)\\s*[^:]*(?<range>:)\\s*(?<range>[^;]+);";
+            fctb.AutoScrollMinSize = new System.Drawing.Size(480, 75);
+            fctb.BackBrush = null;
+            fctb.CharCnWidth = 15;
+            fctb.CharHeight = 15;
+            fctb.CharWidth = 7;
+            fctb.Cursor = System.Windows.Forms.Cursors.IBeam;
+            fctb.DefaultMarkerSize = 8;
+            fctb.DescriptionFile = "";
+            fctb.DisabledColor = System.Drawing.Color.FromArgb(100, 180, 180, 180);
+            fctb.Dock = System.Windows.Forms.DockStyle.Fill;
+            fctb.FindForm = null;
+            fctb.Font = new System.Drawing.Font("Consolas", 9.75F);
+            fctb.GoToForm = null;
+            fctb.Hotkeys = resources.GetString("fctb.Hotkeys");
+            fctb.IsReplaceMode = false;
+            fctb.Location = new System.Drawing.Point(0, 59);
+            fctb.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            fctb.Name = "fctb";
+            fctb.Paddings = new System.Windows.Forms.Padding(0);
+            fctb.ReplaceForm = null;
+            fctb.SelectionColor = System.Drawing.Color.FromArgb(50, 0, 0, 255);
+            fctb.ServiceColors = (FastColoredTextBoxNS.ServiceColors)resources.GetObject("fctb.ServiceColors");
+            fctb.Size = new System.Drawing.Size(581, 282);
+            fctb.TabIndex = 0;
+            fctb.Text = "<li>Article\r\n<a href=\\\"#_comments\\\">Ask a Question about this article</a></li>\r\n<li class=\\\"heading\\\">Quick Answers</li>\r\n<li><a href=\\\"/Questions/ask.aspx\\\">Ask a Question</a></li>\r\n";
+            fctb.UseCJK = FastColoredTextBoxNS.CJKMode.CJK;
+            fctb.Zoom = 100;
+            fctb.TextChanged += Fctb_TextChanged;
             // 
             // SimplestSyntaxHighlightingSample
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(498, 261);
-            this.Controls.Add(this.fctb);
-            this.Controls.Add(this.label1);
-            this.Name = "SimplestSyntaxHighlightingSample";
-            this.Text = "SimplestSyntaxHighlightingSample";
-            ((System.ComponentModel.ISupportInitialize)(this.fctb)).EndInit();
-            this.ResumeLayout(false);
-
+            AutoScaleDimensions = new System.Drawing.SizeF(7F, 17F);
+            AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            ClientSize = new System.Drawing.Size(581, 341);
+            Controls.Add(fctb);
+            Controls.Add(label1);
+            Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            Name = "SimplestSyntaxHighlightingSample";
+            Text = "SimplestSyntaxHighlightingSample";
+            ((System.ComponentModel.ISupportInitialize)fctb).EndInit();
+            ResumeLayout(false);
         }
 
         #endregion

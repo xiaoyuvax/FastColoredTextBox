@@ -5431,17 +5431,17 @@ namespace FastColoredTextBoxNS
         }
 
         [Description("CJK support,disable if not needed for better performace")]
-        public CJKMode UseCJK { get; set; } =  CJKMode.ChineseOnly;
+        public CJKMode UseCJK { get; set; } = CJKMode.HanziOnly;
 
         /// <summary>
         /// Get char width according to CJK mode.
         /// </summary>
         /// <param name="c"></param>
         /// <returns></returns>
-        public int GetCharWidth(char c, Font f = null) => UseCJK switch
+        public int GetCharWidth(char c) => UseCJK switch
         {
-            CJKMode.CJK when f != null && EncodingDetector.IsCJK(c) => (int)GetCharSize(f, c).Width + 1,
-            CJKMode.ChineseOnly or CJKMode.CJK when EncodingDetector.IsCJK(c) => CharCnWidth,
+            CJKMode.CJK when EncodingDetector.IsCJK(c) => (int)GetCharSize(Font, c).Width,
+            CJKMode.HanziOnly when EncodingDetector.IsCJK(c) => CharCnWidth,
             _ => CharWidth
         };
 
@@ -6289,14 +6289,12 @@ namespace FastColoredTextBoxNS
             //替换成下面的代码块：
             int i = LineInfos[place.iLine].GetWordWrapStringStartPosition(iWordWrapIndex);
             string text = lines[place.iLine].Text;
-            int x = 0;
-            if (text.Length > 0)
-                for (; i < place.iChar; i++)
-                    x += GetCharWidth(text[i]);
 
-            if (iWordWrapIndex > 0)
-                x += LineInfos[place.iLine].wordWrapIndent * CharWidth;
-            //
+            int x = 0;
+            if (text.Length > 0) for (; i < place.iChar; i++) x += GetCharWidth(text[i]);
+
+            if (iWordWrapIndex > 0) x += LineInfos[place.iLine].wordWrapIndent * CharWidth;
+
             y -= VerticalScroll.Value;
             x = LeftIndent + Paddings.Left + x - HorizontalScroll.Value;
 
@@ -8085,7 +8083,7 @@ window.status = ""#print"";
     public enum CJKMode
     {
         Disabled,
-        ChineseOnly,
+        HanziOnly,
         CJK
     }
 }

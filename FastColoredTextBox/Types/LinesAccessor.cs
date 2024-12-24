@@ -1,6 +1,6 @@
 ﻿namespace FastColoredTextBoxNS.Types
 {
-    public class LinesAccessor : IList<string>
+    public sealed class LinesAccessor : IList<string>
     {
         private readonly IList<Line> ts;
 

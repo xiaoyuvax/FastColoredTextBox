@@ -3,7 +3,7 @@
     /// <summary>
     /// Limited stack
     /// </summary>
-    public class LimitedStack<T> : Stack<T>
+    public sealed class LimitedStack<T> : Stack<T>
     {
         /// <summary>
         /// Max stack length
