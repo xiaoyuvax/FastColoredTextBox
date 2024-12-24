@@ -20,6 +20,9 @@ It has such settings as foreground color, font style, background color which can
 
 ![Fast Colored TextBox](http://www.codeproject.com/KB/edit/FastColoredTextBox_/fastcoloredtextbox2.png)
 
+![image](https://github.com/user-attachments/assets/57038914-88ca-4dc3-9b44-07b0bf9ff2da)
+
+
 More details http://www.codeproject.com/Articles/161871/Fast-Colored-TextBox-for-syntax-highlighting
 
 Nuget package https://www.nuget.org/packages/VAX-FCTB/
