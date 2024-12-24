@@ -24,7 +24,7 @@
 			Targets NET6.0-8.0
 		</PackageReleaseNotes>
 		<Authors>Pavel Torgashov, Daxanius, Xiaoyuvax</Authors>
-		<Version>2.16.27.102</Version>
+		<Version>2.16.27.103</Version>
 		<PackageId>Vax-FCTB</PackageId>
 		<PackageProjectUrl>https://github.com/xiaoyuvax/FastColoredTextBox/</PackageProjectUrl>
 		<Copyright>GNU License</Copyright>

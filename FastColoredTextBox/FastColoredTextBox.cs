@@ -5431,7 +5431,7 @@ namespace FastColoredTextBoxNS
         }
 
         [Description("CJK support,disable if not needed for better performace")]
-        public CJKMode UseCJK { get; set; }
+        public CJKMode UseCJK { get; set; } =  CJKMode.ChineseOnly;
 
         /// <summary>
         /// Get char width according to CJK mode.
