@@ -6,4 +6,4 @@
 using System.Diagnostics.CodeAnalysis;
 
 // ReSharper disable once StringLiteralTypo
-[assembly: SuppressMessage("Interoperability", "CA1416:Validate platform compatibility", Justification = "It is well known that a custom winforms user control will only work on Windows.", Scope = "namespaceanddescendants", Target = "~M:FastColoredTextBoxNS")]
+[assembly: SuppressMessage("Interoperability", "CA1416:Validate platform compatibility", Justification = "It is well known that a custom winforms user control will only work on Windows.", Scope = "module")]

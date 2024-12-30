@@ -1,4 +1,5 @@
 ﻿#region BSD 3-Clause License
+
 // <copyright company="Edgerunner.org" file="BlinkingStyle.cs">
 // Copyright (c)  2022
 // </copyright>
@@ -32,9 +33,8 @@
 // CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 // OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-#endregion
 
-using System.Drawing;
+#endregion BSD 3-Clause License
 
 namespace FastColoredTextBoxNS.Types;
 
@@ -44,16 +44,16 @@ namespace FastColoredTextBoxNS.Types;
 /// <seealso cref="FastColoredTextBoxNS.Types.Style" />
 public sealed class BlinkingStyle : Style
 {
-   /// <summary>
-   /// Initializes a new instance of the <see cref="BlinkingStyle"/> class.
-   /// </summary>
-   public BlinkingStyle() => IsExportable = false;
+    /// <summary>
+    /// Initializes a new instance of the <see cref="BlinkingStyle"/> class.
+    /// </summary>
+    public BlinkingStyle() => IsExportable = false;
 
-   /// <summary>
-   /// Renders given range of text
-   /// </summary>
-   /// <param name="gr">Graphics object</param>
-   /// <param name="position">Position of the range in absolute control coordinates</param>
-   /// <param name="range">Rendering range of text</param>
-   public override void Draw(Graphics gr, Point position, TextSelectionRange range) { }
+    /// <summary>
+    /// Renders given range of text
+    /// </summary>
+    /// <param name="gr">Graphics object</param>
+    /// <param name="position">Position of the range in absolute control coordinates</param>
+    /// <param name="range">Rendering range of text</param>
+    public override void Draw(Graphics gr, Point position, TextSelectionRange range) { }
 }

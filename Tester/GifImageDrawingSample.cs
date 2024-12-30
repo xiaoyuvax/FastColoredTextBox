@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
+using Timer = System.Windows.Forms.Timer;
 
 namespace Tester {
 	public partial class GifImageDrawingSample : Form {

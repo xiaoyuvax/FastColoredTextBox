@@ -1,4 +1,5 @@
 ﻿#region BSD 3-Clause License
+
 // <copyright company="Edgerunner.org" file="StyleManager.cs">
 // Copyright (c) Thaddeus Ryker 2022
 // </copyright>
@@ -32,10 +33,8 @@
 // CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 // OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-#endregion
 
-using System;
-using System.Collections.Generic;
+#endregion BSD 3-Clause License
 
 namespace FastColoredTextBoxNS.Types;
 
@@ -64,16 +63,16 @@ public class StyleManager
     /// <returns>Style.</returns>
     public Style AddStyle(Style style)
     {
-       if (style == null) return null;
-       Styles.Add(style);
+        if (style == null) return null;
+        Styles.Add(style);
         return style;
     }
 
-   /// <summary>
-   /// Gets the styles.
-   /// </summary>
-   /// <returns>The set of managed styles.</returns>
-   public HashSet<Style> GetStyles()
+    /// <summary>
+    /// Gets the styles.
+    /// </summary>
+    /// <returns>The set of managed styles.</returns>
+    public HashSet<Style> GetStyles()
     {
         return Styles;
     }
@@ -85,7 +84,7 @@ public class StyleManager
     /// <returns>Style.</returns>
     public Style RemoveStyle(Style style)
     {
-       if (style == null) return null;
+        if (style == null) return null;
         return Styles.Remove(style) ? style : null;
     }
 
@@ -96,7 +95,7 @@ public class StyleManager
     /// <returns><c>true</c> if the specified style is managed; otherwise, <c>false</c>.</returns>
     public bool IsManaged(Style style)
     {
-       if (style == null) return false;
+        if (style == null) return false;
         return Styles.Contains(style);
     }
 

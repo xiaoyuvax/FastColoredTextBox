@@ -1,73 +1,75 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <TargetFramework>net6.0-windows</TargetFramework>
-    <OutputType>Library</OutputType>
-    <RootNamespace>FastColoredTextBoxNS</RootNamespace>
-    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-    <UseWindowsForms>true</UseWindowsForms>
-    <ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DocumentationFile>bin\Debug\FastColoredTextBox.xml</DocumentationFile>
-    <DefineConstants>$(DefineConstants)TRACE;Styles32</DefineConstants>
-  </PropertyGroup>
-  <PropertyGroup>
-    <SignAssembly>true</SignAssembly>
-  </PropertyGroup>
-  <PropertyGroup>
-    <AssemblyOriginatorKeyFile>FCTB_key.snk</AssemblyOriginatorKeyFile>
-    <RepositoryUrl>https://github.com/wiredwiz/FastColoredTextBox</RepositoryUrl>
-    <PackageReleaseNotes>Migrated to .NET 6.0.  Added a third set of matching brackets.  Removed Style quantity limits.  Added blinking style support.</PackageReleaseNotes>
-    <NeutralLanguage>en</NeutralLanguage>
-    <Authors>Pavel Torgashov, Daxanius, Wiredwiz</Authors>
-    <Version>2.17.0.0</Version>
-    <PackageId>FCTB-wired</PackageId>
-    <PackageProjectUrl>https://github.com/wiredwiz/FastColoredTextBox</PackageProjectUrl>
-    <Copyright>GNU License</Copyright>
-    <Description>A .Net6 fork of FastColoredTextBox by Pavel Torgashov by Daxanius by Wiredwizard.  Removes style quantity limit, adds a 3rd matching bracket and adds support for a blinking style.</Description>
-    <RepositoryType>git</RepositoryType>
-    <PackageReadmeFile>README.md</PackageReadmeFile>
-    <PackageLicenseFile>license.txt</PackageLicenseFile>
-    <PackageIcon>icon.png</PackageIcon>
-    <PackageTags>FCTB</PackageTags>
-    <Nullable>disable</Nullable>
-    <Title>FastColoredTextBox-Wired</Title>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <DefineConstants>$(DefineConstants)TRACE;Styles32</DefineConstants>
-  </PropertyGroup>
-  <ItemGroup>
-    <None Include="$(SolutionDir)icon.png">
-      <Pack>True</Pack>
-      <PackagePath>\</PackagePath>
-    </None>
-    <None Include="$(SolutionDir)README.md">
-      <Pack>True</Pack>
-      <PackagePath>\</PackagePath>
-    </None>
+	<PropertyGroup>
+		<TargetFrameworks>net8.0-windows7.0;net7.0-windows7.0;net6.0-windows7.0;</TargetFrameworks>
+		<OutputType>Library</OutputType>
+		<RootNamespace>FastColoredTextBoxNS</RootNamespace>
+		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+		<UseWindowsForms>true</UseWindowsForms>
+		<ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
+		<ImplicitUsings>true</ImplicitUsings>
+		<UseWindowsForms>true</UseWindowsForms>
+		<ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
+		<LangVersion>12</LangVersion>
+	</PropertyGroup>	
+	<PropertyGroup>
+		<SignAssembly>true</SignAssembly>
+	</PropertyGroup>
+	<PropertyGroup>
+		<AssemblyOriginatorKeyFile>FCTB_key.snk</AssemblyOriginatorKeyFile>
+		<RepositoryUrl>https://github.com/xiaoyuvax/FastColoredTextBox/</RepositoryUrl>
+		<PackageReleaseNotes>
+			Reforked from Wiredwizard:-Daxanius:-PavelTorgashov			
+			CJK support/中日韩文支持
+			Targets NET6.0-8.0
+		</PackageReleaseNotes>
+		<Authors>Pavel Torgashov, Daxanius, Xiaoyuvax</Authors>
+		<PackageId>Vax-FCTB</PackageId>
+		<PackageProjectUrl>https://github.com/xiaoyuvax/FastColoredTextBox/</PackageProjectUrl>
+		<Copyright>GNU License</Copyright>
+		<Description>A fork of FastColoredTextBox by Pavel Torgashov, Daxanius, Wiredwizard and better CJK support by Xiaoyuvax.更好的中文支持</Description>
+		<RepositoryType>git</RepositoryType>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
+		<PackageLicenseFile>license.txt</PackageLicenseFile>
+		<PackageIcon>icon.png</PackageIcon>
+		<Title>FastColoredTextBox</Title>
+		<PackageTags>winform;control;C#;VB;TextBox;Editor;Colored;CJK</PackageTags>
+		<AssemblyVersion>2.17.0.100</AssemblyVersion>
+		<FileVersion>2.17.0.100</FileVersion>
+		<Version>2.17.0.100</Version>
+		<PackageOutputPath>D:\PUB\Nuget Packages</PackageOutputPath>
+	</PropertyGroup>
+	<ItemGroup>
+		<None Include="$(SolutionDir)icon.png">
+			<Pack>True</Pack>
+			<PackagePath>\</PackagePath>
+		</None>
+		<None Include="$(SolutionDir)README.md">
+			<Pack>True</Pack>
+			<PackagePath>\</PackagePath>
+		</None>
 		<None Include="$(SolutionDir)license.txt">
 			<Pack>True</Pack>
 			<PackagePath>\</PackagePath>
 		</None>
-  </ItemGroup>
-  <ItemGroup>
-    <Reference Include="System.Design" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Update="AutocompleteMenu.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Update="DocumentMap.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Update="Ruler.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="FastColoredTextBox.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="UnfocusablePanel.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-  </ItemGroup>
+	</ItemGroup>
+	<ItemGroup>
+		<Compile Update="AutocompleteMenu.cs">
+			<SubType>Component</SubType>
+		</Compile>
+		<Compile Update="DocumentMap.cs">
+			<SubType>Component</SubType>
+		</Compile>
+		<Compile Update="Ruler.cs">
+			<SubType>UserControl</SubType>
+		</Compile>
+		<Compile Update="FastColoredTextBox.cs">
+			<SubType>UserControl</SubType>
+		</Compile>
+		<Compile Update="UnfocusablePanel.cs">
+			<SubType>UserControl</SubType>
+		</Compile>
+	</ItemGroup>
+	<ItemGroup>
+	  <Folder Include="Properties\" />
+	</ItemGroup>
 </Project>

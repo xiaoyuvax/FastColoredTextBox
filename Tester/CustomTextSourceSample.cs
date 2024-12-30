@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
+using Timer = System.Windows.Forms.Timer;
 
 namespace Tester {
 	public partial class CustomTextSourceSample : Form {

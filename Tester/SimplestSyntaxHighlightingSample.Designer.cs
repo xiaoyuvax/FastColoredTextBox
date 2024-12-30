@@ -28,76 +28,126 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
+            components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SimplestSyntaxHighlightingSample));
-            this.label1 = new System.Windows.Forms.Label();
-            this.fctb = new FastColoredTextBoxNS.FastColoredTextBox();
-            ((System.ComponentModel.ISupportInitialize)(this.fctb)).BeginInit();
-            this.SuspendLayout();
+            label1 = new Label();
+            fctb = new FastColoredTextBoxNS.FastColoredTextBox();
+            panel1 = new Panel();
+            label2 = new Label();
+            cboCJKMode = new ComboBox();
+            ((System.ComponentModel.ISupportInitialize)fctb).BeginInit();
+            panel1.SuspendLayout();
+            SuspendLayout();
             // 
             // label1
             // 
-            this.label1.Dock = System.Windows.Forms.DockStyle.Top;
-            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.label1.Location = new System.Drawing.Point(0, 0);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(498, 45);
-            this.label1.TabIndex = 1;
-            this.label1.Text = "This example shows how to make simplest syntax highlighting.";
+            label1.Dock = DockStyle.Top;
+            label1.Font = new Font("Microsoft Sans Serif", 9.75F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            label1.Location = new Point(0, 0);
+            label1.Margin = new Padding(4, 0, 4, 0);
+            label1.Name = "label1";
+            label1.Size = new Size(581, 35);
+            label1.TabIndex = 1;
+            label1.Text = "This example shows how to make simplest syntax highlighting.";
             // 
             // fctb
             // 
-            this.fctb.AutoCompleteBracketsList = new char[] {
-        '(',
-        ')',
-        '{',
-        '}',
-        '[',
-        ']',
-        '\"',
-        '\"',
-        '\'',
-        '\''};
-            this.fctb.AutoScrollMinSize = new System.Drawing.Size(480, 75);
-            this.fctb.BackBrush = null;
-            this.fctb.CharHeight = 15;
-            this.fctb.CharWidth = 7;
-            this.fctb.Cursor = System.Windows.Forms.Cursors.IBeam;
-            this.fctb.DescriptionFile = "";
-            this.fctb.DisabledColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))));
-            this.fctb.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.fctb.Font = new System.Drawing.Font("Consolas", 9.75F);
-            this.fctb.IsReplaceMode = false;
-            this.fctb.Location = new System.Drawing.Point(0, 45);
-            this.fctb.Name = "fctb";
-            this.fctb.Paddings = new System.Windows.Forms.Padding(0);
-            this.fctb.SelectionColor = System.Drawing.Color.FromArgb(((int)(((byte)(50)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.fctb.ServiceColors = ((FastColoredTextBoxNS.ServiceColors)(resources.GetObject("fctb.ServiceColors")));
-            this.fctb.Size = new System.Drawing.Size(498, 216);
-            this.fctb.TabIndex = 0;
-            this.fctb.Text = "<li>Article\r\n<a href=\\\"#_comments\\\">Ask a Question about this article</a></li>\r\n<" +
-    "li class=\\\"heading\\\">Quick Answers</li>\r\n<li><a href=\\\"/Questions/ask.aspx\\\">Ask" +
-    " a Question</a></li>\r\n";
-            this.fctb.Zoom = 100;
-            this.fctb.TextChanged += new System.EventHandler<FastColoredTextBoxNS.TextChangedEventArgs>(this.Fctb_TextChanged);
+            fctb.AutoCompleteBracketsList = new char[]
+    {
+    '(',
+    ')',
+    '{',
+    '}',
+    '[',
+    ']',
+    '"',
+    '"',
+    '\'',
+    '\''
+    };
+            fctb.AutoIndentCharsPatterns = "^\\s*[\\w\\.]+(\\s\\w+)?\\s*(?<range>=)\\s*(?<range>[^;=]+);\r\n^\\s*(case|default)\\s*[^:]*(?<range>:)\\s*(?<range>[^;]+);";
+            fctb.AutoScrollMinSize = new Size(480, 120);
+            fctb.BackBrush = null;
+            fctb.CharCnWidth = 14;
+            fctb.CharHeight = 15;
+            fctb.CharWidth = 7;
+            fctb.Cursor = Cursors.IBeam;
+            fctb.DefaultMarkerSize = 8;
+            fctb.DescriptionFile = "";
+            fctb.DisabledColor = Color.FromArgb(100, 180, 180, 180);
+            fctb.Dock = DockStyle.Fill;
+            fctb.FindForm = null;
+            fctb.Font = new Font("Consolas", 9.75F);
+            fctb.GoToForm = null;
+            fctb.Hotkeys = resources.GetString("fctb.Hotkeys");
+            fctb.IsReplaceMode = false;
+            fctb.Location = new Point(0, 67);
+            fctb.Margin = new Padding(4);
+            fctb.Name = "fctb";
+            fctb.Paddings = new Padding(0);
+            fctb.ReplaceForm = null;
+            fctb.SelectionColor = Color.FromArgb(50, 0, 0, 255);
+            fctb.ServiceColors = (FastColoredTextBoxNS.ServiceColors)resources.GetObject("fctb.ServiceColors");
+            fctb.Size = new Size(581, 274);
+            fctb.TabIndex = 0;
+            fctb.Text = resources.GetString("fctb.Text");
+            fctb.UseCJK = FastColoredTextBoxNS.CJKMode.CJK;
+            fctb.Zoom = 100;
+            fctb.TextChanged += Fctb_TextChanged;
+            // 
+            // panel1
+            // 
+            panel1.Controls.Add(label2);
+            panel1.Controls.Add(cboCJKMode);
+            panel1.Controls.Add(label1);
+            panel1.Dock = DockStyle.Top;
+            panel1.Location = new Point(0, 0);
+            panel1.Name = "panel1";
+            panel1.Size = new Size(581, 67);
+            panel1.TabIndex = 2;
+            // 
+            // label2
+            // 
+            label2.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            label2.AutoSize = true;
+            label2.Location = new Point(371, 40);
+            label2.Name = "label2";
+            label2.Size = new Size(76, 17);
+            label2.TabIndex = 3;
+            label2.Text = "CJKMode：";
+            // 
+            // cboCJKMode
+            // 
+            cboCJKMode.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            cboCJKMode.FormattingEnabled = true;
+            cboCJKMode.Location = new Point(448, 35);
+            cboCJKMode.Name = "cboCJKMode";
+            cboCJKMode.Size = new Size(121, 25);
+            cboCJKMode.TabIndex = 2;
+            cboCJKMode.SelectedIndexChanged += cboCJKMode_SelectedIndexChanged;
             // 
             // SimplestSyntaxHighlightingSample
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(498, 261);
-            this.Controls.Add(this.fctb);
-            this.Controls.Add(this.label1);
-            this.Name = "SimplestSyntaxHighlightingSample";
-            this.Text = "SimplestSyntaxHighlightingSample";
-            ((System.ComponentModel.ISupportInitialize)(this.fctb)).EndInit();
-            this.ResumeLayout(false);
-
+            AutoScaleDimensions = new SizeF(7F, 17F);
+            AutoScaleMode = AutoScaleMode.Font;
+            ClientSize = new Size(581, 341);
+            Controls.Add(fctb);
+            Controls.Add(panel1);
+            Margin = new Padding(4);
+            Name = "SimplestSyntaxHighlightingSample";
+            Text = "SimplestSyntaxHighlightingSample";
+            ((System.ComponentModel.ISupportInitialize)fctb).EndInit();
+            panel1.ResumeLayout(false);
+            panel1.PerformLayout();
+            ResumeLayout(false);
         }
 
         #endregion
 
         private FastColoredTextBoxNS.FastColoredTextBox fctb;
         private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Panel panel1;
+        private System.Windows.Forms.ComboBox cboCJKMode;
+        private Label label2;
     }
 }

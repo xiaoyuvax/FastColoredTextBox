@@ -1,37 +1,38 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <TargetFramework>net6.0-windows</TargetFramework>
-    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
-    <OutputType>WinExe</OutputType>
-    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-    <UseWindowsForms>true</UseWindowsForms>
-    <ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
-  </PropertyGroup>
-  <ItemGroup>
-    <Reference Include="System.Design" />
-    <Reference Include="TabStrip, Version=2.0.2523.29272, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>.\TabStrip.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Update="CustomHint.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\FastColoredTextBox\FastColoredTextBox.csproj" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="htmlDesc.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="TabStrip.dll" />
-  </ItemGroup>
-  <PropertyGroup>
-    <PostBuildEvent>copy "$(TargetDir)Tester.exe" "$(SolutionDir)Binary"
-copy "$(TargetDir)*.dll" "$(SolutionDir)Binary"
-copy "$(TargetDir)*.xml" "$(SolutionDir)Binary"
-</PostBuildEvent>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net8.0-windows</TargetFramework>
+		<Platform Condition=" '$(Platform)' == '' ">x86</Platform>
+		<OutputType>WinExe</OutputType>
+		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+		<UseWindowsForms>true</UseWindowsForms>
+		<ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
+		<ImplicitUsings>true</ImplicitUsings>
+	</PropertyGroup>
+	<ItemGroup>
+		<Reference Include="TabStrip, Version=2.0.2523.29272, Culture=neutral, processorArchitecture=MSIL">
+			<SpecificVersion>False</SpecificVersion>
+			<HintPath>.\TabStrip.dll</HintPath>
+		</Reference>
+	</ItemGroup>
+	<ItemGroup>
+		<Compile Update="CustomHint.cs">
+			<SubType>UserControl</SubType>
+		</Compile>
+	</ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\FastColoredTextBox\FastColoredTextBox.csproj" />
+	</ItemGroup>
+	<ItemGroup>
+		<Content Include="htmlDesc.xml">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</Content>
+		<Content Include="TabStrip.dll" />
+	</ItemGroup>
+	<PropertyGroup>
+		<PostBuildEvent>
+			copy "$(TargetDir)Tester.exe" "$(SolutionDir)Binary"
+			copy "$(TargetDir)*.dll" "$(SolutionDir)Binary"
+			copy "$(TargetDir)*.xml" "$(SolutionDir)Binary"
+		</PostBuildEvent>
+	</PropertyGroup>
 </Project>
