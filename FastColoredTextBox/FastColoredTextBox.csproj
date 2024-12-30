@@ -18,7 +18,7 @@
 		<AssemblyOriginatorKeyFile>FCTB_key.snk</AssemblyOriginatorKeyFile>
 		<RepositoryUrl>https://github.com/xiaoyuvax/FastColoredTextBox/</RepositoryUrl>
 		<PackageReleaseNotes>
-			Reforked from Wiredwizard:-Daxanius:-PavelTorgashov			
+			Reforked from Wiredwizard:-Daxanius:-PavelTorgashov
 			CJK support/中日韩文支持
 			Targets NET6.0-8.0
 		</PackageReleaseNotes>

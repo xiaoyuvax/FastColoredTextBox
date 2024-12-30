@@ -42,7 +42,14 @@ namespace FastColoredTextBoxNS.Types
         /// Call this method in Draw method, when you need to show VisualMarker for your style
         /// </summary>
         protected virtual void AddVisualMarker(FastColoredTextBox tb, StyleVisualMarker marker) => tb.AddVisualMarker(marker);
-        public static Size GetSizeOfRange(TextSelectionRange range) => new((range.End.iChar - range.Start.iChar) * range.tb.CharWidth, range.tb.CharHeight);
+        public static Size GetSizeOfRange(TextSelectionRange range)
+        {
+            //Original implementation: => new((range.End.iChar - range.Start.iChar) * range.tb.CharWidth, range.tb.CharHeight);
+            int rangeWidth = 0;
+            foreach (char c in range.Text) rangeWidth += range.tb.GetCharWidth(c);
+
+            return new(rangeWidth, range.tb.CharHeight);
+        }
 
         public static GraphicsPath GetRoundedRectangle(Rectangle rect, int d)
         {
@@ -99,7 +106,10 @@ namespace FastColoredTextBoxNS.Types
         {
             //draw background
             if (BackgroundBrush != null)
-                gr.FillRectangle(BackgroundBrush, position.X - (int)(range.tb.CharWidth * 0.10), position.Y, (range.End.iChar - range.Start.iChar) * range.tb.CharWidth + (int)(range.tb.CharWidth * 0.20), range.tb.CharHeight);
+            {
+                //Old implementaiton: var rangeWidth=(range.End.iChar - range.Start.iChar) * range.tb.CharWidth 
+                gr.FillRectangle(BackgroundBrush, position.X - (int)(range.tb.CharWidth * 0.10), position.Y, GetSizeOfRange(range).Width + (int)(range.tb.CharWidth * 0.20), range.tb.CharHeight);
+            }
             //draw chars
             using var f = new Font(range.tb.Font, FontStyle);
             Line line = range.tb[range.Start.iLine];
@@ -110,7 +120,7 @@ namespace FastColoredTextBoxNS.Types
 
             ForeBrush ??= new SolidBrush(range.tb.ForeColor);
             float dx = 0;  //dx is not a fixed value for CJK chars
-            if (range.tb.ImeAllowed)
+            if (false)//  range.tb.ImeAllowed
             {
                 //IME mode
                 for (int i = range.Start.iChar; i < range.End.iChar; i++)
@@ -130,7 +140,7 @@ namespace FastColoredTextBoxNS.Types
                         dx = range.tb.GetCharWidth(c);
 
                         var gs = gr.Save();
-                        float k = size.Width > range.tb.CharWidth + 1 ? range.tb.CharWidth / size.Width : 1;
+                        float k = size.Width > range.tb.GetCharWidth(c) + 1 ? range.tb.GetCharWidth(c) / size.Width : 1;
                         gr.TranslateTransform(x, y + (1 - k) * range.tb.CharHeight / 2);
                         gr.ScaleTransform(k, (float)Math.Sqrt(k));
                         gr.DrawString(line[i].C.ToString(), f, ForeBrush, 0, 0, stringFormat);
@@ -277,10 +287,11 @@ namespace FastColoredTextBoxNS.Types
             //draw background
             if (BackgroundBrush != null)
             {
+                var rangeSize = GetSizeOfRange(range);
+                if (rangeSize.Width == 0) return;
                 gr.SmoothingMode = SmoothingMode.None;
-                var rect = new Rectangle(position.X, position.Y, (range.End.iChar - range.Start.iChar) * range.tb.CharWidth, range.tb.CharHeight);
-                if (rect.Width == 0)
-                    return;
+                var rect = new Rectangle(position.X, position.Y, rangeSize.Width, rangeSize.Height);
+
                 gr.FillRectangle(BackgroundBrush, rect);
                 //
                 if (ForegroundBrush != null)

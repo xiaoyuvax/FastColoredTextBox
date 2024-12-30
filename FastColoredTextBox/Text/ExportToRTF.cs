@@ -132,19 +132,18 @@ namespace FastColoredTextBoxNS.Text
             var intersect = tb.StyleManager.GetStyles().Intersect(styles);
             foreach (var style in intersect)
             {
-                var isTextStyle = style is TextStyle;
-                if (isTextStyle)
+                if (style is TextStyle txtStyle)
                     if (!hasTextStyle || tb.AllowSeveralTextStyleDrawing)
                     {
                         hasTextStyle = true;
-                        textStyle = style as TextStyle;
+                        textStyle = txtStyle;
+                        break;
                     }
             }
 
             //add TextStyle css
-            var result =
-               //draw by default renderer if rtf style is not found
-               !hasTextStyle ? tb.DefaultStyle.GetRTF() : textStyle.GetRTF();
+            //draw by default renderer if rtf style is not found
+            var result = hasTextStyle ? textStyle.GetRTF() : tb.DefaultStyle.GetRTF();
 
             return result;
         }
@@ -183,7 +182,7 @@ namespace FastColoredTextBoxNS.Text
         private void Flush(StringBuilder sb, StringBuilder tempSB, IEnumerable<Style> currentStyles)
         {
             //find textRenderer
-            if (tempSB.Length == 0)
+            if (tempSB.Length == 0 || currentStyles == null)
                 return;
 
             var desc = GetRtfDescriptor(currentStyles);

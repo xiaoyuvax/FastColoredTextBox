@@ -27,6 +27,7 @@ using FastColoredTextBoxNS.Types;
 using Microsoft.Win32;
 using System.Collections.Concurrent;
 using System.ComponentModel;
+using System.Drawing;
 using System.Drawing.Design;
 using System.Drawing.Drawing2D;
 using System.Reflection;
@@ -1640,7 +1641,7 @@ namespace FastColoredTextBoxNS
             get { return Selection.Length; }
             set
             {
-                if (value > 0)
+                if (value >= 0)
                     Selection.End = PositionToPlace(SelectionStart + value);
             }
         }
@@ -3452,7 +3453,7 @@ namespace FastColoredTextBoxNS
                 else
                 {
                     //word wrapping
-                    if (allowIME && IsCJKLetter(c))//in CJK languages cutoff can be in any letter
+                    if (allowIME && EncodingDetector.IsCJK(c))//in CJK languages cutoff can be in any letter
                     {
                         cutOff = i;
                     }
@@ -3475,6 +3476,7 @@ namespace FastColoredTextBoxNS
             }
         }
 
+        [Obsolete]
         public static bool IsCJKLetter(char c)
         {
             int code = Convert.ToInt32(c);
@@ -5638,17 +5640,22 @@ namespace FastColoredTextBoxNS
                 //render by custom styles
                 IEnumerable<Style> currentStyles = null;
                 int iLastFlushedChar = firstChar - 1;
-
+                int x = startX;
+                int xLastFlushedChar = startX;
                 for (int iChar = firstChar; iChar <= lastChar; iChar++)
                 {
-                    var styles = line[from + iChar].Styles;
+                    StyledChar sChar = line[from + iChar];
+                    var styles = sChar.Styles;
                     FlushRendering(gr, currentStyles,
-                                   new Point(startX + (iLastFlushedChar + 1) * CharWidth, y),
+                                   new Point(xLastFlushedChar, y),
                                    new TextSelectionRange(this, from + iLastFlushedChar + 1, iLine, from + iChar, iLine));
                     iLastFlushedChar = iChar - 1;
                     currentStyles = styles;
+                    xLastFlushedChar = x;
+                    x += GetCharWidth(sChar.C);
                 }
-                FlushRendering(gr, currentStyles, new Point(startX + (iLastFlushedChar + 1) * CharWidth, y),
+
+                FlushRendering(gr, currentStyles, new Point(xLastFlushedChar, y),
                                new TextSelectionRange(this, from + iLastFlushedChar + 1, iLine, from + lastChar + 1, iLine));
             }
 
@@ -5658,11 +5665,11 @@ namespace FastColoredTextBoxNS
             {
                 gr.SmoothingMode = SmoothingMode.None;
                 var textRange = new TextSelectionRange(this, from + firstChar, iLine, from + lastChar + 1, iLine);
-                textRange = Selection.GetIntersectionWith(textRange);
+                textRange = Selection.GetIntersectionWith(textRange); //interseciton within this line
+                var textRangeBeforeSelection = new TextSelectionRange(this, from, iLine, textRange.Start.iChar, iLine);  //range before selection within this line
                 if (textRange != null && SelectionStyle != null)
                 {
-                    SelectionStyle.Draw(gr, new Point(startX + (textRange.Start.iChar - from) * CharWidth, 1 + y),
-                                        textRange);
+                    SelectionStyle.Draw(gr, new Point(startX + Style.GetSizeOfRange(textRangeBeforeSelection).Width, 1 + y), textRange);
                 }
             }
         }
@@ -6165,8 +6172,8 @@ namespace FastColoredTextBoxNS
             if (iWordWrapLine < 0) iWordWrapLine = 0;
             //
             int start = LineInfos[iLine].GetWordWrapStringStartPosition(iWordWrapLine);
-            int finish = LineInfos[iLine].GetWordWrapStringFinishPosition(iWordWrapLine, lines[iLine]);
-            var x = (int)Math.Round((float)point.X / CharWidth);
+            int finish = LineInfos[iLine].GetWordWrapStringFinishPosition(iWordWrapLine, lines[iLine]);            
+            var x = XToCharIndex(point.X, iLine);
             if (iWordWrapLine > 0)
                 x -= LineInfos[iLine].wordWrapIndent;
 
@@ -6182,13 +6189,32 @@ namespace FastColoredTextBoxNS
 
             return new Place(x, iLine);
         }
+                
+        private int XToCharIndex(int pointX, int iLine)
+        {
+            //due to mixed different char widths, the original code: var x = (int)Math.Round((float)point.X / CharWidth);
+            //must be replaced with: 
+            int x = 0;
+            int rangeWidth = 0;
+            string text = lines[iLine].Text;
+            int j = 0;
+            for (int length = text.Length; j < length; j++)
+            {
+                if (rangeWidth >= pointX) break;
+                rangeWidth += GetCharWidth(text[j]);
+                x++;
+            }
+
+            return x;
+        }
+
 
         private Place PointToPlaceSimple(Point point)
         {
             point.Offset(HorizontalScroll.Value, VerticalScroll.Value);
             point.Offset(-LeftIndent - Paddings.Left, 0);
             int iLine = YtoLineIndex(point.Y);
-            var x = (int)Math.Round((float)point.X / CharWidth);
+            var x = XToCharIndex(point.X, iLine);
             if (x < 0) x = 0;
             return new Place(x, iLine);
         }
@@ -6507,7 +6533,13 @@ namespace FastColoredTextBoxNS
             //
             int iWordWrapIndex = LineInfos[place.iLine].GetWordWrapStringIndex(place.iChar);
             y += iWordWrapIndex * CharHeight;
-            int x = (place.iChar - LineInfos[place.iLine].GetWordWrapStringStartPosition(iWordWrapIndex)) * CharWidth;
+            //Due to mixed different char widths, the original line: int x = (place.iChar - LineInfos[place.iLine].GetWordWrapStringStartPosition(iWordWrapIndex)) * CharWidth;
+            //must be replaced with:
+            int i = LineInfos[place.iLine].GetWordWrapStringStartPosition(iWordWrapIndex);
+            string text = lines[place.iLine].Text;
+            int x = 0;
+            if (text.Length > 0) for (; i < place.iChar; i++) x += GetCharWidth(text[i]);
+
             if (iWordWrapIndex > 0)
                 x += LineInfos[place.iLine].wordWrapIndent * CharWidth;
             //
