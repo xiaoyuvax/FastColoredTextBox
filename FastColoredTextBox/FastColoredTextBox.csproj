@@ -18,9 +18,10 @@
 		<AssemblyOriginatorKeyFile>FCTB_key.snk</AssemblyOriginatorKeyFile>
 		<RepositoryUrl>https://github.com/xiaoyuvax/FastColoredTextBox/</RepositoryUrl>
 		<PackageReleaseNotes>
-			Reforked from Wiredwizard:-Daxanius:-PavelTorgashov
-			CJK support/中日韩文支持
-			Targets NET6.0-8.0
+			- CJK wordwrapping improvements (not perfect)
+			- Reforked from Wiredwizard:-Daxanius:-PavelTorgashov
+			- CJK support/中日韩文支持
+			- Targeting NET6.0-8.0
 		</PackageReleaseNotes>
 		<Authors>Pavel Torgashov, Daxanius, Xiaoyuvax</Authors>
 		<PackageId>Vax-FCTB</PackageId>
@@ -33,16 +34,16 @@
 		<PackageIcon>icon.png</PackageIcon>
 		<Title>FastColoredTextBox</Title>
 		<PackageTags>winform;control;C#;VB;TextBox;Editor;Colored;CJK</PackageTags>
-		<AssemblyVersion>2.17.0.100</AssemblyVersion>
-		<FileVersion>2.17.0.100</FileVersion>
-		<Version>2.17.0.100</Version>
+		<AssemblyVersion>2.17.0.101</AssemblyVersion>
+		<FileVersion>2.17.0.101</FileVersion>
+		<Version>2.17.0.101</Version>
 		<PackageOutputPath>D:\PUB\Nuget Packages</PackageOutputPath>
 	</PropertyGroup>
 	<ItemGroup>
 		<None Include="$(SolutionDir)icon.png">
 			<Pack>True</Pack>
 			<PackagePath>\</PackagePath>
-		</None>
+		</None>		
 		<None Include="$(SolutionDir)README.md">
 			<Pack>True</Pack>
 			<PackagePath>\</PackagePath>

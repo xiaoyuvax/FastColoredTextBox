@@ -3385,49 +3385,106 @@ namespace FastColoredTextBoxNS
 
             toLine = Math.Min(LinesCount - 1, toLine);
 
-            switch (WordWrapMode)
+            void calcMaxCharsPerLine(Line line = null)
             {
-                case WordWrapMode.WordWrapControlWidth:
-                    maxCharsPerLine = (ClientSize.Width - LeftIndent - Paddings.Left - Paddings.Right) / CharWidth;
-                    break;
+                var availableWidth = ClientSize.Width - LeftIndent - Paddings.Left - Paddings.Right;
 
-                case WordWrapMode.CharWrapControlWidth:
-                    maxCharsPerLine = (ClientSize.Width - LeftIndent - Paddings.Left - Paddings.Right) / CharWidth;
-                    charWrap = true;
-                    break;
+                if (UseCJK != CJKMode.Disabled && line != null)
+                {
+                    int charsPerLine = XToCharIndex(availableWidth, line) + 1;
 
-                case WordWrapMode.WordWrapPreferredWidth:
-                    maxCharsPerLine = PreferredLineWidth;
-                    break;
+                    switch (WordWrapMode)
+                    {
+                        case WordWrapMode.WordWrapControlWidth:
+                            maxCharsPerLine = charsPerLine;
+                            break;
 
-                case WordWrapMode.CharWrapPreferredWidth:
-                    maxCharsPerLine = PreferredLineWidth;
-                    charWrap = true;
-                    break;
+                        case WordWrapMode.CharWrapControlWidth:
+                            maxCharsPerLine = charsPerLine;
+                            charWrap = true;
+                            break;
+
+                        case WordWrapMode.WordWrapPreferredWidth:
+                            maxCharsPerLine = PreferredLineWidth;
+                            break;
+
+                        case WordWrapMode.CharWrapPreferredWidth:
+                            maxCharsPerLine = PreferredLineWidth;
+                            charWrap = true;
+                            break;
+                    }
+                }
+                else switch (WordWrapMode)
+                    {
+                        case WordWrapMode.WordWrapControlWidth:
+                            maxCharsPerLine = availableWidth / CharWidth;
+                            break;
+
+                        case WordWrapMode.CharWrapControlWidth:
+                            maxCharsPerLine = availableWidth / CharWidth;
+                            charWrap = true;
+                            break;
+
+                        case WordWrapMode.WordWrapPreferredWidth:
+                            maxCharsPerLine = PreferredLineWidth;
+                            break;
+
+                        case WordWrapMode.CharWrapPreferredWidth:
+                            maxCharsPerLine = PreferredLineWidth;
+                            charWrap = true;
+                            break;
+                    }
             }
+
+            if (UseCJK == CJKMode.Disabled) calcMaxCharsPerLine();
 
             for (int iLine = fromLine; iLine <= toLine; iLine++)
                 if (lines.IsLineLoaded(iLine))
                 {
+                    var line = lines[iLine];
+                    if (UseCJK != CJKMode.Disabled) calcMaxCharsPerLine(line); //Under CJKMode,calculate WordWrap for each line.
+
                     if (!wordWrap)
                         LineInfos[iLine].CutOffPositions.Clear();
                     else
                     {
                         LineInfo li = LineInfos[iLine];
 
-                        li.wordWrapIndent = WordWrapAutoIndent ? lines[iLine].StartSpacesCount + WordWrapIndent : WordWrapIndent;
+                        li.wordWrapIndent = WordWrapAutoIndent ? line.StartSpacesCount + WordWrapIndent : WordWrapIndent;
 
                         if (WordWrapMode == WordWrapMode.Custom)
                         {
-                            WordWrapNeeded?.Invoke(this, new WordWrapNeededEventArgs(li.CutOffPositions, ImeAllowed, lines[iLine]));
+                            WordWrapNeeded?.Invoke(this, new WordWrapNeededEventArgs(li.CutOffPositions, ImeAllowed, line));
                         }
                         else
-                            CalcCutOffs(li.CutOffPositions, maxCharsPerLine, maxCharsPerLine - li.wordWrapIndent, ImeAllowed, charWrap, lines[iLine]);
+                            CalcCutOffs(li.CutOffPositions, maxCharsPerLine, maxCharsPerLine - li.wordWrapIndent, ImeAllowed, charWrap, line);
 
                         LineInfos[iLine] = li;
                     }
                 }
             needRecalc = true;
+        }
+
+
+
+        /// <summary>
+        /// Yield returns an enumeration of widths by the end of each char, incrementally char by char from the left.
+        /// For measuring widths of char ranges, especially when char widths are various.
+        /// </summary>
+        /// <param name="line"></param>
+        /// <param name="measureFrom">from char index,useful for wrapped line</param>
+        /// <returns>Key:Visual Line char index, Value:width by the end of char</returns>
+        public IEnumerable<KeyValuePair<int, int>> XByEachChar(Line line, int measureFrom = 0)
+        {
+            int w = 0;
+            int iChar = measureFrom;
+            for (; iChar < line.Count; iChar++)
+            {
+                StyledChar sChar = line[iChar];
+                w += GetCharWidth(sChar.C);
+                yield return new(iChar - measureFrom, w);
+            }
+            yield return new(iChar - measureFrom, w);
         }
 
         /// <summary>
@@ -5210,13 +5267,14 @@ namespace FastColoredTextBoxNS
 
             //draw text area border
             DrawTextAreaBorder(e.Graphics);
-            //
-            int firstChar = (Math.Max(0, HorizontalScroll.Value - Paddings.Left)) / CharWidth;
+
+            // init evaluation of firstChar/lastChar without CJK support, and firstChar and lastChar may change in the for loop under CJK mode.
+            int firstChar = Math.Max(0, HorizontalScroll.Value - Paddings.Left) / CharWidth;
             int lastChar = (HorizontalScroll.Value + ClientSize.Width) / CharWidth;
             //
             var x = LeftIndent + Paddings.Left - HorizontalScroll.Value;
-            if (x < LeftIndent)
-                firstChar++;
+            if (x < LeftIndent) firstChar++;
+
             //create dictionary of bookmarks
             var bookmarksByLineIndex = new Dictionary<int, Bookmark>();
             foreach (Bookmark item in bookmarks)
@@ -5232,6 +5290,7 @@ namespace FastColoredTextBoxNS
             {
                 Line line = lines[iLine];
                 LineInfo lineInfo = LineInfos[iLine];
+
                 //
                 if (lineInfo.startY > VerticalScroll.Value + ClientSize.Height)
                     break;
@@ -5331,6 +5390,7 @@ namespace FastColoredTextBoxNS
 
                     //indent
                     var indent = iWordWrapLine == 0 ? 0 : lineInfo.wordWrapIndent * CharWidth;
+
                     //draw chars
                     DrawLineChars(e.Graphics, firstChar, lastChar, iLine, iWordWrapLine, x + indent, y);
                 }
@@ -5616,13 +5676,19 @@ namespace FastColoredTextBoxNS
                 }
         }
 
-        private void DrawLineChars(Graphics gr, int firstChar, int lastChar, int iLine, int iWordWrapLine, int startX,
-                                   int y)
+        private void DrawLineChars(Graphics gr, int firstChar, int lastChar, int iLine, int iWordWrapLine, int startX, int y)
         {
             Line line = lines[iLine];
             LineInfo lineInfo = LineInfos[iLine];
             int from = lineInfo.GetWordWrapStringStartPosition(iWordWrapLine);
             int to = lineInfo.GetWordWrapStringFinishPosition(iWordWrapLine, line);
+
+            //Re-evaluation firstChar/lastChar for eachLine
+            if (UseCJK != CJKMode.Disabled)
+            {
+                //firstChar = WidthToPosition(line, Math.Max(0, HorizontalScroll.Value - Paddings.Left), from);  //this may be ignored
+                lastChar = XToCharIndex(HorizontalScroll.Value + ClientSize.Width, line, from);
+            }
 
             lastChar = Math.Min(to - from, lastChar);
 
@@ -6094,10 +6160,10 @@ namespace FastColoredTextBoxNS
         {
             int fromX = p.iChar;
             int toX = p.iChar;
-
-            for (int i = p.iChar; i < lines[p.iLine].Count; i++)
+            var line = lines[p.iLine];
+            for (int i = p.iChar; i < line.Count; i++)
             {
-                char c = lines[p.iLine][i].C;
+                char c = line[i].C;
                 if (char.IsLetterOrDigit(c) || c == '_')
                     toX = i + 1;
                 else
@@ -6106,7 +6172,7 @@ namespace FastColoredTextBoxNS
 
             for (int i = p.iChar - 1; i >= 0; i--)
             {
-                char c = lines[p.iLine][i].C;
+                char c = line[i].C;
                 if (char.IsLetterOrDigit(c) || c == '_')
                     fromX = i;
                 else
@@ -6171,17 +6237,16 @@ namespace FastColoredTextBoxNS
             } while (y > point.Y);
             if (iWordWrapLine < 0) iWordWrapLine = 0;
             //
+            var line = lines[iLine];
             int start = LineInfos[iLine].GetWordWrapStringStartPosition(iWordWrapLine);
-            int finish = LineInfos[iLine].GetWordWrapStringFinishPosition(iWordWrapLine, lines[iLine]);            
-            var x = XToCharIndex(point.X, iLine);
+            int finish = LineInfos[iLine].GetWordWrapStringFinishPosition(iWordWrapLine, line);
+            var x = XToCharIndex(point.X, line, start);
             if (iWordWrapLine > 0)
                 x -= LineInfos[iLine].wordWrapIndent;
 
             x = x < 0 ? start : start + x;
-            if (x > finish)
-                x = finish + 1;
-            if (x > lines[iLine].Count)
-                x = lines[iLine].Count;
+            if (x > finish) x = finish + 1;
+            if (x > line.Count) x = line.Count;
 
 #if debug
             Console.WriteLine("PointToPlace: " + sw.ElapsedMilliseconds);
@@ -6189,23 +6254,46 @@ namespace FastColoredTextBoxNS
 
             return new Place(x, iLine);
         }
-                
-        private int XToCharIndex(int pointX, int iLine)
+
+        /// <summary>
+        /// location X to char index in Visual Line (vs. Logical Line).
+        /// </summary>
+        /// <param name="pointX"></param>
+        /// <param name="iLine"></param>
+        /// <param name="measureFrom">logical char index to measureFrom, usually the start logical char index of a visual line, use with wordwrap</param>
+        /// <returns></returns>
+        private int XToCharIndex(int pointX, int iLine, int measureFrom = 0)
         {
             //due to mixed different char widths, the original code: var x = (int)Math.Round((float)point.X / CharWidth);
-            //must be replaced with: 
-            int x = 0;
-            int rangeWidth = 0;
-            string text = lines[iLine].Text;
-            int j = 0;
-            for (int length = text.Length; j < length; j++)
+            //must be replaced with:
+            int charIndex = 0;
+            int w = 0;
+            var line = lines[iLine];
+            for (int j = measureFrom; j < line.Count; j++)
             {
-                if (rangeWidth >= pointX) break;
-                rangeWidth += GetCharWidth(text[j]);
-                x++;
+                if (w >= pointX) break;
+                w += GetCharWidth(line[j].C);
+                charIndex++;
             }
+            return charIndex;
+        }
 
-            return x;
+        /// <summary>
+        /// Measure and return char position crossing the available width of line, for supporting mixed char widths.
+        /// </summary>
+        /// <param name="pointX"></param>
+        /// <param name="line"></param>
+        /// <param name="measureFrom"></param>
+        /// <returns>Key:charPosition,Value:Width after the char</returns>
+        private int XToCharIndex(int pointX, Line line, int measureFrom = 0)
+        {
+            int charIndex = 0;
+            foreach (var kv in XByEachChar(line, measureFrom))
+            {
+                if (kv.Value >= pointX) return kv.Key;
+                else charIndex = kv.Key;
+            }
+            return charIndex;
         }
 
 
@@ -6215,7 +6303,6 @@ namespace FastColoredTextBoxNS
             point.Offset(-LeftIndent - Paddings.Left, 0);
             int iLine = YtoLineIndex(point.Y);
             var x = XToCharIndex(point.X, iLine);
-            if (x < 0) x = 0;
             return new Place(x, iLine);
         }
 

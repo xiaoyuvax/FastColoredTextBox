@@ -120,7 +120,7 @@ namespace FastColoredTextBoxNS.Types
 
             ForeBrush ??= new SolidBrush(range.tb.ForeColor);
             float dx = 0;  //dx is not a fixed value for CJK chars
-            if (false)//  range.tb.ImeAllowed
+            if (range.tb.ImeAllowed)
             {
                 //IME mode
                 for (int i = range.Start.iChar; i < range.End.iChar; i++)
