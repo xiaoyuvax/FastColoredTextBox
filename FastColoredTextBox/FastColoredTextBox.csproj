@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
-		<TargetFrameworks>net8.0-windows7.0;net7.0-windows7.0;net6.0-windows7.0;</TargetFrameworks>
+		<TargetFrameworks>net9.0-windows7.0;net8.0-windows7.0;net7.0-windows7.0;net6.0-windows7.0;</TargetFrameworks>
 		<OutputType>Library</OutputType>
 		<RootNamespace>FastColoredTextBoxNS</RootNamespace>
 		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
@@ -9,7 +9,8 @@
 		<ImplicitUsings>true</ImplicitUsings>
 		<UseWindowsForms>true</UseWindowsForms>
 		<ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
-		<LangVersion>12</LangVersion>
+		<LangVersion>13</LangVersion>
+		<NoWarn>WFO1000</NoWarn>
 	</PropertyGroup>	
 	<PropertyGroup>
 		<SignAssembly>true</SignAssembly>
@@ -18,12 +19,11 @@
 		<AssemblyOriginatorKeyFile>FCTB_key.snk</AssemblyOriginatorKeyFile>
 		<RepositoryUrl>https://github.com/xiaoyuvax/FastColoredTextBox/</RepositoryUrl>
 		<PackageReleaseNotes>
-			- CJK wordwrapping improvements (not perfect)
-			- Reforked from Wiredwizard:-Daxanius:-PavelTorgashov
-			- CJK support/中日韩文支持
-			- Targeting NET6.0-8.0
+			- CJKL mix wordwrapping almost perfect/中日韩拉丁字母混合换行基本完美
+			- Targeting NET6.0-9.0
+			- Restructed the code and minor optimization
 		</PackageReleaseNotes>
-		<Authors>Pavel Torgashov, Daxanius, Xiaoyuvax</Authors>
+		<Authors>Pavel Torgashov, Daxanius, Wiredwizard, Xiaoyuvax</Authors>
 		<PackageId>Vax-FCTB</PackageId>
 		<PackageProjectUrl>https://github.com/xiaoyuvax/FastColoredTextBox/</PackageProjectUrl>
 		<Copyright>GNU License</Copyright>
@@ -34,9 +34,9 @@
 		<PackageIcon>icon.png</PackageIcon>
 		<Title>FastColoredTextBox</Title>
 		<PackageTags>winform;control;C#;VB;TextBox;Editor;Colored;CJK</PackageTags>
-		<AssemblyVersion>2.17.0.101</AssemblyVersion>
-		<FileVersion>2.17.0.101</FileVersion>
-		<Version>2.17.0.101</Version>
+		<AssemblyVersion>2.17.0.200</AssemblyVersion>
+		<FileVersion>2.17.0.200</FileVersion>
+		<Version>2.17.0.201</Version>
 		<PackageOutputPath>D:\PUB\Nuget Packages</PackageOutputPath>
 	</PropertyGroup>
 	<ItemGroup>

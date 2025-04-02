@@ -20,7 +20,7 @@ namespace FastColoredTextBoxNS.Text
         public bool UseOriginalFont { get; set; }
 
         private FastColoredTextBox tb;
-        private readonly Dictionary<Color, int> colorTable = new();
+        private readonly Dictionary<Color, int> colorTable = [];
 
         public ExportToRTF() => UseOriginalFont = true;
 

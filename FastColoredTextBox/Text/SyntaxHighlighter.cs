@@ -23,7 +23,7 @@ namespace FastColoredTextBoxNS.Text
 
         //
         protected readonly Dictionary<string, SyntaxDescriptor> descByXMLfileNames =
-            new();
+            [];
 
         protected readonly List<Style> resilientStyles = new(5);
 
@@ -596,7 +596,7 @@ namespace FastColoredTextBoxNS.Text
             tb.RightBracket3 = oldBrackets[5];
         }
 
-        protected static char[] RememberBrackets(FastColoredTextBox tb) => new[] { tb.LeftBracket, tb.RightBracket, tb.LeftBracket2, tb.RightBracket2, tb.LeftBracket3, tb.RightBracket3 };
+        protected static char[] RememberBrackets(FastColoredTextBox tb) => [tb.LeftBracket, tb.RightBracket, tb.LeftBracket2, tb.RightBracket2, tb.LeftBracket3, tb.RightBracket3];
 
         protected void InitCShaprRegex()
         {

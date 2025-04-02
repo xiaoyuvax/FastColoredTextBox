@@ -9,7 +9,7 @@ namespace FastColoredTextBoxNS.Input
     /// </summary>
     public class MacrosManager
     {
-        private readonly List<object> macro = new();
+        private readonly List<object> macro = [];
 
         internal MacrosManager(FastColoredTextBox ctrl)
         {

@@ -49,7 +49,7 @@ public class StyleManager
     /// </summary>
     public StyleManager()
     {
-        Styles = new HashSet<Style>();
+        Styles = [];
     }
 
     /// <summary>

@@ -267,7 +267,7 @@ namespace FastColoredTextBoxNS.Input
     {
         private string insertedText;
         readonly List<TextSelectionRange> ranges;
-        readonly List<string> prevText = new();
+        readonly List<string> prevText = [];
 
         /// <summary>
         /// Constructor
@@ -349,7 +349,7 @@ namespace FastColoredTextBoxNS.Input
             lastSel = new RangeInfo(tb.Selection);
         }
 
-        public override UndoableCommand Clone() => new ReplaceTextCommand(ts, new List<TextSelectionRange>(ranges), insertedText);
+        public override UndoableCommand Clone() => new ReplaceTextCommand(ts, [.. ranges], insertedText);
 
         internal static void ClearSelected(TextSource ts)
         {
@@ -457,7 +457,7 @@ namespace FastColoredTextBoxNS.Input
     public class ReplaceMultipleTextCommand : UndoableCommand
     {
         private readonly List<ReplaceRange> ranges;
-        readonly List<string> prevText = new();
+        readonly List<string> prevText = [];
 
         public class ReplaceRange
         {
@@ -536,7 +536,7 @@ namespace FastColoredTextBoxNS.Input
             lastSel = new RangeInfo(tb.Selection);
         }
 
-        public override UndoableCommand Clone() => new ReplaceMultipleTextCommand(ts, new List<ReplaceRange>(ranges));
+        public override UndoableCommand Clone() => new ReplaceMultipleTextCommand(ts, [.. ranges]);
     }
 
     /// <summary>
@@ -545,7 +545,7 @@ namespace FastColoredTextBoxNS.Input
     public class RemoveLinesCommand : UndoableCommand
     {
         private readonly List<int> iLines;
-        readonly List<string> prevText = new();
+        readonly List<string> prevText = [];
 
         /// <summary>
         /// Constructor
@@ -626,7 +626,7 @@ namespace FastColoredTextBoxNS.Input
             lastSel = new RangeInfo(tb.Selection);
         }
 
-        public override UndoableCommand Clone() => new RemoveLinesCommand(ts, new List<int>(iLines));
+        public override UndoableCommand Clone() => new RemoveLinesCommand(ts, [.. iLines]);
     }
 
     /// <summary>
@@ -636,7 +636,7 @@ namespace FastColoredTextBoxNS.Input
     {
         private readonly UndoableCommand cmd;
         private readonly TextSelectionRange range;
-        private readonly List<UndoableCommand> commandsByRanges = new();
+        private readonly List<UndoableCommand> commandsByRanges = [];
 
         public MultiRangeCommand(UndoableCommand command) : base(command.ts)
         {

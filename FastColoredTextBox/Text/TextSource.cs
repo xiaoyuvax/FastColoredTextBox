@@ -11,7 +11,7 @@ namespace FastColoredTextBoxNS.Text
     /// </summary>
     public class TextSource : IList<Line>, IDisposable
     {
-        readonly protected List<Line> lines = new();
+        readonly protected List<Line> lines = [];
         protected LinesAccessor linesAccessor;
         private int lastLineUniqueId;
         public CommandManager Manager { get; set; }
@@ -155,7 +155,7 @@ namespace FastColoredTextBoxNS.Text
 
         public virtual void RemoveLine(int index, int count)
         {
-            List<int> removedLineIds = new();
+            List<int> removedLineIds = [];
             //
             if (count > 0)
                 if (IsNeedBuildRemovedLineIds)

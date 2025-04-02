@@ -416,8 +416,7 @@ namespace FastColoredTextBoxNS.Types
         {
             base.Dispose();
 
-            if (Pen != null)
-                Pen.Dispose();
+            Pen?.Dispose();
             GC.SuppressFinalize(this);
         }
     }

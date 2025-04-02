@@ -7,7 +7,7 @@
     /// </summary>
     internal static class CharSizeCache
     {
-        private static readonly Dictionary<string, SizeF> cache = new();
+        private static readonly Dictionary<string, SizeF> cache = [];
 
         internal static void Clear() => cache.Clear();
 

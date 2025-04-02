@@ -12,9 +12,9 @@ namespace FastColoredTextBoxNS.Text
         public char leftBracket3 = '[';
         public char rightBracket3 = ']';
         public BracketsHighlightStrategy bracketsHighlightStrategy = BracketsHighlightStrategy.Strategy2;
-        public readonly List<Style> styles = new();
-        public readonly List<RuleDesc> rules = new();
-        public readonly List<FoldingDesc> foldings = new();
+        public readonly List<Style> styles = [];
+        public readonly List<RuleDesc> rules = [];
+        public readonly List<FoldingDesc> foldings = [];
 
         public void Dispose()
         {
@@ -35,10 +35,7 @@ namespace FastColoredTextBoxNS.Text
         {
             get
             {
-                if (regex == null)
-                {
-                    regex = new Regex(pattern, SyntaxHighlighter.RegexCompiledOption | options);
-                }
+                regex ??= new Regex(pattern, SyntaxHighlighter.RegexCompiledOption | options);
                 return regex;
             }
         }

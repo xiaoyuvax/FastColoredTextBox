@@ -11,7 +11,7 @@ namespace FastColoredTextBoxNS.Text
     /// </summary>
     public class FileTextSource : TextSource, IDisposable
     {
-        private List<int> sourceFileLinePositions = new();
+        private List<int> sourceFileLinePositions = [];
         private FileStream fs;
         private Encoding fileEncoding;
         private readonly System.Windows.Forms.Timer timer = new();
@@ -71,8 +71,7 @@ namespace FastColoredTextBoxNS.Text
         {
             Clear();
 
-            if (fs != null)
-                fs.Dispose();
+            fs?.Dispose();
 
             SaveEOL = Environment.NewLine;
 
@@ -314,8 +313,7 @@ namespace FastColoredTextBoxNS.Text
             StreamReader sr = new(fs, fileEncoding);
 
             var s = sr.ReadLine();
-            if (s == null)
-                s = "";
+            s ??= "";
 
             //call event handler
             if (LineNeeded != null)
@@ -378,8 +376,7 @@ namespace FastColoredTextBoxNS.Text
 
         public override void Dispose()
         {
-            if (fs != null)
-                fs.Dispose();
+            fs?.Dispose();
 
             timer.Dispose();
             GC.SuppressFinalize(this);

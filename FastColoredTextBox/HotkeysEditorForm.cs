@@ -6,7 +6,7 @@ namespace FastColoredTextBoxNS
 {
     public partial class HotkeysEditorForm : Form
     {
-        private readonly BindingList<HotkeyWrapper> wrappers = new();
+        private readonly BindingList<HotkeyWrapper> wrappers = [];
 
         public HotkeysEditorForm(HotkeysMapping hotkeys)
         {
@@ -72,7 +72,7 @@ namespace FastColoredTextBoxNS
 
         private void BtResore_Click(object sender, EventArgs e)
         {
-            HotkeysMapping h = new();
+            HotkeysMapping h = [];
             h.InitDefault();
             BuildWrappers(h);
         }

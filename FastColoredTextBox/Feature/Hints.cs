@@ -9,7 +9,7 @@ namespace FastColoredTextBoxNS.Feature
     public class Hints : ICollection<Hint>, IDisposable
     {
         private readonly FastColoredTextBox tb;
-        private readonly List<Hint> items = new();
+        private readonly List<Hint> items = [];
 
         public Hints(FastColoredTextBox tb)
         {

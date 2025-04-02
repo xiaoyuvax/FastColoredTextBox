@@ -57,7 +57,7 @@ namespace FastColoredTextBoxNS.Types
         /// </summary>
         /// <param name="style">The style.</param>
         /// <returns>The added Style.</returns>
-        /// <exception cref="System.InvalidOperationException">You cannot add more than {LastStyleIndex} styles to a character</exception>
+        /// <exception cref="InvalidOperationException">You cannot add more than {LastStyleIndex} styles to a character</exception>
         public Style AddStyle(Style style)
         {
             ++LastStyleIndex;

@@ -40,7 +40,7 @@ namespace FastColoredTextBoxNS.Types
         internal Line(int uid)
         {
             this.UniqueId = uid;
-            chars = new List<StyledChar>();
+            chars = [];
         }
 
         /// <summary>
@@ -234,8 +234,7 @@ namespace FastColoredTextBoxNS.Types
         {
             get
             {
-                if (cutOffPositions == null)
-                    cutOffPositions = new List<int>();
+                cutOffPositions ??= [];
                 return cutOffPositions;
             }
         }

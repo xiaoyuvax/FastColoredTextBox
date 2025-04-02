@@ -10,6 +10,46 @@ namespace FastColoredTextBoxNS.Text
     {
         private const long _defaultHeuristicSampleSize = 0x10000; //completely arbitrary - inappropriate for high numbers of files / high speed requirements
 
+        public static Encoding DetectBOMBytes(byte[] BOMBytes)
+        {
+            if (BOMBytes.Length < 2)
+                return null;
+
+            if (BOMBytes[0] == 0xff
+                && BOMBytes[1] == 0xfe
+                && (BOMBytes.Length < 4
+                    || BOMBytes[2] != 0
+                    || BOMBytes[3] != 0
+                    )
+                )
+                return Encoding.Unicode;
+
+            if (BOMBytes[0] == 0xfe
+                && BOMBytes[1] == 0xff
+                )
+                return Encoding.BigEndianUnicode;
+
+            if (BOMBytes.Length < 3)
+                return null;
+
+            if (BOMBytes[0] == 0xef && BOMBytes[1] == 0xbb && BOMBytes[2] == 0xbf)
+                return Encoding.UTF8;
+
+            if (BOMBytes[0] == 0x2b && BOMBytes[1] == 0x2f && BOMBytes[2] == 0x76)
+                return Encoding.UTF7;
+
+            if (BOMBytes.Length < 4)
+                return null;
+
+            if (BOMBytes[0] == 0xff && BOMBytes[1] == 0xfe && BOMBytes[2] == 0 && BOMBytes[3] == 0)
+                return Encoding.UTF32;
+
+            if (BOMBytes[0] == 0 && BOMBytes[1] == 0 && BOMBytes[2] == 0xfe && BOMBytes[3] == 0xff)
+                return Encoding.GetEncoding(12001);
+
+            return null;
+        }
+
         public static Encoding DetectTextFileEncoding(string InputFilename)
         {
             using FileStream textfileStream = File.OpenRead(InputFilename);
@@ -53,47 +93,6 @@ namespace FastColoredTextBoxNS.Text
             HasBOM = false;
             return encodingFound;
         }
-
-        public static Encoding DetectBOMBytes(byte[] BOMBytes)
-        {
-            if (BOMBytes.Length < 2)
-                return null;
-
-            if (BOMBytes[0] == 0xff
-                && BOMBytes[1] == 0xfe
-                && (BOMBytes.Length < 4
-                    || BOMBytes[2] != 0
-                    || BOMBytes[3] != 0
-                    )
-                )
-                return Encoding.Unicode;
-
-            if (BOMBytes[0] == 0xfe
-                && BOMBytes[1] == 0xff
-                )
-                return Encoding.BigEndianUnicode;
-
-            if (BOMBytes.Length < 3)
-                return null;
-
-            if (BOMBytes[0] == 0xef && BOMBytes[1] == 0xbb && BOMBytes[2] == 0xbf)
-                return Encoding.UTF8;
-
-            if (BOMBytes[0] == 0x2b && BOMBytes[1] == 0x2f && BOMBytes[2] == 0x76)
-                return Encoding.UTF7;
-
-            if (BOMBytes.Length < 4)
-                return null;
-
-            if (BOMBytes[0] == 0xff && BOMBytes[1] == 0xfe && BOMBytes[2] == 0 && BOMBytes[3] == 0)
-                return Encoding.UTF32;
-
-            if (BOMBytes[0] == 0 && BOMBytes[1] == 0 && BOMBytes[2] == 0xfe && BOMBytes[3] == 0xff)
-                return Encoding.GetEncoding(12001);
-
-            return null;
-        }
-
         public static Encoding DetectUnicodeInByteSampleByHeuristics(byte[] SampleBytes)
         {
             long oddBinaryNullsInSample = 0;
@@ -215,24 +214,6 @@ namespace FastColoredTextBoxNS.Text
             }
 
             return null;
-        }
-
-        private static bool IsCommonUSASCIIByte(byte testByte)
-        {
-            if (testByte == 0x0A //lf
-                || testByte == 0x0D //cr
-                || testByte == 0x09 //tab
-                || testByte >= 0x20 && testByte <= 0x2F //common punctuation
-                || testByte >= 0x30 && testByte <= 0x39 //digits
-                || testByte >= 0x3A && testByte <= 0x40 //common punctuation
-                || testByte >= 0x41 && testByte <= 0x5A //capital letters
-                || testByte >= 0x5B && testByte <= 0x60 //common punctuation
-                || testByte >= 0x61 && testByte <= 0x7A //lowercase letters
-                || testByte >= 0x7B && testByte <= 0x7E //common punctuation
-                )
-                return true;
-            else
-                return false;
         }
 
         public static bool IsCJK(char code)
@@ -386,6 +367,24 @@ namespace FastColoredTextBoxNS.Text
             }
 
             return lengthFound;
+        }
+
+        private static bool IsCommonUSASCIIByte(byte testByte)
+        {
+            if (testByte == 0x0A //lf
+                || testByte == 0x0D //cr
+                || testByte == 0x09 //tab
+                || testByte >= 0x20 && testByte <= 0x2F //common punctuation
+                || testByte >= 0x30 && testByte <= 0x39 //digits
+                || testByte >= 0x3A && testByte <= 0x40 //common punctuation
+                || testByte >= 0x41 && testByte <= 0x5A //capital letters
+                || testByte >= 0x5B && testByte <= 0x60 //common punctuation
+                || testByte >= 0x61 && testByte <= 0x7A //lowercase letters
+                || testByte >= 0x7B && testByte <= 0x7E //common punctuation
+                )
+                return true;
+            else
+                return false;
         }
     }
 }

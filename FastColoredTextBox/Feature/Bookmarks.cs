@@ -59,7 +59,7 @@ namespace FastColoredTextBoxNS.Feature
     public class Bookmarks : BaseBookmarks
     {
         protected FastColoredTextBox tb;
-        protected List<Bookmark> items = new();
+        protected List<Bookmark> items = [];
         protected int counter;
 
         public Bookmarks(FastColoredTextBox tb)

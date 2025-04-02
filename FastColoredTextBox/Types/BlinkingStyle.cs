@@ -41,7 +41,7 @@ namespace FastColoredTextBoxNS.Types;
 /// <summary>
 /// A style that defines blinking text.
 /// </summary>
-/// <seealso cref="FastColoredTextBoxNS.Types.Style" />
+/// <seealso cref="Style" />
 public sealed class BlinkingStyle : Style
 {
     /// <summary>

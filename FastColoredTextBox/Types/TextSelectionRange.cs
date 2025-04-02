@@ -1392,11 +1392,6 @@ namespace FastColoredTextBoxNS.Types
             OnSelectionChanged();
         }
 
-        public static StyleIndex ToStyleIndex(int i)
-        {
-            return (StyleIndex)(1 << i);
-        }
-
         public RangeRect Bounds
         {
             get
