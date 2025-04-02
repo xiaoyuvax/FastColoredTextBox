@@ -1,4 +1,4 @@
-﻿using FastColoredTextBoxNS;
+﻿using FastColoredTextBoxNS.EventArg;
 using FastColoredTextBoxNS.Text;
 using System;
 using System.Text.RegularExpressions;

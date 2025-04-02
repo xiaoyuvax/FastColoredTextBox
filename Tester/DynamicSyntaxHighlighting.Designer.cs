@@ -65,7 +65,7 @@
             this.fctb.TabIndex = 4;
             this.fctb.Text = "\r\n(defun fibonacci(n)\r\n    (if (or (= n 0) (= n 1))\r\n     1\r\n     (+ (fibonacci (" +
     "- n 1)) (fibonacci (- n 2)))))";
-            this.fctb.TextChangedDelayed += new System.EventHandler<FastColoredTextBoxNS.TextChangedEventArgs>(this.Fctb_TextChangedDelayed);
+            this.fctb.TextChangedDelayed += new System.EventHandler<FastColoredTextBoxNS.EventArg.TextChangedEventArgs>(this.Fctb_TextChangedDelayed);
             // 
             // DynamicSyntaxHighlighting
             // 

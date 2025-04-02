@@ -69,8 +69,8 @@
             this.fctb.TabIndex = 3;
             this.fctb.Text = resources.GetString("fctb.Text");
             this.fctb.Zoom = 100;
-            this.fctb.TextChangedDelayed += new System.EventHandler<FastColoredTextBoxNS.TextChangedEventArgs>(this.Fctb_TextChangedDelayed);
-            this.fctb.AutoIndentNeeded += new System.EventHandler<FastColoredTextBoxNS.AutoIndentEventArgs>(this.Fctb_AutoIndentNeeded);
+            this.fctb.TextChangedDelayed += new System.EventHandler<FastColoredTextBoxNS.EventArg.TextChangedEventArgs>(this.Fctb_TextChangedDelayed);
+            this.fctb.AutoIndentNeeded += new System.EventHandler<FastColoredTextBoxNS.EventArg.AutoIndentEventArgs>(this.Fctb_AutoIndentNeeded);
             // 
             // CustomFoldingSample
             // 

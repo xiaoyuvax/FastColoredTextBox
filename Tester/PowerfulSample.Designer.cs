@@ -478,10 +478,10 @@ namespace Tester
             this.fctb.TabIndex = 3;
             this.fctb.Text = resources.GetString("fctb.Text");
             this.fctb.Zoom = 100;
-            this.fctb.TextChanged += new System.EventHandler<FastColoredTextBoxNS.TextChangedEventArgs>(this.Fctb_TextChanged);
+            this.fctb.TextChanged += new System.EventHandler<FastColoredTextBoxNS.EventArg.TextChangedEventArgs>(this.Fctb_TextChanged);
             this.fctb.SelectionChangedDelayed += new System.EventHandler(this.Fctb_SelectionChangedDelayed);
-            this.fctb.AutoIndentNeeded += new System.EventHandler<FastColoredTextBoxNS.AutoIndentEventArgs>(this.Fctb_AutoIndentNeeded);
-            this.fctb.CustomAction += new System.EventHandler<FastColoredTextBoxNS.CustomActionEventArgs>(this.Fctb_CustomAction);
+            this.fctb.AutoIndentNeeded += new System.EventHandler<FastColoredTextBoxNS.EventArg.AutoIndentEventArgs>(this.Fctb_AutoIndentNeeded);
+            this.fctb.CustomAction += new System.EventHandler<FastColoredTextBoxNS.EventArg.CustomActionEventArgs>(this.Fctb_CustomAction);
             // 
             // jSONToolStripMenuItem
             // 

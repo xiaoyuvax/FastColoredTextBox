@@ -1,4 +1,5 @@
-﻿using FastColoredTextBoxNS;
+﻿using FastColoredTextBoxNS.Enums;
+using FastColoredTextBoxNS.EventArg;
 using FastColoredTextBoxNS.Types;
 
 namespace Tester

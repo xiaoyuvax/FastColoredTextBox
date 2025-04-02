@@ -9,7 +9,7 @@ namespace Tester {
 
 		public HyperlinkSample() => InitializeComponent();
 
-		private void Fctb_TextChangedDelayed(object sender, FastColoredTextBoxNS.TextChangedEventArgs e) {
+		private void Fctb_TextChangedDelayed(object sender, FastColoredTextBoxNS.EventArg.TextChangedEventArgs e) {
 			e.ChangedRange.ClearStyle(blueStyle);
 			e.ChangedRange.SetStyle(blueStyle, @"(http|ftp|https):\/\/[\w\-_]+(\.[\w\-_]+)+([\w\-\.,@?^=%&amp;:/~\+#]*[\w\-\@?^=%&amp;/~\+#])?");
 		}

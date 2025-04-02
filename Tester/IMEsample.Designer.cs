@@ -28,60 +28,92 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
+            components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(IMEsample));
-            this.label1 = new System.Windows.Forms.Label();
-            this.fctb = new FastColoredTextBoxNS.FastColoredTextBox();
-            ((System.ComponentModel.ISupportInitialize)(this.fctb)).BeginInit();
-            this.SuspendLayout();
+            label1 = new Label();
+            fctb = new FastColoredTextBoxNS.FastColoredTextBox();
+            ((System.ComponentModel.ISupportInitialize)fctb).BeginInit();
+            SuspendLayout();
             // 
             // label1
             // 
-            this.label1.Dock = System.Windows.Forms.DockStyle.Top;
-            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.label1.Location = new System.Drawing.Point(0, 0);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(417, 85);
-            this.label1.TabIndex = 3;
-            this.label1.Text = resources.GetString("label1.Text");
+            label1.Dock = DockStyle.Top;
+            label1.Font = new Font("Microsoft Sans Serif", 9.75F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            label1.Location = new Point(0, 0);
+            label1.Margin = new Padding(4, 0, 4, 0);
+            label1.Name = "label1";
+            label1.Size = new Size(486, 111);
+            label1.TabIndex = 3;
+            label1.Text = resources.GetString("label1.Text");
             // 
             // fctb
             // 
-            this.fctb.AutoIndent = false;
-            this.fctb.AutoScrollMinSize = new System.Drawing.Size(0, 264);
-            this.fctb.BackBrush = null;
-            this.fctb.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.fctb.CharHeight = 24;
-            this.fctb.CharWidth = 12;
-            this.fctb.Cursor = System.Windows.Forms.Cursors.IBeam;
-            this.fctb.DisabledColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))));
-            this.fctb.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.fctb.Font = new System.Drawing.Font("Consolas", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.fctb.ImeMode = System.Windows.Forms.ImeMode.On;
-            this.fctb.IsReplaceMode = false;
-            this.fctb.LeftBracket = '(';
-            this.fctb.Location = new System.Drawing.Point(0, 85);
-            this.fctb.Name = "fctb";
-            this.fctb.Paddings = new System.Windows.Forms.Padding(0);
-            this.fctb.RightBracket = ')';
-            this.fctb.SelectionColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.fctb.ShowLineNumbers = false;
-            this.fctb.Size = new System.Drawing.Size(417, 217);
-            this.fctb.TabIndex = 2;
-            this.fctb.Text = resources.GetString("fctb.Text");
-            this.fctb.WordWrap = true;
+            fctb.AccessibleDescription = "Textbox control";
+            fctb.AccessibleName = "Fast Colored Text Box";
+            fctb.AccessibleRole = AccessibleRole.Text;
+            fctb.AutoCompleteBracketsList = new char[]
+    {
+    '(',
+    ')',
+    '{',
+    '}',
+    '[',
+    ']',
+    '"',
+    '"',
+    '\'',
+    '\''
+    };
+            fctb.AutoIndent = false;
+            fctb.AutoIndentCharsPatterns = "^\\s*[\\w\\.]+(\\s\\w+)?\\s*(?<range>=)\\s*(?<range>[^;=]+);\r\n^\\s*(case|default)\\s*[^:]*(?<range>:)\\s*(?<range>[^;]+);";
+            fctb.AutoScrollMinSize = new Size(0, 288);
+            fctb.BackBrush = null;
+            fctb.BorderStyle = BorderStyle.FixedSingle;
+            fctb.CharCnWidth = 19;
+            fctb.CharHeight = 24;
+            fctb.CharWidth = 12;
+            fctb.Cursor = Cursors.IBeam;
+            fctb.DefaultMarkerSize = 8;
+            fctb.DisabledColor = Color.FromArgb(100, 180, 180, 180);
+            fctb.Dock = DockStyle.Fill;
+            fctb.FindForm = null;
+            fctb.FoldingHighlightColor = Color.LightGray;
+            fctb.FoldingHighlightEnabled = false;
+            fctb.Font = new Font("Consolas", 15.75F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            fctb.GoToForm = null;
+            fctb.Hotkeys = resources.GetString("fctb.Hotkeys");
+            fctb.ImeMode = ImeMode.On;
+            fctb.IsReplaceMode = false;
+            fctb.LeftBracket = '(';
+            fctb.Location = new Point(0, 111);
+            fctb.Margin = new Padding(4, 4, 4, 4);
+            fctb.Name = "fctb";
+            fctb.Paddings = new Padding(0);
+            fctb.ReplaceForm = null;
+            fctb.RightBracket = ')';
+            fctb.SelectionColor = Color.FromArgb(60, 0, 0, 255);
+            fctb.ServiceColors = (FastColoredTextBoxNS.ServiceColors)resources.GetObject("fctb.ServiceColors");
+            fctb.ShowLineNumbers = false;
+            fctb.Size = new Size(486, 284);
+            fctb.TabIndex = 2;
+            fctb.Text = resources.GetString("fctb.Text");
+            fctb.ToolTipDelay = 100;
+            fctb.UseCJK = FastColoredTextBoxNS.Enums.CJKMode.CJK;
+            fctb.WordWrap = true;
+            fctb.Zoom = 100;
             // 
             // IMEsample
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(417, 302);
-            this.Controls.Add(this.fctb);
-            this.Controls.Add(this.label1);
-            this.Name = "IMEsample";
-            this.Text = "IMEsample";
-            ((System.ComponentModel.ISupportInitialize)(this.fctb)).EndInit();
-            this.ResumeLayout(false);
+            AutoScaleDimensions = new SizeF(7F, 17F);
+            AutoScaleMode = AutoScaleMode.Font;
+            ClientSize = new Size(486, 395);
+            Controls.Add(fctb);
+            Controls.Add(label1);
+            Margin = new Padding(4, 4, 4, 4);
+            Name = "IMEsample";
+            Text = "IMEsample";
+            ((System.ComponentModel.ISupportInitialize)fctb).EndInit();
+            ResumeLayout(false);
 
         }
 

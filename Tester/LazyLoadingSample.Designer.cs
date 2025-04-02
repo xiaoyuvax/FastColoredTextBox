@@ -183,7 +183,7 @@
     "d large file (approx. 50mb). \r\nThen bind file to the control in menu File/Bind t" +
     "o file.";
             this.fctb.Zoom = 100;
-            this.fctb.TextChangedDelayed += new System.EventHandler<FastColoredTextBoxNS.TextChangedEventArgs>(this.Fctb_TextChangedDelayed);
+            this.fctb.TextChangedDelayed += new System.EventHandler<FastColoredTextBoxNS.EventArg.TextChangedEventArgs>(this.Fctb_TextChangedDelayed);
             this.fctb.VisibleRangeChangedDelayed += new System.EventHandler(this.Fctb_VisibleRangeChangedDelayed);
             // 
             // LazyLoadingSample

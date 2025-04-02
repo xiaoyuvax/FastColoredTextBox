@@ -62,7 +62,7 @@
             this.fctb.AutoScrollMinSize = new System.Drawing.Size(137, 180);
             this.fctb.BackBrush = null;
             this.fctb.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.fctb.BracketsHighlightStrategy = FastColoredTextBoxNS.BracketsHighlightStrategy.Strategy2;
+            this.fctb.BracketsHighlightStrategy = FastColoredTextBoxNS.Enums.BracketsHighlightStrategy.Strategy2;
             this.fctb.CharHeight = 15;
             this.fctb.CharWidth = 7;
             this.fctb.Cursor = System.Windows.Forms.Cursors.IBeam;

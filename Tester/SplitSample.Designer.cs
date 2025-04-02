@@ -86,7 +86,7 @@ namespace Tester {
             this.fctbMaster.AutoIndentCharsPatterns = "^\\s*[\\w\\.]+(\\s\\w+)?\\s*(?<range>=)\\s*(?<range>[^;=]+);\r\n^\\s*(case|default)\\s*[^:]*(?<range>:)\\s*(?<range>[^;]+);";
             this.fctbMaster.AutoScrollMinSize = new System.Drawing.Size(284, 255);
             this.fctbMaster.BackBrush = null;
-            this.fctbMaster.BracketsHighlightStrategy = FastColoredTextBoxNS.BracketsHighlightStrategy.Strategy2;
+            this.fctbMaster.BracketsHighlightStrategy = FastColoredTextBoxNS.Enums.BracketsHighlightStrategy.Strategy2;
             this.fctbMaster.CharHeight = 15;
             this.fctbMaster.CharWidth = 7;
             this.fctbMaster.Cursor = System.Windows.Forms.Cursors.IBeam;
@@ -128,7 +128,7 @@ namespace Tester {
             this.fctbSlave.AutoIndentCharsPatterns = "^\\s*[\\w\\.]+(\\s\\w+)?\\s*(?<range>=)\\s*(?<range>[^;=]+);\r\n^\\s*(case|default)\\s*[^:]*(?<range>:)\\s*(?<range>[^;]+);";
             this.fctbSlave.AutoScrollMinSize = new System.Drawing.Size(0, 255);
             this.fctbSlave.BackBrush = null;
-            this.fctbSlave.BracketsHighlightStrategy = FastColoredTextBoxNS.BracketsHighlightStrategy.Strategy2;
+            this.fctbSlave.BracketsHighlightStrategy = FastColoredTextBoxNS.Enums.BracketsHighlightStrategy.Strategy2;
             this.fctbSlave.CharHeight = 15;
             this.fctbSlave.CharWidth = 7;
             this.fctbSlave.Cursor = System.Windows.Forms.Cursors.IBeam;

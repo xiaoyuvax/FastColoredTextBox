@@ -87,7 +87,7 @@
             this.consoleTextBox1.Size = new System.Drawing.Size(713, 342);
             this.consoleTextBox1.TabIndex = 0;
             this.consoleTextBox1.WordWrap = true;
-            this.consoleTextBox1.WordWrapMode = FastColoredTextBoxNS.WordWrapMode.CharWrapPreferredWidth;
+            this.consoleTextBox1.WordWrapMode = FastColoredTextBoxNS.Enums.WordWrapMode.CharWrapPreferredWidth;
             this.consoleTextBox1.Zoom = 100;
             // 
             // ConsoleSample

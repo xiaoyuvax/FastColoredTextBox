@@ -49,7 +49,7 @@
             this.fctb.TabIndex = 0;
             this.fctb.Text = "some text \r\nsome text http://google.com?q=FastColoredTextBox some text\r\n\r\n(see al" +
     "so PredefinedStylesSample)";
-            this.fctb.TextChangedDelayed += new System.EventHandler<FastColoredTextBoxNS.TextChangedEventArgs>(this.Fctb_TextChangedDelayed);
+            this.fctb.TextChangedDelayed += new System.EventHandler<FastColoredTextBoxNS.EventArg.TextChangedEventArgs>(this.Fctb_TextChangedDelayed);
             this.fctb.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Fctb_MouseDown);
             this.fctb.MouseMove += new System.Windows.Forms.MouseEventHandler(this.Fctb_MouseMove);
             // 

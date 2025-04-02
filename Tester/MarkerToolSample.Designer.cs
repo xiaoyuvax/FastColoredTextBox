@@ -146,7 +146,7 @@ namespace Tester {
             this.fctb.Zoom = 100;
             this.fctb.SelectionChangedDelayed += new System.EventHandler(this.Fctb_SelectionChangedDelayed);
             this.fctb.VisualMarkerClick += new System.EventHandler<VisualMarkerEventArgs>(this.Fctb_VisualMarkerClick);
-            this.fctb.PaintLine += new System.EventHandler<FastColoredTextBoxNS.PaintLineEventArgs>(this.Fctb_PaintLine);
+            this.fctb.PaintLine += new System.EventHandler<FastColoredTextBoxNS.EventArg.PaintLineEventArgs>(this.Fctb_PaintLine);
             this.fctb.Resize += new System.EventHandler(this.Fctb_Resize);
             // 
             // MarkerToolSample

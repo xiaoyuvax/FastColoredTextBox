@@ -91,7 +91,7 @@
             fctb.Size = new Size(581, 274);
             fctb.TabIndex = 0;
             fctb.Text = resources.GetString("fctb.Text");
-            fctb.UseCJK = FastColoredTextBoxNS.CJKMode.CJK;
+            fctb.UseCJK = FastColoredTextBoxNS.Enums.CJKMode.CJK;
             fctb.Zoom = 100;
             fctb.TextChanged += Fctb_TextChanged;
             // 

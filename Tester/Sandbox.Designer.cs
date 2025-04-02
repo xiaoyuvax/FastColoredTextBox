@@ -81,7 +81,7 @@
             this.fctb.Text = "(fastColoredTextBox1)\r\ngfdsg fd\r\ng fdsg (local) = 12\r\ndsfds\r\n";
             this.fctb.WordWrap = true;
             this.fctb.Zoom = 100;
-            this.fctb.TextChanged += new System.EventHandler<FastColoredTextBoxNS.TextChangedEventArgs>(this.Fctb_TextChanged);
+            this.fctb.TextChanged += new System.EventHandler<FastColoredTextBoxNS.EventArg.TextChangedEventArgs>(this.Fctb_TextChanged);
             // 
             // Sandbox
             // 

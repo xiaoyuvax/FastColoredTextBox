@@ -1,4 +1,4 @@
-﻿using FastColoredTextBoxNS;
+﻿using FastColoredTextBoxNS.EventArg;
 using System.Windows.Forms;
 
 namespace Tester {

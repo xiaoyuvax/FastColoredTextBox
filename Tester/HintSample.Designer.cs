@@ -137,7 +137,7 @@ namespace Tester {
             this.fctb.AutoIndentCharsPatterns = "^\\s*[\\w\\.]+(\\s\\w+)?\\s*(?<range>=)\\s*(?<range>[^;=]+);\r\n^\\s*(case|default)\\s*[^:]*(?<range>:)\\s*(?<range>[^;]+);";
             this.fctb.AutoScrollMinSize = new System.Drawing.Size(0, 290);
             this.fctb.BackBrush = null;
-            this.fctb.BracketsHighlightStrategy = FastColoredTextBoxNS.BracketsHighlightStrategy.Strategy2;
+            this.fctb.BracketsHighlightStrategy = FastColoredTextBoxNS.Enums.BracketsHighlightStrategy.Strategy2;
             this.fctb.CharHeight = 15;
             this.fctb.CharWidth = 7;
             this.fctb.Cursor = System.Windows.Forms.Cursors.IBeam;
@@ -165,7 +165,7 @@ namespace Tester {
             this.fctb.TextAreaBorderColor = System.Drawing.Color.Gray;
             this.fctb.WordWrap = true;
             this.fctb.Zoom = 100;
-            this.fctb.HintClick += new System.EventHandler<FastColoredTextBoxNS.HintClickEventArgs>(this.Fctb_HintClick);
+            this.fctb.HintClick += new System.EventHandler<FastColoredTextBoxNS.EventArg.HintClickEventArgs>(this.Fctb_HintClick);
             // 
             // HintSample
             // 

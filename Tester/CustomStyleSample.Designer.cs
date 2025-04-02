@@ -71,8 +71,8 @@
             this.fctb.Text = resources.GetString("fctb.Text");
             this.fctb.TextAreaBorder = FastColoredTextBoxNS.TextAreaBorderType.Shadow;
             this.fctb.WordWrap = true;
-            this.fctb.WordWrapMode = FastColoredTextBoxNS.WordWrapMode.WordWrapPreferredWidth;
-            this.fctb.TextChanged += new System.EventHandler<FastColoredTextBoxNS.TextChangedEventArgs>(this.Fctb_TextChanged);
+            this.fctb.WordWrapMode = FastColoredTextBoxNS.Enums.WordWrapMode.WordWrapPreferredWidth;
+            this.fctb.TextChanged += new System.EventHandler<FastColoredTextBoxNS.EventArg.TextChangedEventArgs>(this.Fctb_TextChanged);
             // 
             // CustomStyleSample
             // 
