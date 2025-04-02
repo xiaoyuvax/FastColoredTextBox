@@ -12,6 +12,7 @@ It has such settings as foreground color, font style, background color which can
 - CJKL mix wordwrapping almost perfect/中日韩拉丁字母混合换行基本完美
 - Targeting NET6.0-9.0
 - Restructed the code and minor optimization
+  
 24-12-30 (V2.17.0.0)
 - Reforked from Wiredwizard:-Daxanius:-PavelTorgashov
 24-12-25 (V2.16.27.106)
