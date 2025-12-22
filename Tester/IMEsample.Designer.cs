@@ -98,7 +98,7 @@
             fctb.TabIndex = 2;
             fctb.Text = resources.GetString("fctb.Text");
             fctb.ToolTipDelay = 100;
-            fctb.UseCJK = FastColoredTextBoxNS.Enums.CJKMode.CJK;
+            fctb.UseCJK = FastColoredTextBoxNS.CJKMode.CJK;
             fctb.WordWrap = true;
             fctb.Zoom = 100;
             // 

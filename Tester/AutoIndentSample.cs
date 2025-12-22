@@ -1,8 +1,6 @@
-﻿using FastColoredTextBoxNS.EventArg;
+﻿using FastColoredTextBoxNS;
 using FastColoredTextBoxNS.Text;
-using System;
 using System.Text.RegularExpressions;
-using System.Windows.Forms;
 
 namespace Tester {
 	public partial class AutoIndentSample : Form {

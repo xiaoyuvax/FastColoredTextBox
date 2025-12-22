@@ -52,6 +52,9 @@
             // 
             // fctb
             // 
+            fctb.AccessibleDescription = "Textbox control";
+            fctb.AccessibleName = "Fast Colored Text Box";
+            fctb.AccessibleRole = AccessibleRole.Text;
             fctb.AutoCompleteBracketsList = new char[]
     {
     '(',
@@ -66,7 +69,7 @@
     '\''
     };
             fctb.AutoIndentCharsPatterns = "^\\s*[\\w\\.]+(\\s\\w+)?\\s*(?<range>=)\\s*(?<range>[^;=]+);\r\n^\\s*(case|default)\\s*[^:]*(?<range>:)\\s*(?<range>[^;]+);";
-            fctb.AutoScrollMinSize = new Size(480, 120);
+            fctb.AutoScrollMinSize = new Size(0, 121);
             fctb.BackBrush = null;
             fctb.CharCnWidth = 14;
             fctb.CharHeight = 15;
@@ -77,6 +80,8 @@
             fctb.DisabledColor = Color.FromArgb(100, 180, 180, 180);
             fctb.Dock = DockStyle.Fill;
             fctb.FindForm = null;
+            fctb.FoldingHighlightColor = Color.LightGray;
+            fctb.FoldingHighlightEnabled = false;
             fctb.Font = new Font("Consolas", 9.75F);
             fctb.GoToForm = null;
             fctb.Hotkeys = resources.GetString("fctb.Hotkeys");
@@ -84,14 +89,16 @@
             fctb.Location = new Point(0, 67);
             fctb.Margin = new Padding(4);
             fctb.Name = "fctb";
-            fctb.Paddings = new Padding(0);
+            fctb.Paddings = new Padding(0, 1, 0, 0);
             fctb.ReplaceForm = null;
             fctb.SelectionColor = Color.FromArgb(50, 0, 0, 255);
             fctb.ServiceColors = (FastColoredTextBoxNS.ServiceColors)resources.GetObject("fctb.ServiceColors");
             fctb.Size = new Size(581, 274);
             fctb.TabIndex = 0;
             fctb.Text = resources.GetString("fctb.Text");
-            fctb.UseCJK = FastColoredTextBoxNS.Enums.CJKMode.CJK;
+            fctb.ToolTipDelay = 100;
+            fctb.UseCJK = FastColoredTextBoxNS.CJKMode.CJK;
+            fctb.WordWrap = true;
             fctb.Zoom = 100;
             fctb.TextChanged += Fctb_TextChanged;
             // 

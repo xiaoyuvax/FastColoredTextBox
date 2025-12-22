@@ -1,5 +1,4 @@
-﻿using FastColoredTextBoxNS.EventArg;
-using System.Windows.Forms;
+﻿using FastColoredTextBoxNS;
 
 namespace Tester {
 	public partial class CustomFoldingSample : Form {

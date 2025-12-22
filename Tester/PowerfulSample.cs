@@ -1,13 +1,7 @@
 ﻿using FastColoredTextBoxNS;
-using FastColoredTextBoxNS.EventArg;
 using FastColoredTextBoxNS.Text;
 using FastColoredTextBoxNS.Types;
-using System;
-using System.Drawing;
-using System.IO;
-using System.Linq;
 using System.Text.RegularExpressions;
-using System.Windows.Forms;
 
 namespace Tester {
 	public partial class PowerfulSample : Form {

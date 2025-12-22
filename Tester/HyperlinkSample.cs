@@ -1,7 +1,5 @@
 ﻿using FastColoredTextBoxNS.Types;
 using System.Diagnostics;
-using System.Drawing;
-using System.Windows.Forms;
 
 namespace Tester {
 	public partial class HyperlinkSample : Form {
@@ -9,7 +7,7 @@ namespace Tester {
 
 		public HyperlinkSample() => InitializeComponent();
 
-		private void Fctb_TextChangedDelayed(object sender, FastColoredTextBoxNS.EventArg.TextChangedEventArgs e) {
+		private void Fctb_TextChangedDelayed(object sender, FastColoredTextBoxNS.TextChangedEventArgs e) {
 			e.ChangedRange.ClearStyle(blueStyle);
 			e.ChangedRange.SetStyle(blueStyle, @"(http|ftp|https):\/\/[\w\-_]+(\.[\w\-_]+)+([\w\-\.,@?^=%&amp;:/~\+#]*[\w\-\@?^=%&amp;/~\+#])?");
 		}

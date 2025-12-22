@@ -1,18 +1,10 @@
 ﻿using FarsiLibrary.Win;
 using FastColoredTextBoxNS;
-using FastColoredTextBoxNS.EventArg;
 using FastColoredTextBoxNS.Feature;
 using FastColoredTextBoxNS.Text;
 using FastColoredTextBoxNS.Types;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Drawing;
-using System.IO;
-using System.Linq;
 using System.Text.RegularExpressions;
-using System.Threading;
-using System.Windows.Forms;
 
 namespace Tester {
 	public partial class PowerfulCSharpEditor : Form {

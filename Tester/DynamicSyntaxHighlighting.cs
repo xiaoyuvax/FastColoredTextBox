@@ -1,7 +1,5 @@
-﻿using FastColoredTextBoxNS.EventArg;
+﻿using FastColoredTextBoxNS;
 using FastColoredTextBoxNS.Types;
-using System.Drawing;
-using System.Windows.Forms;
 
 namespace Tester {
 	public partial class DynamicSyntaxHighlighting : Form {

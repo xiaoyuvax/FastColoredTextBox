@@ -1,6 +1,5 @@
-﻿using FastColoredTextBoxNS.EventArg;
+﻿using FastColoredTextBoxNS;
 using System.Text.RegularExpressions;
-using System.Windows.Forms;
 
 namespace Tester {
 	public partial class CustomWordWrapSample : Form {

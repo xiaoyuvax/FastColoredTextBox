@@ -1,7 +1,5 @@
-﻿using FastColoredTextBoxNS.EventArg;
+﻿using FastColoredTextBoxNS;
 using FastColoredTextBoxNS.Feature;
-using System;
-using System.Windows.Forms;
 
 namespace Tester {
 	public partial class HintSample : Form {

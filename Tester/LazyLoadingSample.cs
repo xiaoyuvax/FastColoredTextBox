@@ -1,10 +1,7 @@
-﻿using FastColoredTextBoxNS.EventArg;
+﻿using FastColoredTextBoxNS;
 using FastColoredTextBoxNS.Types;
-using System;
-using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Windows.Forms;
 
 namespace Tester {
 	public partial class LazyLoadingSample : Form {

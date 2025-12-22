@@ -1,9 +1,5 @@
 ﻿using FastColoredTextBoxNS;
-using FastColoredTextBoxNS.EventArg;
 using FastColoredTextBoxNS.Types;
-using System;
-using System.Drawing;
-using System.Windows.Forms;
 
 namespace Tester {
 	public partial class Sandbox : Form {

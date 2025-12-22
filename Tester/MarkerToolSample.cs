@@ -1,10 +1,7 @@
-﻿using FastColoredTextBoxNS.EventArg;
+﻿using FastColoredTextBoxNS;
 using FastColoredTextBoxNS.Feature;
 using FastColoredTextBoxNS.Types;
-using System;
-using System.Drawing;
 using System.Drawing.Drawing2D;
-using System.Windows.Forms;
 
 namespace Tester {
 	public partial class MarkerToolSample : Form {

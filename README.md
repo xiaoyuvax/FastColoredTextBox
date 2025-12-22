@@ -8,9 +8,13 @@ It works well with small, medium, large and very-very large files.
 It has such settings as foreground color, font style, background color which can be adjusted for arbitrarily selected text symbols. One can easily gain access to a text with the use of regular expressions. WordWrap, Find/Replace, Code folding and multilevel Undo/Redo are supported as well. 
 
 ## Update Logs   
+25-12-22 (V2.17.0.203)
+- A wordwrapping bug fixed
+- .NET6.0 target removed for better code optimization (now targeting .NET7-9)
+- Some other code optimization
 25-04-02 (V2.17.0.2)
 - CJKL mix wordwrapping almost perfect/中日韩拉丁字母混合换行基本完美
-- Targeting NET6.0-9.0
+- Targeting .NET6.0-9.0
 - Restructed the code and minor optimization
 24-12-30 (V2.17.0.0)
 - Reforked from Wiredwizard:-Daxanius:-PavelTorgashov
@@ -28,7 +32,7 @@ It has such settings as foreground color, font style, background color which can
 
 
 ## Known Issues
-- N/A so far
+- Wordwrapped lines may exceed controlwidth in some cases, especially when scollbar is visible, but can be solved by setting PaddingRight property.
 
 ![Fast Colored TextBox](http://www.codeproject.com/KB/edit/FastColoredTextBox_/fastcoloredtextbox2.png)
 
