@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
-		<TargetFrameworks>net9.0-windows7.0;net8.0-windows7.0;net7.0-windows7.0;net6.0-windows7.0;</TargetFrameworks>
+		<TargetFrameworks>net9.0-windows7.0;net8.0-windows7.0;net7.0-windows7.0;</TargetFrameworks>
 		<OutputType>Library</OutputType>
 		<RootNamespace>FastColoredTextBoxNS</RootNamespace>
 		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
@@ -11,16 +11,17 @@
 		<ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
 		<LangVersion>13</LangVersion>
 		<NoWarn>WFO1000</NoWarn>
-	</PropertyGroup>	
+	</PropertyGroup>
 	<PropertyGroup>
 		<SignAssembly>true</SignAssembly>
 	</PropertyGroup>
 	<PropertyGroup>
 		<AssemblyOriginatorKeyFile>FCTB_key.snk</AssemblyOriginatorKeyFile>
 		<RepositoryUrl>https://github.com/xiaoyuvax/FastColoredTextBox/</RepositoryUrl>
-		<PackageReleaseNotes>
+		<PackageReleaseNotes>			
+			- 2025/12/22 Wordwrap bug fix/修复换行错误
 			- CJKL mix wordwrapping almost perfect/中日韩拉丁字母混合换行基本完美
-			- Targeting NET6.0-9.0
+			- Targeting NET7.0-9.0
 			- Restructed the code and minor optimization
 		</PackageReleaseNotes>
 		<Authors>Pavel Torgashov, Daxanius, Wiredwizard, Xiaoyuvax</Authors>
@@ -34,16 +35,17 @@
 		<PackageIcon>icon.png</PackageIcon>
 		<Title>FastColoredTextBox</Title>
 		<PackageTags>winform;control;C#;VB;TextBox;Editor;Colored;CJK</PackageTags>
-		<AssemblyVersion>2.17.0.200</AssemblyVersion>
-		<FileVersion>2.17.0.200</FileVersion>
-		<Version>2.17.0.201</Version>
+		<AssemblyVersion>2.17.0.203</AssemblyVersion>
+		<FileVersion>2.17.0.203</FileVersion>
+		<Version>2.17.0.203</Version>
 		<PackageOutputPath>D:\PUB\Nuget Packages</PackageOutputPath>
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 	</PropertyGroup>
 	<ItemGroup>
 		<None Include="$(SolutionDir)icon.png">
 			<Pack>True</Pack>
 			<PackagePath>\</PackagePath>
-		</None>		
+		</None>
 		<None Include="$(SolutionDir)README.md">
 			<Pack>True</Pack>
 			<PackagePath>\</PackagePath>
@@ -71,6 +73,6 @@
 		</Compile>
 	</ItemGroup>
 	<ItemGroup>
-	  <Folder Include="Properties\" />
+		<Folder Include="Properties\" />
 	</ItemGroup>
 </Project>

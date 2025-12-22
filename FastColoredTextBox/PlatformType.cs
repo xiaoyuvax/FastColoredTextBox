@@ -2,7 +2,7 @@
 
 namespace FastColoredTextBoxNS
 {
-    public static class PlatformType
+    public static partial class PlatformType
     {
         const ushort PROCESSOR_ARCHITECTURE_INTEL = 0;
         const ushort PROCESSOR_ARCHITECTURE_IA64 = 6;
@@ -24,11 +24,11 @@ namespace FastColoredTextBoxNS
             public ushort wProcessorRevision;
         };
 
-        [DllImport("kernel32.dll")]
-        static extern void GetNativeSystemInfo(ref SYSTEM_INFO lpSystemInfo);
+        [LibraryImport("kernel32.dll")]
+        static partial void GetNativeSystemInfo(ref SYSTEM_INFO lpSystemInfo);
 
-        [DllImport("kernel32.dll")]
-        static extern void GetSystemInfo(ref SYSTEM_INFO lpSystemInfo);
+        [LibraryImport("kernel32.dll")]
+        static partial void GetSystemInfo(ref SYSTEM_INFO lpSystemInfo);
 
         public static Platform GetOperationSystemPlatform()
         {

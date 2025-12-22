@@ -209,8 +209,7 @@ namespace FastColoredTextBoxNS
             EnableBlinkingStyle = true;
             FoldedBlocks = [];
             AutoCompleteBrackets = false;
-            AutoIndentCharsPatterns = @"^\s*[\w\.]+(\s\w+)?\s*(?<range>=)\s*(?<range>[^;=]+);
-^\s*(case|default)\s*[^:]*(?<range>:)\s*(?<range>[^;]+);";
+            AutoIndentCharsPatterns = @"^\s*[\w\.]+(\s\w+)?\s*(?<range>=)\s*(?<range>[^;=]+);^\s*(case|default)\s*[^:]*(?<range>:)\s*(?<range>[^;]+);";
             AutoIndentChars = true;
             CaretBlinking = true;
             ServiceColors = new ServiceColors();
@@ -2641,11 +2640,11 @@ namespace FastColoredTextBoxNS
             data.SetData(DataFormats.Rtf, new ExportToRTF().GetRtf(Selection.Clone()));
         }
 
-        [DllImport("user32.dll")]
-        private static extern IntPtr GetOpenClipboardWindow();
+        [LibraryImport("user32.dll")]
+        private static partial IntPtr GetOpenClipboardWindow();
 
-        [DllImport("user32.dll")]
-        private static extern IntPtr CloseClipboard();
+        [LibraryImport("user32.dll")]
+        private static partial IntPtr CloseClipboard();
 
         protected static void SetClipboard(DataObject data)
         {
@@ -3076,11 +3075,11 @@ namespace FastColoredTextBoxNS
 
         public static SizeF GetCharSize(Font font, char c) => CharSizeCache.GetCharSize(font, c);
 
-        [DllImport("Imm32.dll")]
-        private static extern IntPtr ImmGetContext(IntPtr hWnd);
+        [LibraryImport("Imm32.dll")]
+        private static partial IntPtr ImmGetContext(IntPtr hWnd);
 
-        [DllImport("Imm32.dll")]
-        private static extern IntPtr ImmAssociateContext(IntPtr hWnd, IntPtr hIMC);
+        [LibraryImport("Imm32.dll")]
+        private static partial IntPtr ImmAssociateContext(IntPtr hWnd, IntPtr hIMC);
 
         protected override void WndProc(ref Message m)
         {
@@ -3485,30 +3484,47 @@ namespace FastColoredTextBoxNS
             int cutOff = 0, prevCutOff = 0;
             int w, backSet;
             char c;
+            bool wrapByChar;
             cutOffPositions.Clear();
 
             for (int i = 0; i < line.Count - 1; i++)
             {
                 c = line[i].C;
-                var wrapByChar = (UseCJK != CJKMode.Disabled && EncodingDetector.IsCJK(c)) || charWrap;
+                wrapByChar = (UseCJK != CJKMode.Disabled && EncodingDetector.IsCJK(c)) || charWrap;
                 if (wrapByChar
                     || !char.IsLetterOrDigit(c) && c != '_' && c != '\'' && c != '\xa0' && ((c != '.' && c != ',') || !char.IsDigit(line[i + 1].C)))//dot before digit
                 {
-                    cutOff = Math.Min(i + 1, line.Count - 1);
+                    cutOff = Math.Min(i + 1, line.Count - 1); //推荐的切割的位置为当前字符之后
                 }
 
                 w = GetCharWidth(c);
                 segmentWidth += w;
                 excessiveWidth = segmentWidth - maxWidth;
-                if (excessiveWidth > 0) //如果超宽度
+                if (excessiveWidth > 0) //超宽时确定是否采用推荐切割位置，否则继续累积宽度，要求i>0是为了避免极端情况下指定的换行宽度过小导致第一个字符就超宽
                 {
                     if (cutOff == 0 || (cutOffPositions.Count > 0 && cutOff == cutOffPositions[^1])) cutOff = i + 1;
                     else
                     {
-                        if (wrapByChar) backSet = excessiveWidth > w ? 2 : excessiveWidth >= 0 ? 1 : 0;
-                        else backSet = excessiveWidth >= 0 ? cutOff - prevCutOff : 0;
-                        cutOffPositions.Add(cutOff -= backSet); //切割位置在当前字符之前
-                        if (i > backSet) i = cutOff - 1; //回退字符，for会先+1,所以-1
+                        if (wrapByChar)
+                        {
+                            backSet = excessiveWidth >= w ? 2 : excessiveWidth >= 0 ? 1 : 0;
+                            cutOff -= backSet;
+                            cutOffPositions.Add(cutOff);
+                            i = cutOff - 1;  //回退1字符，因为cutOff为选定的字符之后，且for会先+1,所以-1，以便下次循环从cutOff开始
+                        }
+                        else
+                        {
+                            if (cutOffPositions.Count > 0 && prevCutOff == cutOffPositions[^1])
+                            {
+                                cutOffPositions.Add(cutOff);  //特殊情况：如果prevCutOff位置刚好已被采用，则采用当前推荐切割位置，虽然已超宽。
+                                i = cutOff - 1;
+                            }
+                            else
+                            {
+                                cutOffPositions.Add(prevCutOff); //如果上一个推荐切割位置未被采用，则采用上一个推荐切割位置
+                                i = prevCutOff - 1;
+                            }
+                        }
                     }
                     segmentWidth = 0;
                 }
@@ -4460,7 +4476,7 @@ namespace FastColoredTextBoxNS
         {
             TextSelectionRange old = Selection.Clone();
             var lowerCase = SelectedText.ToLower();
-            var r = new Regex(@"(^\S)|[\.\?!:]\s+(\S)", RegexOptions.ExplicitCapture);
+            var r = RegexSentenceCase();
             SelectedText = r.Replace(lowerCase, s => s.Value.ToUpper());
             Selection.Start = old.Start;
             Selection.End = old.End;
@@ -5079,20 +5095,25 @@ namespace FastColoredTextBoxNS
             return base.IsInputKey(keyData);
         }
 
-        [DllImport("User32.dll")]
-        private static extern bool CreateCaret(IntPtr hWnd, int hBitmap, int nWidth, int nHeight);
+        [LibraryImport("User32.dll")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        private static partial bool CreateCaret(IntPtr hWnd, int hBitmap, int nWidth, int nHeight);
 
-        [DllImport("User32.dll")]
-        private static extern bool SetCaretPos(int x, int y);
+        [LibraryImport("User32.dll")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        private static partial bool SetCaretPos(int x, int y);
 
-        [DllImport("User32.dll")]
-        private static extern bool DestroyCaret();
+        [LibraryImport("User32.dll")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        private static partial bool DestroyCaret();
 
-        [DllImport("User32.dll")]
-        private static extern bool ShowCaret(IntPtr hWnd);
+        [LibraryImport("User32.dll")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        private static partial bool ShowCaret(IntPtr hWnd);
 
-        [DllImport("User32.dll")]
-        private static extern bool HideCaret(IntPtr hWnd);
+        [LibraryImport("User32.dll")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        private static partial bool HideCaret(IntPtr hWnd);
 
         protected override void OnPaintBackground(PaintEventArgs e)
         {
@@ -7136,7 +7157,7 @@ namespace FastColoredTextBoxNS
 
             // Determine number of whitespaces to remove
             string lineText = this.lines[currentLineIndex].Text;
-            Match whitespacesLeftOfSelectionStartMatch = new Regex(@"\s*", RegexOptions.RightToLeft).Match(lineText, currentLeftSelectionStartIndex);
+            Match whitespacesLeftOfSelectionStartMatch = RegexDecreaseIndentOfSingleLine().Match(lineText, currentLeftSelectionStartIndex);
             int leftOffset = whitespacesLeftOfSelectionStartMatch.Index;
             int countOfWhitespaces = whitespacesLeftOfSelectionStartMatch.Length;
             int numberOfCharactersToRemove = 0;
@@ -8222,8 +8243,8 @@ window.status = ""#print"";
             OnScroll(yea);
         }
 
-        [DllImport("user32.dll")]
-        private static extern int SendMessage(IntPtr hwnd, int wMsg, int wParam, int lParam);
+        [LibraryImport("user32.dll")]
+        private static partial int SendMessage(IntPtr hwnd, int wMsg, int wParam, int lParam);
 
         private const int WM_SETREDRAW = 0xB;
 
@@ -8376,6 +8397,11 @@ window.status = ""#print"";
 
             #endregion IComparer<LineInfo> Members
         }
+
+        [GeneratedRegex(@"(^\S)|[\.\?!:]\s+(\S)", RegexOptions.ExplicitCapture)]
+        private static partial Regex RegexSentenceCase() ;
+        [GeneratedRegex(@"\s*", RegexOptions.RightToLeft)]
+        private static partial Regex RegexDecreaseIndentOfSingleLine();
 
         #endregion Nested type: LineYComparer
     }
