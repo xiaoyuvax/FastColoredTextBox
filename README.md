@@ -12,6 +12,7 @@ It has such settings as foreground color, font style, background color which can
 - A wordwrapping bug fixed
 - .NET6.0 target removed for better code optimization (now targeting .NET7-9)
 - Some other code optimization
+
 25-04-02 (V2.17.0.2)
 - CJKL mix wordwrapping almost perfect/中日韩拉丁字母混合换行基本完美
 - Targeting .NET6.0-9.0
