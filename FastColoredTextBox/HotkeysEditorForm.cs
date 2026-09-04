@@ -11,8 +11,23 @@ namespace FastColoredTextBoxNS
         public HotkeysEditorForm(HotkeysMapping hotkeys)
         {
             InitializeComponent();
+            ApplyLocalization();
             BuildWrappers(hotkeys);
             dgv.DataSource = wrappers;
+        }
+
+        private void ApplyLocalization()
+        {
+            Text = Localization.GetString("HotkeysEditorForm_Title");
+            label1.Text = Localization.GetString("HotkeysEditorForm_Label");
+            cbModifiers.HeaderText = Localization.GetString("HotkeysEditorForm_Modifiers");
+            cbKey.HeaderText = Localization.GetString("HotkeysEditorForm_Key");
+            cbAction.HeaderText = Localization.GetString("HotkeysEditorForm_Action");
+            btAdd.Text = Localization.GetString("HotkeysEditorForm_Add");
+            btRemove.Text = Localization.GetString("HotkeysEditorForm_Remove");
+            btCancel.Text = Localization.GetString("HotkeysEditorForm_Cancel");
+            btOk.Text = Localization.GetString("HotkeysEditorForm_OK");
+            btResore.Text = Localization.GetString("HotkeysEditorForm_RestoreDefault");
         }
 
         private int CompereKeys(Keys key1, Keys key2)
@@ -90,7 +105,9 @@ namespace FastColoredTextBoxNS
                 var actions = GetUnAssignedActions();
                 if (!string.IsNullOrEmpty(actions))
                 {
-                    if (MessageBox.Show("Some actions are not assigned!\r\nActions: " + actions + "\r\nPress Yes to save and exit, press No to continue editing", "Some actions is not assigned", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == System.Windows.Forms.DialogResult.No)
+                    string message = Localization.GetString("HotkeysEditorForm_WarningMessage", actions);
+                    string title = Localization.GetString("HotkeysEditorForm_WarningTitle");
+                    if (MessageBox.Show(message, title, MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == System.Windows.Forms.DialogResult.No)
                         e.Cancel = true;
                 }
             }

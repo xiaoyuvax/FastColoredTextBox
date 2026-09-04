@@ -15,6 +15,21 @@ namespace FastColoredTextBoxNS
         {
             InitializeComponent();
             this.tb = tb;
+            ApplyLocalization();
+        }
+
+        private void ApplyLocalization()
+        {
+            Text = Localization.GetString("ReplaceForm_Title");
+            label1.Text = Localization.GetString("ReplaceForm_FindLabel");
+            label2.Text = Localization.GetString("ReplaceForm_ReplaceLabel");
+            cbMatchCase.Text = Localization.GetString("ReplaceForm_MatchCase");
+            cbWholeWord.Text = Localization.GetString("ReplaceForm_MatchWholeWord");
+            cbRegex.Text = Localization.GetString("ReplaceForm_Regex");
+            btFindNext.Text = Localization.GetString("ReplaceForm_FindNext");
+            btReplace.Text = Localization.GetString("ReplaceForm_Replace");
+            btReplaceAll.Text = Localization.GetString("ReplaceForm_ReplaceAll");
+            btClose.Text = Localization.GetString("ReplaceForm_Close");
         }
 
         public bool Find(string pattern)
@@ -96,7 +111,7 @@ namespace FastColoredTextBoxNS
             try
             {
                 if (!Find(tbFind.Text))
-                    MessageBox.Show("Not found");
+                    MessageBox.Show(Localization.GetString("ReplaceForm_NotFound"));
             }
             catch (Exception ex) { MessageBox.Show(ex.Message); }
         }
@@ -140,7 +155,7 @@ namespace FastColoredTextBoxNS
                     }
                 //
                 tb.Invalidate();
-                MessageBox.Show(ranges.Count + " occurrence(s) replaced");
+                MessageBox.Show(Localization.GetString("ReplaceForm_ReplacedCount", ranges.Count));
             }
             catch (Exception ex) { MessageBox.Show(ex.Message); }
             tb.Selection.EndUpdate();

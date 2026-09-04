@@ -5,6 +5,8 @@ using System.ComponentModel;
 using System.Threading;
 using System.Windows.Forms;
 
+#pragma warning disable WFO1000
+
 namespace Tester {
 	public partial class ConsoleSample : Form {
 		private bool stop;

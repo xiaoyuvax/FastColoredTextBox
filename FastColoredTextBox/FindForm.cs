@@ -11,6 +11,19 @@ namespace FastColoredTextBoxNS
         {
             InitializeComponent();
             this.tb = tb;
+            ApplyLocalization();
+        }
+
+        private void ApplyLocalization()
+        {
+            Text = Localization.GetString("FindForm_Title");
+            label1.Text = Localization.GetString("FindForm_FindLabel");
+            cbMatchCase.Text = Localization.GetString("FindForm_MatchCase");
+            cbWholeWord.Text = Localization.GetString("FindForm_MatchWholeWord");
+            cbRegex.Text = Localization.GetString("FindForm_Regex");
+            btFindNext.Text = Localization.GetString("FindForm_FindNext");
+            btnFindPrev.Text = Localization.GetString("FindForm_FindPrevious");
+            btClose.Text = Localization.GetString("FindForm_Close");
         }
 
         private bool SearchRange(string pattern, TextSelectionRange range, RegexOptions opt)
@@ -65,7 +78,7 @@ namespace FastColoredTextBoxNS
                 searchRange.End = selectedRange.Start;
                 if (SearchRange(pattern, searchRange, opt)) { return; }
 
-                MessageBox.Show("Not found");
+                MessageBox.Show(Localization.GetString("FindForm_NotFound"));
             }
             catch (Exception ex) { MessageBox.Show(ex.Message); }
         }
@@ -96,7 +109,7 @@ namespace FastColoredTextBoxNS
                 searchRange.End = new Place(tb.GetLineLength(tb.LinesCount - 1), tb.LinesCount - 1);
                 if (SearchRangeReversed(pattern, searchRange, opt)) { return; }
 
-                MessageBox.Show("Not found");
+                MessageBox.Show(Localization.GetString("FindForm_NotFound"));
             }
             catch (Exception ex) { MessageBox.Show(ex.Message); }
         }

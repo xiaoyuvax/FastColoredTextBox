@@ -2,6 +2,8 @@
 using System.Drawing;
 using System.Windows.Forms;
 
+#pragma warning disable WFO1000
+
 namespace Tester {
 	public partial class CustomScrollBarsSample : Form {
 		public CustomScrollBarsSample() {

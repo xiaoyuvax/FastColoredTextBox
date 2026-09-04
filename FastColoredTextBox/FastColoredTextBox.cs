@@ -6576,7 +6576,9 @@ namespace FastColoredTextBoxNS
         /// <returns>Coordiantes</returns>
         public Point PlaceToPoint(Place place)
         {
-            if (place.iLine >= LineInfos.Count)
+            if (place.iLine >= LineInfos.Count || place.iLine < 0)
+                return new Point();
+            if (place.iLine >= lines.Count)
                 return new Point();
             int y = LineInfos[place.iLine].startY;
             //
@@ -6587,7 +6589,7 @@ namespace FastColoredTextBoxNS
             int i = LineInfos[place.iLine].GetWordWrapStringStartPosition(iWordWrapIndex);
             string text = lines[place.iLine].Text;
             int x = 0;
-            if (text.Length > 0) for (; i < place.iChar; i++) x += GetCharWidth(text[i]);
+            if (text.Length > 0) for (; i < place.iChar && i < text.Length; i++) x += GetCharWidth(text[i]);
 
             if (iWordWrapIndex > 0)
                 x += LineInfos[place.iLine].wordWrapIndent * CharWidth;

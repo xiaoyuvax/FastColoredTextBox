@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+
+  <!-- FindForm -->
+  <data name="FindForm_Title" xml:space="preserve">
+    <value>Find</value>
+  </data>
+  <data name="FindForm_FindLabel" xml:space="preserve">
+    <value>Find:</value>
+  </data>
+  <data name="FindForm_MatchCase" xml:space="preserve">
+    <value>Match case</value>
+  </data>
+  <data name="FindForm_MatchWholeWord" xml:space="preserve">
+    <value>Match whole word</value>
+  </data>
+  <data name="FindForm_Regex" xml:space="preserve">
+    <value>Regex</value>
+  </data>
+  <data name="FindForm_FindNext" xml:space="preserve">
+    <value>Find next</value>
+  </data>
+  <data name="FindForm_FindPrevious" xml:space="preserve">
+    <value>Find previous</value>
+  </data>
+  <data name="FindForm_Close" xml:space="preserve">
+    <value>Close</value>
+  </data>
+  <data name="FindForm_NotFound" xml:space="preserve">
+    <value>Not found</value>
+  </data>
+
+  <!-- ReplaceForm -->
+  <data name="ReplaceForm_Title" xml:space="preserve">
+    <value>Find and replace</value>
+  </data>
+  <data name="ReplaceForm_FindLabel" xml:space="preserve">
+    <value>Find:</value>
+  </data>
+  <data name="ReplaceForm_ReplaceLabel" xml:space="preserve">
+    <value>Replace:</value>
+  </data>
+  <data name="ReplaceForm_MatchCase" xml:space="preserve">
+    <value>Match case</value>
+  </data>
+  <data name="ReplaceForm_MatchWholeWord" xml:space="preserve">
+    <value>Match whole word</value>
+  </data>
+  <data name="ReplaceForm_Regex" xml:space="preserve">
+    <value>Regex</value>
+  </data>
+  <data name="ReplaceForm_FindNext" xml:space="preserve">
+    <value>Find next</value>
+  </data>
+  <data name="ReplaceForm_Replace" xml:space="preserve">
+    <value>Replace</value>
+  </data>
+  <data name="ReplaceForm_ReplaceAll" xml:space="preserve">
+    <value>Replace all</value>
+  </data>
+  <data name="ReplaceForm_Close" xml:space="preserve">
+    <value>Close</value>
+  </data>
+  <data name="ReplaceForm_NotFound" xml:space="preserve">
+    <value>Not found</value>
+  </data>
+  <data name="ReplaceForm_ReplacedCount" xml:space="preserve">
+    <value>{0} occurrence(s) replaced</value>
+  </data>
+
+  <!-- GoToForm -->
+  <data name="GoToForm_Title" xml:space="preserve">
+    <value>Go To Line</value>
+  </data>
+  <data name="GoToForm_LabelFormat" xml:space="preserve">
+    <value>Line number (1 - {0}):</value>
+  </data>
+  <data name="GoToForm_OK" xml:space="preserve">
+    <value>OK</value>
+  </data>
+  <data name="GoToForm_Cancel" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+
+  <!-- HotkeysEditorForm -->
+  <data name="HotkeysEditorForm_Title" xml:space="preserve">
+    <value>Hotkeys Editor</value>
+  </data>
+  <data name="HotkeysEditorForm_Label" xml:space="preserve">
+    <value>Hotkeys mapping</value>
+  </data>
+  <data name="HotkeysEditorForm_Modifiers" xml:space="preserve">
+    <value>Modifiers</value>
+  </data>
+  <data name="HotkeysEditorForm_Key" xml:space="preserve">
+    <value>Key</value>
+  </data>
+  <data name="HotkeysEditorForm_Action" xml:space="preserve">
+    <value>Action</value>
+  </data>
+  <data name="HotkeysEditorForm_Add" xml:space="preserve">
+    <value>Add</value>
+  </data>
+  <data name="HotkeysEditorForm_Remove" xml:space="preserve">
+    <value>Remove</value>
+  </data>
+  <data name="HotkeysEditorForm_Cancel" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="HotkeysEditorForm_OK" xml:space="preserve">
+    <value>OK</value>
+  </data>
+  <data name="HotkeysEditorForm_RestoreDefault" xml:space="preserve">
+    <value>Restore default</value>
+  </data>
+  <data name="HotkeysEditorForm_WarningTitle" xml:space="preserve">
+    <value>Some actions are not assigned</value>
+  </data>
+  <data name="HotkeysEditorForm_WarningMessage" xml:space="preserve">
+    <value>Some actions are not assigned!\r\nActions: {0}\r\nPress Yes to save and exit, press No to continue editing</value>
+  </data>
+
+  <!-- Common MessageBox -->
+  <data name="MessageBox_Error" xml:space="preserve">
+    <value>Error</value>
+  </data>
+</root>

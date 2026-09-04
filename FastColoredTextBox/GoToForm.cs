@@ -8,6 +8,14 @@
         public GoToForm()
         {
             InitializeComponent();
+            ApplyLocalization();
+        }
+
+        private void ApplyLocalization()
+        {
+            Text = Localization.GetString("GoToForm_Title");
+            btnOk.Text = Localization.GetString("GoToForm_OK");
+            btnCancel.Text = Localization.GetString("GoToForm_Cancel");
         }
 
         protected override void OnLoad(EventArgs e)
@@ -16,7 +24,7 @@
 
             this.tbLineNumber.Text = this.SelectedLineNumber.ToString();
 
-            this.label.Text = String.Format("Line number (1 - {0}):", this.TotalLineCount);
+            this.label.Text = Localization.GetString("GoToForm_LabelFormat", this.TotalLineCount);
         }
 
         protected override void OnShown(EventArgs e)

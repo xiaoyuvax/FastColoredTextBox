@@ -8,6 +8,17 @@ It works well with small, medium, large and very-very large files.
 It has such settings as foreground color, font style, background color which can be adjusted for arbitrarily selected text symbols. One can easily gain access to a text with the use of regular expressions. WordWrap, Find/Replace, Code folding and multilevel Undo/Redo are supported as well. 
 
 ## Update Logs   
+04-09-2025 (V2.17.0.205)
+- Undo/Redo core logic refactored (position accuracy, cross-line support)
+- Column selection mode IndexOutOfRangeException fixed
+- Horizontal scroll text overlapping line numbers fixed
+- Default padding 2px (matches WinForms TextBox)
+- Localization support for Find/Replace/GoTo/Hotkeys forms (EN/ZH)
+- Chinese labels shortened to match English width
+- Label z-order fixed (no longer overlaps controls)
+- Redo shortcut changed to Ctrl+Y (standard Windows convention)
+- .NET 10.0 support added
+
 25-12-22 (V2.17.0.203)
 - A wordwrapping bug fixed
 - .NET6.0 target removed for better code optimization (now targeting .NET7-9)

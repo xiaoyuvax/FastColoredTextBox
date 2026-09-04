@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
-		<TargetFrameworks>net9.0-windows7.0;net8.0-windows7.0;net7.0-windows7.0;</TargetFrameworks>
+		<TargetFrameworks>net10.0-windows7.0;net9.0-windows7.0;net8.0-windows7.0;net7.0-windows7.0;</TargetFrameworks>
 		<OutputType>Library</OutputType>
 		<RootNamespace>FastColoredTextBoxNS</RootNamespace>
 		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
@@ -18,12 +18,22 @@
 	<PropertyGroup>
 		<AssemblyOriginatorKeyFile>FCTB_key.snk</AssemblyOriginatorKeyFile>
 		<RepositoryUrl>https://github.com/xiaoyuvax/FastColoredTextBox/</RepositoryUrl>
-		<PackageReleaseNotes>			
-			- 2025/12/22 Wordwrap bug fix/修复换行错误
-			- CJKL mix wordwrapping almost perfect/中日韩拉丁字母混合换行基本完美
-			- Targeting NET7.0-9.0
-			- Restructed the code and minor optimization
-		</PackageReleaseNotes>
+		<PackageReleaseNotes>
+      - 2026/9/3 Undo/Redo core logic refactored (position accuracy, cross-line support)
+      - Column selection mode IndexOutOfRangeException fixed
+      - Horizontal scroll text overlapping line numbers fixed
+      - Default padding (2px) matches WinForms TextBox
+      - Localization support for Find/Replace/GoTo/Hotkeys forms (EN/ZH)
+      - Chinese labels shortened to match English width
+      - Label z-order fixed (no longer overlaps controls)
+      - Redo shortcut changed to Ctrl+Y (standard Windows convention)
+      - .NET 10.0 support added
+      - 2026/7/23 "Select all" problem when evaluating text property/修正设置Text属性全选问题
+      - 2025/12/22 Wordwrap bug fix/修复换行错误
+      - CJKL mix wordwrapping almost perfect/中日韩拉丁字母混合换行基本完美
+      - Targeting NET7.0-10.0
+      - Restructed the code and minor optimization
+    </PackageReleaseNotes>
 		<Authors>Pavel Torgashov, Daxanius, Wiredwizard, Xiaoyuvax</Authors>
 		<PackageId>Vax-FCTB</PackageId>
 		<PackageProjectUrl>https://github.com/xiaoyuvax/FastColoredTextBox/</PackageProjectUrl>
@@ -35,25 +45,34 @@
 		<PackageIcon>icon.png</PackageIcon>
 		<Title>FastColoredTextBox</Title>
 		<PackageTags>winform;control;C#;VB;TextBox;Editor;Colored;CJK</PackageTags>
-		<AssemblyVersion>2.17.0.203</AssemblyVersion>
-		<FileVersion>2.17.0.203</FileVersion>
-		<Version>2.17.0.203</Version>
+		<AssemblyVersion>2.17.0.205</AssemblyVersion>
+		<FileVersion>2.17.0.205</FileVersion>
+		<Version>2.17.0.205</Version>
 		<PackageOutputPath>D:\PUB\Nuget Packages</PackageOutputPath>
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 	</PropertyGroup>
 	<ItemGroup>
-		<None Include="$(SolutionDir)icon.png">
+		<None Include="..\icon.png">
 			<Pack>True</Pack>
 			<PackagePath>\</PackagePath>
 		</None>
-		<None Include="$(SolutionDir)README.md">
+		<None Include="..\README.md">
 			<Pack>True</Pack>
 			<PackagePath>\</PackagePath>
 		</None>
-		<None Include="$(SolutionDir)license.txt">
+		<None Include="..\license.txt">
 			<Pack>True</Pack>
 			<PackagePath>\</PackagePath>
 		</None>
+	</ItemGroup>
+	<ItemGroup>
+		<EmbeddedResource Update="Resources\Strings.resx">
+			<Generator>ResXFileCodeGenerator</Generator>
+			<LastGenOutput>Strings.Designer.cs</LastGenOutput>
+		</EmbeddedResource>
+		<EmbeddedResource Update="Resources\Strings.zh-CN.resx">
+			<Generator>ResXFileCodeGenerator</Generator>
+		</EmbeddedResource>
 	</ItemGroup>
 	<ItemGroup>
 		<Compile Update="AutocompleteMenu.cs">
