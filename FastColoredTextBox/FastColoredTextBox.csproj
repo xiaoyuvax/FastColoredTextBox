@@ -19,9 +19,9 @@
 		<AssemblyOriginatorKeyFile>FCTB_key.snk</AssemblyOriginatorKeyFile>
 		<RepositoryUrl>https://github.com/xiaoyuvax/FastColoredTextBox/</RepositoryUrl>
 		<PackageReleaseNotes>
+      - 2026/9/7 Horizontal scrolling right: text no longer slides over the line number area; CJK lines now position the first visible char by actual char widths (no left gap)
       - 2026/9/3 Undo/Redo core logic refactored (position accuracy, cross-line support)
       - Column selection mode IndexOutOfRangeException fixed
-      - Horizontal scroll text overlapping line numbers fixed
       - Default padding (2px) matches WinForms TextBox
       - Localization support for Find/Replace/GoTo/Hotkeys forms (EN/ZH)
       - Chinese labels shortened to match English width
@@ -45,9 +45,9 @@
 		<PackageIcon>icon.png</PackageIcon>
 		<Title>FastColoredTextBox</Title>
 		<PackageTags>winform;control;C#;VB;TextBox;Editor;Colored;CJK</PackageTags>
-		<AssemblyVersion>2.17.0.205</AssemblyVersion>
-		<FileVersion>2.17.0.205</FileVersion>
-		<Version>2.17.0.205</Version>
+		<AssemblyVersion>2.17.0.206</AssemblyVersion>
+		<FileVersion>2.17.0.206</FileVersion>
+		<Version>2.17.0.206</Version>
 		<PackageOutputPath>D:\PUB\Nuget Packages</PackageOutputPath>
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 	</PropertyGroup>

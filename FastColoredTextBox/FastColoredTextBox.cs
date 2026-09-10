@@ -5356,7 +5356,7 @@ namespace FastColoredTextBoxNS
                     var indent = iWordWrapLine == 0 ? 0 : lineInfo.wordWrapIndent * CharWidth;
 
                     //draw chars
-                    DrawLineChars(e.Graphics, firstChar, lastChar, iLine, iWordWrapLine, x + indent, y);
+                    DrawLineChars(e.Graphics, firstChar, lastChar, iLine, iWordWrapLine, x + indent, y, LeftIndent);
                 }
             }
 
@@ -5638,21 +5638,45 @@ namespace FastColoredTextBoxNS
                 }
         }
 
-        private void DrawLineChars(Graphics gr, int firstChar, int lastChar, int iLine, int iWordWrapLine, int startX, int y)
+        private void DrawLineChars(Graphics gr, int firstChar, int lastChar, int iLine, int iWordWrapLine, int startX, int y, int minVisibleX = int.MinValue)
         {
             Line line = lines[iLine];
             LineInfo lineInfo = LineInfos[iLine];
             int from = lineInfo.GetWordWrapStringStartPosition(iWordWrapLine);
             int to = lineInfo.GetWordWrapStringFinishPosition(iWordWrapLine, line);
 
-            //Re-evaluation firstChar/lastChar for eachLine
+            //Re-evaluation of lastChar for each line (mixed char widths)
             if (UseCJK != CJKMode.Disabled)
             {
-                //firstChar = WidthToPosition(line, Math.Max(0, HorizontalScroll.Value - Paddings.Left), from);  //this may be ignored
                 lastChar = XToCharIndex(HorizontalScroll.Value + ClientSize.Width, line, from);
             }
 
             lastChar = Math.Min(to - from, lastChar);
+
+            //Skip the chars scrolled out to the left (hidden under the line number area) and measure their width:
+            //the first rendered char must be positioned at startX + skippedWidth, otherwise the whole text slides
+            //left over the line numbers when the horizontal scrollbar is scrolled to the right.
+            int skippedWidth = 0;
+            if (UseCJK == CJKMode.Disabled)
+            {
+                skippedWidth = firstChar * CharWidth;
+            }
+            else if (minVisibleX > int.MinValue)
+            {
+                //CJK: char widths vary, so locate by actual measurement the first char starting at/right of
+                //minVisibleX (the CharWidth-based estimate is inaccurate for mixed-width lines)
+                firstChar = 0;
+                while (startX + skippedWidth < minVisibleX && firstChar <= lastChar)
+                {
+                    skippedWidth += GetCharWidth(line[from + firstChar].C);
+                    firstChar++;
+                }
+            }
+            else
+            {
+                for (int i = 0; i < firstChar && from + i < line.Count; i++)
+                    skippedWidth += GetCharWidth(line[from + i].C);
+            }
 
             gr.SmoothingMode = SmoothingMode.AntiAlias;
 
@@ -5660,7 +5684,7 @@ namespace FastColoredTextBoxNS
             if (lineInfo.VisibleState == VisibleState.StartOfHiddenBlock)
             {
                 //rendering by FoldedBlockStyle
-                FoldedBlockStyle.Draw(gr, new Point(startX + firstChar * CharWidth, y),
+                FoldedBlockStyle.Draw(gr, new Point(startX + skippedWidth, y),
                                       new TextSelectionRange(this, from + firstChar, iLine, from + lastChar + 1, iLine));
             }
             else
@@ -5668,8 +5692,8 @@ namespace FastColoredTextBoxNS
                 //render by custom styles
                 IEnumerable<Style> currentStyles = null;
                 int iLastFlushedChar = firstChar - 1;
-                int x = startX;
-                int xLastFlushedChar = startX;
+                int x = startX + skippedWidth;
+                int xLastFlushedChar = x;
                 for (int iChar = firstChar; iChar <= lastChar; iChar++)
                 {
                     StyledChar sChar = line[from + iChar];

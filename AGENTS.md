@@ -30,7 +30,8 @@ dotnet build FastColoredTextBox.sln -c Release
 - Test projects target older frameworks (.NET 8/9) and have WFO1000 errors on .NET 9+
 - No formal test suite - manual testing via Tester apps
 
-## Recent Optimizations (v2.17.0.205+)
+## Recent Optimizations (v2.17.0.206)
+- Horizontal scroll text overlapping line number area fully fixed (CJK re-evaluation, non-uniform width support)
 - Default Padding 2px (matches WinForms TextBox)
 - Localization support (EN/ZH) for Find/Replace/GoTo/Hotkeys forms
 - Horizontal scroll text overlapping line numbers fixed
@@ -48,6 +49,6 @@ dotnet pack FastColoredTextBox/FastColoredTextBox.csproj -c Release -o ./nupkg
 Package config in csproj: icon.png, README.md, license.txt included.
 
 ## Git/Release
-- Version in csproj: `<Version>2.17.0.205</Version>`
+- Version in csproj: `<Version>2.17.0.206</Version>`
 - Update `PackageReleaseNotes` in csproj for releases
 - Main branch: `master`

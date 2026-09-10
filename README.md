@@ -8,6 +8,9 @@ It works well with small, medium, large and very-very large files.
 It has such settings as foreground color, font style, background color which can be adjusted for arbitrarily selected text symbols. One can easily gain access to a text with the use of regular expressions. WordWrap, Find/Replace, Code folding and multilevel Undo/Redo are supported as well. 
 
 ## Update Logs   
+07-09-2026 (V2.17.0.206)
+- Horizontal scroll text overlapping line number area fully fixed (CJK line re-evaluation, non-uniform char width support)
+
 04-09-2025 (V2.17.0.205)
 - Undo/Redo core logic refactored (position accuracy, cross-line support)
 - Column selection mode IndexOutOfRangeException fixed
@@ -45,7 +48,7 @@ It has such settings as foreground color, font style, background color which can
 
 
 ## Known Issues
-- Wordwrapped lines may exceed controlwidth in some cases, especially when scollbar is visible, but can be solved by setting PaddingRight property.
+- Wordwrapped lines may exceed controlwidth in some cases, but can be solved by setting PaddingRight property.
 
 ![Fast Colored TextBox](http://www.codeproject.com/KB/edit/FastColoredTextBox_/fastcoloredtextbox2.png)
 
