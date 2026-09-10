@@ -51,8 +51,6 @@ Fast Colored TextBox 是一个适用于 .NET 的文本编辑器组件，支持�
 ## 已知问题
 - 自动换行时部分行可能超出控件宽度（尤其滚动条可见时），可通过设置 PaddingRight 属性解决。
 
-![Fast Colored TextBox](http://www.codeproject.com/KB/edit/FastColoredTextBox_/fastcoloredtextbox2.png)
-
 ![image](https://github.com/user-attachments/assets/45d80c00-62d4-4782-bc65-6c5cc13e9710)
 
 ## 相关链接

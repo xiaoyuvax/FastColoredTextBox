@@ -52,8 +52,6 @@ It has such settings as foreground color, font style, background color which can
 ## Known Issues
 - Wordwrapped lines may exceed controlwidth in some cases, but can be solved by setting PaddingRight property.
 
-![Fast Colored TextBox](http://www.codeproject.com/KB/edit/FastColoredTextBox_/fastcoloredtextbox2.png)
-
 ![image](https://github.com/user-attachments/assets/45d80c00-62d4-4782-bc65-6c5cc13e9710)
 
 
