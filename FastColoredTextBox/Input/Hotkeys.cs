@@ -1,6 +1,5 @@
 ﻿using System.ComponentModel;
 using System.Drawing.Design;
-using System.Globalization;
 using System.Text;
 using System.Windows.Forms.Design;
 using KEYS = System.Windows.Forms.Keys;
@@ -89,8 +88,8 @@ namespace FastColoredTextBoxNS.Input
 
         public override string ToString()
         {
-            var cult = Thread.CurrentThread.CurrentUICulture;
-            Thread.CurrentThread.CurrentUICulture = CultureInfo.InvariantCulture;
+            // Note: no thread culture swapping here. KeysConverter follows CurrentCulture (not
+            // CurrentUICulture), so the old swap was ineffective and mutating thread state is not thread-safe.
             StringBuilder sb = new();
             var kc = new KeysConverter();
             foreach (var pair in this)
@@ -100,7 +99,6 @@ namespace FastColoredTextBoxNS.Input
 
             if (sb.Length > 1)
                 sb.Remove(sb.Length - 2, 2);
-            Thread.CurrentThread.CurrentUICulture = cult;
 
             return sb.ToString();
         }
@@ -109,8 +107,6 @@ namespace FastColoredTextBoxNS.Input
         {
             var result = new HotkeysMapping();
             result.Clear();
-            var cult = Thread.CurrentThread.CurrentUICulture;
-            Thread.CurrentThread.CurrentUICulture = CultureInfo.InvariantCulture;
 
             var kc = new KeysConverter();
             KEYS k = default;
@@ -128,8 +124,6 @@ namespace FastColoredTextBoxNS.Input
                 var a = (FCTBAction)Enum.Parse(typeof(FCTBAction), pp[1].Trim());
                 result[k] = a;
             }
-
-            Thread.CurrentThread.CurrentUICulture = cult;
 
             return result;
         }

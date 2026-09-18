@@ -22,8 +22,9 @@ namespace FastColoredTextBoxNS.Text
         public readonly Style BlackStyle = new TextStyle(Brushes.Black, null, FontStyle.Regular);
 
         //
-        protected readonly Dictionary<string, SyntaxDescriptor> descByXMLfileNames =
-            [];
+        //ConcurrentDictionary: the highlighter can be shared by multiple FCTB instances on different threads (e.g. tabbed editors)
+        protected readonly System.Collections.Concurrent.ConcurrentDictionary<string, SyntaxDescriptor> descByXMLfileNames =
+            new(System.StringComparer.Ordinal);
 
         protected readonly List<Style> resilientStyles = new(5);
 
@@ -99,6 +100,19 @@ namespace FastColoredTextBoxNS.Text
         protected Regex PHPStringRegex;
         protected Regex PHPVarRegex;
 
+        protected Regex MdHeadingRegex,
+                      MdBoldRegex,
+                      MdItalicRegex,
+                      MdStrikethroughRegex,
+                      MdCodeInlineRegex,
+                      MdCodeBlockRegex,
+                      MdLinkRegex,
+                      MdImageRegex,
+                      MdBlockquoteRegex,
+                      MdHrRegex,
+                      MdUnorderedListRegex,
+                      MdOrderedListRegex;
+
         protected Regex SQLCommentRegex1,
                       SQLCommentRegex2,
                       SQLCommentRegex3,
@@ -119,16 +133,7 @@ namespace FastColoredTextBoxNS.Text
 
         protected FastColoredTextBox currentTb;
 
-        public static RegexOptions RegexCompiledOption
-        {
-            get
-            {
-                if (platformType == Platform.X86)
-                    return RegexOptions.Compiled;
-                else
-                    return RegexOptions.None;
-            }
-        }
+        public static RegexOptions RegexCompiledOption => RegexOptions.Compiled;
 
         public SyntaxHighlighter(FastColoredTextBox currentTb)
         {
@@ -141,6 +146,7 @@ namespace FastColoredTextBoxNS.Text
         {
             foreach (SyntaxDescriptor desc in descByXMLfileNames.Values)
                 desc.Dispose();
+            DisposeMarkdownStyles();
             GC.SuppressFinalize(this);
         }
 
@@ -187,6 +193,10 @@ namespace FastColoredTextBoxNS.Text
 
                 case Language.JSON:
                     JSONSyntaxHighlight(range);
+                    break;
+
+                case Language.Markdown:
+                    MarkdownSyntaxHighlight(range);
                     break;
 
                 default:
@@ -251,9 +261,27 @@ namespace FastColoredTextBoxNS.Text
                     LuaAutoIndentNeeded(sender, args);
                     break;
 
+                case Language.Markdown:
+                    break;
+
                 default:
                     break;
             }
+        }
+
+        // Cached, precompiled auto-indent regexes (created on first use, reused afterwards).
+        // Regex.IsMatch(string, string) re-parses the pattern on every call.
+        private static Regex aiPHPBlockOpenClose, aiPHPBlockStart, aiPHPBlockEnd, aiPHPUnclosedOp, aiPHPClosedOp,
+                             aiCSharpBlockOpenClose, aiCSharpBlockStart, aiCSharpBlockEnd,
+                             aiCSharpLabel, aiCSharpDefault, aiCSharpCaseDefault,
+                             aiCSharpUnclosedOp, aiCSharpClosedOp,
+                             aiVBBlockEnd, aiVBDeclStart, aiVBThen, aiVBBlockStart, aiVBElse,
+                             aiLuaBlockEnd, aiLuaThen, aiLuaBlockStart, aiLuaElse;
+
+        private static Regex AiRegex(ref Regex slot, string pattern, RegexOptions options = RegexOptions.None)
+        {
+            slot ??= new Regex(pattern, RegexOptions.Compiled | options);
+            return slot;
         }
 
         protected void PHPAutoIndentNeeded(object sender, AutoIndentEventArgs args)
@@ -262,24 +290,24 @@ namespace FastColoredTextBoxNS.Text
             FastColoredTextBox tb = sender as FastColoredTextBox;
             tb.CalcAutoIndentShiftByCodeFolding(sender, args);*/
             //block {}
-            if (Regex.IsMatch(args.LineText, @"^[^""']*\{.*\}[^""']*$"))
+            if (AiRegex(ref aiPHPBlockOpenClose, @"^[^""']*\{.*\}[^""']*$").IsMatch(args.LineText))
                 return;
             //start of block {}
-            if (Regex.IsMatch(args.LineText, @"^[^""']*\{"))
+            if (AiRegex(ref aiPHPBlockStart, @"^[^""']*\{").IsMatch(args.LineText))
             {
                 args.ShiftNextLines = args.TabLength;
                 return;
             }
             //end of block {}
-            if (Regex.IsMatch(args.LineText, @"}[^""']*$"))
+            if (AiRegex(ref aiPHPBlockEnd, @"}[^""']*$").IsMatch(args.LineText))
             {
                 args.Shift = -args.TabLength;
                 args.ShiftNextLines = -args.TabLength;
                 return;
             }
             //is unclosed operator in previous line ?
-            if (Regex.IsMatch(args.PrevLineText, @"^\s*(if|for|foreach|while|[\}\s]*else)\b[^{]*$"))
-                if (!Regex.IsMatch(args.PrevLineText, @"(;\s*$)|(;\s*//)")) //operator is unclosed
+            if (AiRegex(ref aiPHPUnclosedOp, @"^\s*(if|for|foreach|while|[\}\s]*else)\b[^{]*$").IsMatch(args.PrevLineText))
+                if (!AiRegex(ref aiPHPClosedOp, @"(;\s*$)|(;\s*//)").IsMatch(args.PrevLineText)) //operator is unclosed
                 {
                     args.Shift = args.TabLength;
                     return;
@@ -307,32 +335,30 @@ namespace FastColoredTextBoxNS.Text
         protected void VBAutoIndentNeeded(object sender, AutoIndentEventArgs args)
         {
             //end of block
-            if (Regex.IsMatch(args.LineText, @"^\s*(End|EndIf|Next|Loop)\b", RegexOptions.IgnoreCase))
+            if (AiRegex(ref aiVBBlockEnd, @"^\s*(End|EndIf|Next|Loop)\b", RegexOptions.IgnoreCase).IsMatch(args.LineText))
             {
                 args.Shift = -args.TabLength;
                 args.ShiftNextLines = -args.TabLength;
                 return;
             }
             //start of declaration
-            if (Regex.IsMatch(args.LineText,
-                              @"\b(Class|Property|Enum|Structure|Sub|Function|Namespace|Interface|Get)\b|(Set\s*\()",
-                              RegexOptions.IgnoreCase))
+            if (AiRegex(ref aiVBDeclStart, @"\b(Class|Property|Enum|Structure|Sub|Function|Namespace|Interface|Get)\b|(Set\s*\()", RegexOptions.IgnoreCase).IsMatch(args.LineText))
             {
                 args.ShiftNextLines = args.TabLength;
                 return;
             }
             // then ...
-            if (Regex.IsMatch(args.LineText, @"\b(Then)\s*\S+", RegexOptions.IgnoreCase))
+            if (AiRegex(ref aiVBThen, @"\b(Then)\s*\S+", RegexOptions.IgnoreCase).IsMatch(args.LineText))
                 return;
             //start of operator block
-            if (Regex.IsMatch(args.LineText, @"^\s*(If|While|For|Do|Try|With|Using|Select)\b", RegexOptions.IgnoreCase))
+            if (AiRegex(ref aiVBBlockStart, @"^\s*(If|While|For|Do|Try|With|Using|Select)\b", RegexOptions.IgnoreCase).IsMatch(args.LineText))
             {
                 args.ShiftNextLines = args.TabLength;
                 return;
             }
 
             //Statements else, elseif, case etc
-            if (Regex.IsMatch(args.LineText, @"^\s*(Else|ElseIf|Case|Catch|Finally)\b", RegexOptions.IgnoreCase))
+            if (AiRegex(ref aiVBElse, @"^\s*(Else|ElseIf|Case|Catch|Finally)\b", RegexOptions.IgnoreCase).IsMatch(args.LineText))
             {
                 args.Shift = -args.TabLength;
                 return;
@@ -349,37 +375,37 @@ namespace FastColoredTextBoxNS.Text
         protected void CSharpAutoIndentNeeded(object sender, AutoIndentEventArgs args)
         {
             //block {}
-            if (Regex.IsMatch(args.LineText, @"^[^""']*\{.*\}[^""']*$"))
+            if (AiRegex(ref aiCSharpBlockOpenClose, @"^[^""']*\{.*\}[^""']*$").IsMatch(args.LineText))
                 return;
             //start of block {}
-            if (Regex.IsMatch(args.LineText, @"^[^""']*\{"))
+            if (AiRegex(ref aiCSharpBlockStart, @"^[^""']*\{").IsMatch(args.LineText))
             {
                 args.ShiftNextLines = args.TabLength;
                 return;
             }
             //end of block {}
-            if (Regex.IsMatch(args.LineText, @"}[^""']*$"))
+            if (AiRegex(ref aiCSharpBlockEnd, @"}[^""']*$").IsMatch(args.LineText))
             {
                 args.Shift = -args.TabLength;
                 args.ShiftNextLines = -args.TabLength;
                 return;
             }
             //label
-            if (Regex.IsMatch(args.LineText, @"^\s*\w+\s*:\s*($|//)") &&
-                !Regex.IsMatch(args.LineText, @"^\s*default\s*:"))
+            if (AiRegex(ref aiCSharpLabel, @"^\s*\w+\s*:\s*($|//)").IsMatch(args.LineText) &&
+                !AiRegex(ref aiCSharpDefault, @"^\s*default\s*:").IsMatch(args.LineText))
             {
                 args.Shift = -args.TabLength;
                 return;
             }
             //some statements: case, default
-            if (Regex.IsMatch(args.LineText, @"^\s*(case|default)\b.*:\s*($|//)"))
+            if (AiRegex(ref aiCSharpCaseDefault, @"^\s*(case|default)\b.*:\s*($|//)").IsMatch(args.LineText))
             {
                 args.Shift = -args.TabLength / 2;
                 return;
             }
             //is unclosed operator in previous line ?
-            if (Regex.IsMatch(args.PrevLineText, @"^\s*(if|for|foreach|while|[\}\s]*else)\b[^{]*$"))
-                if (!Regex.IsMatch(args.PrevLineText, @"(;\s*$)|(;\s*//)")) //operator is unclosed
+            if (AiRegex(ref aiCSharpUnclosedOp, @"^\s*(if|for|foreach|while|[\}\s]*else)\b[^{]*$").IsMatch(args.PrevLineText))
+                if (!AiRegex(ref aiCSharpClosedOp, @"(;\s*$)|(;\s*//)").IsMatch(args.PrevLineText)) //operator is unclosed
                 {
                     args.Shift = args.TabLength;
                     return;
@@ -733,7 +759,49 @@ namespace FastColoredTextBoxNS.Text
                     NumberStyle = MagentaStyle;
                     KeywordStyle = BlueStyle;
                     break;
+
+                case Language.Markdown:
+                    //dispose previously created brushes/styles before recreating them,
+                    //InitStyleSchema is called every time the Language property changes
+                    DisposeMarkdownStyles();
+                    MdH1Style = new TextStyle(((TextStyle)BlueBoldStyle).ForeBrush, null, FontStyle.Bold);
+                    MdH2Style = new TextStyle(((TextStyle)BlueBoldStyle).ForeBrush, null, FontStyle.Bold | FontStyle.Italic);
+                    MdH3Style = new TextStyle(((TextStyle)BlueStyle).ForeBrush, null, FontStyle.Bold);
+                    MdHeadingStyle = new TextStyle(((TextStyle)BlueStyle).ForeBrush, null, FontStyle.Bold);
+                    MdBoldStyle = BoldStyle;
+                    MdItalicStyle = BrownStyle;
+                    MdStrikethroughStyle = GrayStyle;
+                    MdCodeInlineStyle = new TextStyle(((TextStyle)MagentaStyle).ForeBrush, new SolidBrush(Color.FromArgb(240, 240, 240)), FontStyle.Regular);
+                    MdCodeBlockStyle = new MarkdownCodeBlockStyle(((TextStyle)BlackStyle).ForeBrush, new SolidBrush(Color.FromArgb(245, 245, 245)), Color.FromArgb(200, 200, 200));
+                    MdLinkStyle = new TextStyle(((TextStyle)BlueStyle).ForeBrush, null, FontStyle.Underline);
+                    MdImageStyle = BlueStyle;
+                    MdBlockquoteStyle = new TextStyle(((TextStyle)GreenStyle).ForeBrush, new SolidBrush(Color.FromArgb(230, 245, 230)), FontStyle.Italic);
+                    MdHrStyle = GrayStyle;
+                    MdListStyle = MaroonStyle;
+                    break;
             }
+        }
+
+        /// <summary>
+        /// Disposes the GDI brushes created by InitStyleSchema for Markdown styles
+        /// </summary>
+        protected virtual void DisposeMarkdownStyles()
+        {
+            DisposeStyleBrushes(MdCodeInlineStyle);
+            DisposeStyleBrushes(MdBlockquoteStyle);
+            if (MdCodeBlockStyle is MarkdownCodeBlockStyle codeBlockStyle)
+            {
+                codeBlockStyle.BackgroundBrush?.Dispose();
+                codeBlockStyle.BorderPen?.Dispose();
+            }
+            MdCodeBlockStyle = null;
+            MdH1Style = MdH2Style = MdH3Style = MdHeadingStyle = null;
+        }
+
+        private static void DisposeStyleBrushes(Style style)
+        {
+            if (style is TextStyle ts)
+                ts.BackgroundBrush?.Dispose();
         }
 
         /// <summary>
@@ -1334,24 +1402,24 @@ namespace FastColoredTextBoxNS.Text
         protected void LuaAutoIndentNeeded(object sender, AutoIndentEventArgs args)
         {
             //end of block
-            if (Regex.IsMatch(args.LineText, @"^\s*(end|until)\b"))
+            if (AiRegex(ref aiLuaBlockEnd, @"^\s*(end|until)\b").IsMatch(args.LineText))
             {
                 args.Shift = -args.TabLength;
                 args.ShiftNextLines = -args.TabLength;
                 return;
             }
             // then ...
-            if (Regex.IsMatch(args.LineText, @"\b(then)\s*\S+"))
+            if (AiRegex(ref aiLuaThen, @"\b(then)\s*\S+").IsMatch(args.LineText))
                 return;
             //start of operator block
-            if (Regex.IsMatch(args.LineText, @"^\s*(function|do|for|while|repeat|if)\b"))
+            if (AiRegex(ref aiLuaBlockStart, @"^\s*(function|do|for|while|repeat|if)\b").IsMatch(args.LineText))
             {
                 args.ShiftNextLines = args.TabLength;
                 return;
             }
 
             //Statements else, elseif, case etc
-            if (Regex.IsMatch(args.LineText, @"^\s*(else|elseif)\b", RegexOptions.IgnoreCase))
+            if (AiRegex(ref aiLuaElse, @"^\s*(else|elseif)\b", RegexOptions.IgnoreCase).IsMatch(args.LineText))
             {
                 args.Shift = -args.TabLength;
                 return;
@@ -1400,6 +1468,118 @@ namespace FastColoredTextBoxNS.Text
             //set folding markers
             range.SetFoldingMarkers("{", "}"); //allow to collapse brackets block
             range.SetFoldingMarkers(@"\[", @"\]"); //allow to collapse comment block
+        }
+
+        protected void InitMarkdownRegex()
+        {
+            //[ \t] instead of \s: \s would also swallow line breaks and merge the next line into the match
+            MdHeadingRegex = new Regex(@"^#{1,6}[ \t]+.+$", RegexOptions.Multiline | RegexCompiledOption);
+            MdBoldRegex = new Regex(@"\*\*.+?\*\*", RegexCompiledOption);
+            //(?<!\*)\*(?!\*): not part of ** (bold).
+            //(?<![\d*])...(\*(?![\d*])|$): closing star must not be preceded by digit-star; with digit-separated stars ("2 * 3 * 4") both stars are surrounded by digits, so plain arithmetic stays plain while "a*b*c" still italicizes.
+            MdItalicRegex = new Regex(@"(?<![\d*])\*(?!\*).+?(?<!\d)\*(?![\d*])", RegexCompiledOption);
+            MdStrikethroughRegex = new Regex(@"~~.+?~~", RegexCompiledOption);
+            //[^`\n]: inline code must not span multiple lines
+            MdCodeInlineRegex = new Regex(@"`[^`\n]+`", RegexCompiledOption);
+            //Singleline is required so that '.' matches line breaks between the fences
+            MdCodeBlockRegex = new Regex(@"^```.*?^```", RegexOptions.Multiline | RegexOptions.Singleline | RegexCompiledOption);
+            //(?<!!): image syntax ![alt](url) must not also be styled as a link
+            MdLinkRegex = new Regex(@"(?<!!)\[(?<text>[^\]]+)\]\((?<url>[^)]+)\)", RegexCompiledOption);
+            MdImageRegex = new Regex(@"!\[(?<text>[^\]]*)\]\((?<url>[^)]+)\)", RegexCompiledOption);
+            MdBlockquoteRegex = new Regex(@"^>[^\n]*$", RegexOptions.Multiline | RegexCompiledOption);
+            MdHrRegex = new Regex(@"^(-{3,}|\*{3,}|_{3,})$", RegexOptions.Multiline | RegexCompiledOption);
+            MdUnorderedListRegex = new Regex(@"^[\s]*[-*+][ \t]", RegexOptions.Multiline | RegexCompiledOption);
+            MdOrderedListRegex = new Regex(@"^[\s]*\d+\.[ \t]", RegexOptions.Multiline | RegexCompiledOption);
+        }
+
+        /// <summary>
+        /// Highlights Markdown text
+        /// </summary>
+        /// <param name="range"></param>
+        public virtual void MarkdownSyntaxHighlight(TextSelectionRange range)
+        {
+            var tb = range.tb;
+
+            //Fenced code blocks span multiple lines, so the highlighted range must
+            //contain complete blocks. With the default ChangedRange strategy, typing
+            //inside a block would clear the style of the lines outside the change.
+            if (tb.HighlightingRangeType == HighlightingRangeType.ChangedRange)
+                range = tb.VisibleRange.GetUnionWith(range);
+
+            range.tb.CommentPrefix = null;
+            range.tb.LeftBracket = '(';
+            range.tb.RightBracket = ')';
+            range.tb.LeftBracket2 = '[';
+            range.tb.RightBracket2 = ']';
+            range.tb.LeftBracket3 = '\x0';
+            range.tb.RightBracket3 = '\x0';
+
+            range.tb.AutoIndentCharsPatterns = @"";
+
+            //clear style of changed range
+            range.ClearStyle(MdHeadingStyle, MdH1Style, MdH2Style, MdH3Style,
+                             MdBoldStyle, MdItalicStyle, MdStrikethroughStyle,
+                             MdCodeInlineStyle, MdCodeBlockStyle, MdLinkStyle, MdImageStyle,
+                             MdBlockquoteStyle, MdHrStyle, MdListStyle);
+
+            if (MdHeadingRegex == null)
+                InitMarkdownRegex();
+
+            //code block (fenced) - highest priority
+            range.SetStyle(MdCodeBlockStyle, MdCodeBlockRegex);
+            //inline code
+            range.SetStyle(MdCodeInlineStyle, MdCodeInlineRegex);
+
+            //heading with per-level styling
+            foreach (TextSelectionRange r in range.GetRanges(MdHeadingRegex))
+            {
+                //determine heading level from the ### prefix
+                string headingText = r.Text;
+                int level = 0;
+                while (level < headingText.Length && headingText[level] == '#')
+                    level++;
+
+                //apply style to THIS match only
+                switch (level)
+                {
+                    case 1:
+                        r.SetStyle(MdH1Style);
+                        break;
+                    case 2:
+                        r.SetStyle(MdH2Style);
+                        break;
+                    case 3:
+                        r.SetStyle(MdH3Style);
+                        break;
+                    default:
+                        r.SetStyle(MdHeadingStyle);
+                        break;
+                }
+            }
+
+            //bold
+            range.SetStyle(MdBoldStyle, MdBoldRegex);
+            //italic
+            range.SetStyle(MdItalicStyle, MdItalicRegex);
+            //strikethrough
+            range.SetStyle(MdStrikethroughStyle, MdStrikethroughRegex);
+            //image (before link to avoid conflict)
+            range.SetStyle(MdImageStyle, MdImageRegex);
+            //link
+            range.SetStyle(MdLinkStyle, MdLinkRegex);
+            //blockquote
+            range.SetStyle(MdBlockquoteStyle, MdBlockquoteRegex);
+            //horizontal rule
+            range.SetStyle(MdHrStyle, MdHrRegex);
+            //unordered list
+            range.SetStyle(MdListStyle, MdUnorderedListRegex);
+            //ordered list
+            range.SetStyle(MdListStyle, MdOrderedListRegex);
+
+            //clear folding markers
+            range.ClearFoldingMarkers();
+            //set folding markers for fenced code blocks
+            range.SetFoldingMarkers(@"^```", @"^```", RegexOptions.Multiline);
         }
 
         #region Styles
@@ -1519,48 +1699,76 @@ namespace FastColoredTextBoxNS.Text
         /// </summary>
         public Style TypesStyle { get; set; }
 
-        #endregion Styles
-    }
-
-    public static class LanguageDetector
-    {
         /// <summary>
-        /// Converts a string like "lua" or "csharp" to a Language
+        /// Markdown heading style
         /// </summary>
-        public static Language StringToLanguage(string language)
-        {
-            return language.Trim().ToLower() switch
-            {
-                "lua" => Language.Lua,
-                "html" => Language.HTML,
-                "xml" => Language.XML,
-                "sql" => Language.SQL,
-                "vb" => Language.VB,
-                "cs" => Language.CSharp,
-                "csharp" => Language.CSharp,
-                "java" => Language.CSharp,
-                "js" => Language.JS,
-                "php" => Language.PHP,
-                _ => Language.Custom,
-            };
-            ;
-        }
-    }
+        public Style MdHeadingStyle { get; set; }
 
-    /// <summary>
-    /// Language
-    /// </summary>
-    public enum Language
-    {
-        Custom,
-        CSharp,
-        VB,
-        HTML,
-        XML,
-        SQL,
-        PHP,
-        JS,
-        Lua,
-        JSON
+        /// <summary>
+        /// Markdown H1 style (largest)
+        /// </summary>
+        public Style MdH1Style { get; set; }
+
+        /// <summary>
+        /// Markdown H2 style
+        /// </summary>
+        public Style MdH2Style { get; set; }
+
+        /// <summary>
+        /// Markdown H3 style
+        /// </summary>
+        public Style MdH3Style { get; set; }
+
+        /// <summary>
+        /// Markdown bold style
+        /// </summary>
+        public Style MdBoldStyle { get; set; }
+
+        /// <summary>
+        /// Markdown italic style
+        /// </summary>
+        public Style MdItalicStyle { get; set; }
+
+        /// <summary>
+        /// Markdown strikethrough style
+        /// </summary>
+        public Style MdStrikethroughStyle { get; set; }
+
+        /// <summary>
+        /// Markdown inline code style
+        /// </summary>
+        public Style MdCodeInlineStyle { get; set; }
+
+        /// <summary>
+        /// Markdown fenced code block style
+        /// </summary>
+        public Style MdCodeBlockStyle { get; set; }
+
+        /// <summary>
+        /// Markdown link style
+        /// </summary>
+        public Style MdLinkStyle { get; set; }
+
+        /// <summary>
+        /// Markdown image style
+        /// </summary>
+        public Style MdImageStyle { get; set; }
+
+        /// <summary>
+        /// Markdown blockquote style
+        /// </summary>
+        public Style MdBlockquoteStyle { get; set; }
+
+        /// <summary>
+        /// Markdown horizontal rule style
+        /// </summary>
+        public Style MdHrStyle { get; set; }
+
+        /// <summary>
+        /// Markdown list style
+        /// </summary>
+        public Style MdListStyle { get; set; }
+
+        #endregion Styles
     }
 }

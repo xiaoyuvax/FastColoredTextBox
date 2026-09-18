@@ -88,7 +88,7 @@ namespace FastColoredTextBoxNS.Text
 
             int prev = 0;
             int prevPos = 0;
-            BinaryReader br = new(fs, enc);
+            using BinaryReader br = new(fs, enc);
             while (fs.Position < length)
             {
                 prevPos = (int)fs.Position;
@@ -116,21 +116,13 @@ namespace FastColoredTextBoxNS.Text
                 lines.Add(null);
             }
 
-            if (length > 2000000)
-                GC.Collect();
-
-            Line[] temp = new Line[100];
-
-            var c = lines.Count;
-            lines.AddRange(temp);
-            lines.TrimExcess();
-            lines.RemoveRange(c, temp.Length);
+            //Prewarm List capacity instead of forcing a full GC.Collect()
 
             int[] temp2 = new int[100];
-            c = lines.Count;
+            var c = lines.Count;
             sourceFileLinePositions.AddRange(temp2);
             sourceFileLinePositions.TrimExcess();
-            sourceFileLinePositions.RemoveRange(c, temp.Length);
+            sourceFileLinePositions.RemoveRange(c, temp2.Length);
 
             fileEncoding = enc;
 
@@ -212,43 +204,56 @@ namespace FastColoredTextBoxNS.Text
             var dir = Path.GetDirectoryName(fileName);
             var tempFileName = Path.Combine(dir, Path.GetFileNameWithoutExtension(fileName) + ".tmp");
 
-            StreamReader sr = new(fs, fileEncoding);
-            using (FileStream tempFs = new(tempFileName, FileMode.Create))
-            using (StreamWriter sw = new(tempFs, enc))
+            bool writeOk = false;
+            try
             {
-                sw.Flush();
-
-                for (int i = 0; i < Count; i++)
+                using StreamReader sr = new(fs, fileEncoding);
+                using (FileStream tempFs = new(tempFileName, FileMode.Create))
+                using (StreamWriter sw = new(tempFs, enc))
                 {
-                    newLinePos.Add((int)tempFs.Length);
-
-                    var sourceLine = ReadLine(sr, i);//read line from source file
-                    string line;
-
-                    bool lineIsChanged = lines[i] != null && lines[i].IsChanged;
-
-                    if (lineIsChanged)
-                        line = lines[i].Text;
-                    else
-                        line = sourceLine;
-
-                    //call event handler
-                    if (LinePushed != null)
-                    {
-                        var args = new LinePushedEventArgs(sourceLine, i, lineIsChanged ? line : null);
-                        LinePushed(this, args);
-
-                        if (args.SavedText != null)
-                            line = args.SavedText;
-                    }
-
-                    //save line to file
-                    sw.Write(line);
-
-                    if (i < Count - 1)
-                        sw.Write(SaveEOL);
-
                     sw.Flush();
+
+                    for (int i = 0; i < Count; i++)
+                    {
+                        newLinePos.Add((int)tempFs.Length);
+
+                        var sourceLine = ReadLine(sr, i);//read line from source file
+                        string line;
+
+                        bool lineIsChanged = lines[i] != null && lines[i].IsChanged;
+
+                        if (lineIsChanged)
+                            line = lines[i].Text;
+                        else
+                            line = sourceLine;
+
+                        //call event handler
+                        if (LinePushed != null)
+                        {
+                            var args = new LinePushedEventArgs(sourceLine, i, lineIsChanged ? line : null);
+                            LinePushed(this, args);
+
+                            if (args.SavedText != null)
+                                line = args.SavedText;
+                        }
+
+                        //save line to file
+                        sw.Write(line);
+
+                        if (i < Count - 1)
+                            sw.Write(SaveEOL);
+
+                        sw.Flush();
+                    }
+                }
+                writeOk = true;
+            }
+            finally
+            {
+                if (!writeOk)
+                {
+                    //temp file is incomplete: remove it and keep the original file untouched
+                    try { File.Delete(tempFileName); } catch { /* best effort */ }
                 }
             }
 
@@ -256,13 +261,21 @@ namespace FastColoredTextBoxNS.Text
             for (int i = 0; i < Count; i++)
                 lines[i] = null;
             //deattach from source file
-            sr.Dispose();
             fs.Dispose();
-            //delete target file
-            if (File.Exists(fileName))
-                File.Delete(fileName);
-            //rename temp file
-            File.Move(tempFileName, fileName);
+            try
+            {
+                //delete target file
+                if (File.Exists(fileName))
+                    File.Delete(fileName);
+                //rename temp file
+                File.Move(tempFileName, fileName);
+            }
+            catch
+            {
+                //restore the stream binding so the control stays usable after a failed save
+                fs = new FileStream(fileName, FileMode.Open);
+                throw;
+            }
 
             //binding to new file
             sourceFileLinePositions = newLinePos;

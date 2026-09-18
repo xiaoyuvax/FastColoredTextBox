@@ -27,20 +27,16 @@ dotnet build FastColoredTextBox.sln -c Release
 - Main control: `FastColoredTextBox.cs` (~314 KB)
 - Key components: AutocompleteMenu, DocumentMap, Ruler, Find/Replace/GoTo forms
 - CJK/WordWrap improvements in recent versions
-- Test projects target older frameworks (.NET 8/9) and have WFO1000 errors on .NET 9+
-- No formal test suite - manual testing via Tester apps
+- Test projects target older frameworks (.NET 8/9) and have WFO1000 errors on .NET 9+ (suppress with `-p:NoWarn=WFO1000`)
+- Unit tests: `FastColoredTextBox.Tests/` (xUnit, no UI required) - run with `dotnet test FastColoredTextBox.Tests`
 
-## Recent Optimizations (v2.17.0.206)
-- Horizontal scroll text overlapping line number area fully fixed (CJK re-evaluation, non-uniform width support)
-- Default Padding 2px (matches WinForms TextBox)
-- Localization support (EN/ZH) for Find/Replace/GoTo/Hotkeys forms
-- Horizontal scroll text overlapping line numbers fixed
-- Undo/Redo core logic refactored (position accuracy, cross-line support)
-- Column selection mode IndexOutOfRangeException fixed
-- Label z-order fixed (no longer overlaps controls)
-- Chinese labels shortened to match English width
-- Redo shortcut changed to Ctrl+Y (standard Windows convention)
-- .NET 10.0 support added
+## Recent Optimizations (v2.17.0.207)
+- Native Markdown syntax highlighting (Language.Markdown): fenced code blocks, headings, inline code, links/images, blockquotes, lists, HR
+- Markdown regex fixes: fenced blocks now match across lines (Singleline), headings/inline code/blockquotes no longer span lines, images no longer double-styled as links
+- Highlighting performance: RegexCompiledOption now always Compiled, regex cache in TextSelectionRange.GetRanges, precompiled auto-indent regexes
+- Stability: GDI brush disposal for Markdown styles, Ruler Dispose (event unsubscribe), FileTextSource.SaveToFile failure-safe temp file handling, ReadExactly in EncodingDetector, UTF-7 BOM no longer returned
+- Assembly version fixed: GenerateAssemblyInfo re-enabled (DLL version was 0.0.0.0)
+- Repo hygiene: stale AnalysisReport.sarif / .NET Framework app.config removed
 
 ## NuGet Packaging
 ```bash
@@ -49,6 +45,6 @@ dotnet pack FastColoredTextBox/FastColoredTextBox.csproj -c Release -o ./nupkg
 Package config in csproj: icon.png, README.md, license.txt included.
 
 ## Git/Release
-- Version in csproj: `<Version>2.17.0.206</Version>`
+- Version in csproj: `<Version>2.17.0.207</Version>`
 - Update `PackageReleaseNotes` in csproj for releases
 - Main branch: `master`

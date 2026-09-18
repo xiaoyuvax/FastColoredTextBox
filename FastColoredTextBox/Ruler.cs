@@ -45,6 +45,22 @@ namespace FastColoredTextBoxNS
             CaretTickColor = Color.Black;
         }
 
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                if (components != null)
+                    components.Dispose();
+                //unsubscribe from the target to avoid keeping the ruler alive
+                //through its Scroll/SelectionChanged/VisibleRangeChanged handlers
+                if (target != null)
+                    UnSubscribe(target);
+                target = null;
+            }
+
+            base.Dispose(disposing);
+        }
+
         protected virtual void OnTargetChanged() => TargetChanged?.Invoke(this, EventArgs.Empty);
 
         protected virtual void UnSubscribe(FastColoredTextBox target)

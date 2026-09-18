@@ -50,6 +50,8 @@ Namespace TesterVB
 		Private WithEvents Button21 As Button
 		Private WithEvents Label22 As Label
 		Private WithEvents Button22 As Button
+		Private WithEvents Label23 As Label
+		Private WithEvents Button23 As Button
 
 		Protected Overrides Sub Dispose(disposing As Boolean)
 			If disposing AndAlso Me.components IsNot Nothing Then
@@ -687,6 +689,10 @@ Namespace TesterVB
 			Dim x = New CustomFoldingSample
 			x.Show()
 		End Sub
-		Friend WithEvents Label23 As System.Windows.Forms.Label
+
+		Private Sub Button23_Click(sender As Object, e As EventArgs) Handles Button23.Click
+			Dim x = New MarkdownSample
+			x.Show()
+		End Sub
 	End Class
 End Namespace

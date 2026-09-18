@@ -106,6 +106,8 @@
             button38 = new Button();
             label39 = new Label();
             button39 = new Button();
+            label40 = new Label();
+            button40 = new Button();
             SuspendLayout();
             // 
             // button1
@@ -927,12 +929,35 @@
             button39.UseVisualStyleBackColor = true;
             button39.Click += Button39_Click;
             // 
+            // label40
+            // 
+            label40.Location = new Point(741, 769);
+            label40.Margin = new Padding(4, 0, 4, 0);
+            label40.Name = "label40";
+            label40.Size = new Size(220, 38);
+            label40.TabIndex = 79;
+            label40.Text = "Markdown syntax highlighting sample.";
+            label40.TextAlign = ContentAlignment.TopRight;
+            // 
+            // button40
+            // 
+            button40.Location = new Point(969, 769);
+            button40.Margin = new Padding(4);
+            button40.Name = "button40";
+            button40.Size = new Size(88, 30);
+            button40.TabIndex = 78;
+            button40.Text = "Show";
+            button40.UseVisualStyleBackColor = true;
+            button40.Click += Button40_Click;
+            // 
             // MainForm
             // 
             AutoScaleDimensions = new SizeF(7F, 17F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1068, 765);
+            ClientSize = new Size(1068, 810);
             Controls.Add(button7);
+            Controls.Add(label40);
+            Controls.Add(button40);
             Controls.Add(label39);
             Controls.Add(button39);
             Controls.Add(label38);
@@ -1098,5 +1123,7 @@
         private System.Windows.Forms.Button button38;
         private System.Windows.Forms.Label label39;
         private System.Windows.Forms.Button button39;
+        private System.Windows.Forms.Label label40;
+        private System.Windows.Forms.Button button40;
     }
 }

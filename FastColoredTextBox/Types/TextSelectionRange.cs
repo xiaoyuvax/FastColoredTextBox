@@ -7,7 +7,7 @@ namespace FastColoredTextBoxNS.Types
     /// <summary>
     /// Diapason of text chars
     /// </summary>
-    public class TextSelectionRange : IEnumerable<Place>
+    public partial class TextSelectionRange : IEnumerable<Place>
     {
         private Place start;
         private Place end;
@@ -18,6 +18,22 @@ namespace FastColoredTextBoxNS.Types
         private string cachedText;
         private List<Place> cachedCharIndexToPlace;
         private int cachedTextVersion = -1;
+
+        //Cache of compiled regexes used by GetRanges(string, RegexOptions).
+        //Highlighting calls GetRanges with the same patterns on every keystroke,
+        //re-compiling/re-parsing them each time is pure overhead.
+        private static readonly Dictionary<(string pattern, RegexOptions options), Regex> regexCache = [];
+
+        private static Regex GetOrAddRegex(string pattern, RegexOptions options)
+        {
+            var key = (pattern, options);
+            if (!regexCache.TryGetValue(key, out var regex))
+            {
+                regex = new Regex(pattern, options);
+                regexCache[key] = regex;
+            }
+            return regex;
+        }
 
         /// <summary>
         /// Constructor
@@ -220,7 +236,7 @@ namespace FastColoredTextBoxNS.Types
                     for (int x = fromX; x <= toX; x++)
                         sb.Append(tb[y][x].C);
                     if (y != toLine && fromLine != toLine)
-                        sb.AppendLine();
+                        sb.Append('\n'); // one logical char per line break, matching Length and GetText
                 }
                 return sb.ToString();
             }
@@ -246,7 +262,7 @@ namespace FastColoredTextBoxNS.Types
                     cnt += toX - fromX + 1;
 
                     if (y != toLine && fromLine != toLine)
-                        cnt += Environment.NewLine.Length;
+                        cnt++; // one logical char per line break, matching Text and GetText
                 }
 
                 return cnt;
@@ -293,11 +309,10 @@ namespace FastColoredTextBoxNS.Types
                         charIndexToPlace.Add(new Place(x, y));
                     }
                     if (y != toLine && fromLine != toLine)
-                        foreach (char c in Environment.NewLine)
-                        {
-                            sb.Append(c);
-                            charIndexToPlace.Add(new Place(tb[y].Count/*???*/, y));
-                        }
+                    {
+                        sb.Append('\n'); // one logical char per line break, matching Text and Length
+                        charIndexToPlace.Add(new Place(tb[y].Count/*???*/, y));
+                    }
                 }
             }
             text = sb.ToString();
@@ -851,8 +866,8 @@ namespace FastColoredTextBoxNS.Types
             //get text
             GetText(out string text, out List<Place> charIndexToPlace);
 
-            //create regex
-            Regex regex = new(regexPattern, options);
+            //create regex (cached: same patterns are requested on every highlight pass)
+            Regex regex = GetOrAddRegex(regexPattern, options);
 
             foreach (Match m in regex.Matches(text))
             {
@@ -877,7 +892,7 @@ namespace FastColoredTextBoxNS.Types
         /// <returns>Enumeration of ranges</returns>
         public IEnumerable<TextSelectionRange> GetRangesByLines(string regexPattern, RegexOptions options)
         {
-            var regex = new Regex(regexPattern, options);
+            var regex = GetOrAddRegex(regexPattern, options);
             foreach (var r in GetRangesByLines(regex))
                 yield return r;
         }
@@ -924,8 +939,8 @@ namespace FastColoredTextBoxNS.Types
         public IEnumerable<TextSelectionRange> GetRangesByLinesReversed(string regexPattern, RegexOptions options)
         {
             Normalize();
-            //create regex
-            Regex regex = new(regexPattern, options);
+            //create regex (cached)
+            Regex regex = GetOrAddRegex(regexPattern, options);
             //
             var fts = tb.TextSource as FileTextSource; //<----!!!! ugly
 
@@ -980,12 +995,9 @@ namespace FastColoredTextBoxNS.Types
         /// </summary>
         public void ClearStyle(params Style[] styles)
         {
-            try
-            {
-                foreach (var style in styles)
-                    ClearStyle(style);
-            }
-            catch {; }
+            if (styles == null) return;
+            foreach (var style in styles)
+                ClearStyle(style);
         }
 
         /// <summary>
@@ -1592,142 +1604,6 @@ namespace FastColoredTextBoxNS.Types
             }
         }
 
-        #region ColumnSelectionMode
-
-        private TextSelectionRange GetIntersectionWith_ColumnSelectionMode(TextSelectionRange range)
-        {
-            if (range.Start.iLine != range.End.iLine)
-                return new TextSelectionRange(tb, Start, Start);
-            var rect = Bounds;
-            if (range.Start.iLine < rect.iStartLine || range.Start.iLine > rect.iEndLine)
-                return new TextSelectionRange(tb, Start, Start);
-
-            return new TextSelectionRange(tb, rect.iStartChar, range.Start.iLine, rect.iEndChar, range.Start.iLine).GetIntersectionWith(range);
-        }
-
-        private bool GoRightThroughFolded_ColumnSelectionMode()
-        {
-            var boundes = Bounds;
-            var endOfLines = true;
-            for (int iLine = boundes.iStartLine; iLine <= boundes.iEndLine; iLine++)
-                if (boundes.iEndChar < tb[iLine].Count)
-                {
-                    endOfLines = false;
-                    break;
-                }
-
-            if (endOfLines)
-                return false;
-
-            var start = Start;
-            var end = End;
-            start.Offset(1, 0);
-            end.Offset(1, 0);
-            BeginUpdate();
-            Start = start;
-            End = end;
-            EndUpdate();
-
-            return true;
-        }
-
-        private IEnumerable<Place> GetEnumerator_ColumnSelectionMode()
-        {
-            var bounds = Bounds;
-            if (bounds.iStartLine < 0) yield break;
-            //
-            for (int y = bounds.iStartLine; y <= bounds.iEndLine; y++)
-            {
-                for (int x = bounds.iStartChar; x < bounds.iEndChar; x++)
-                {
-                    if (x < tb[y].Count)
-                        yield return new Place(x, y);
-                }
-            }
-        }
-
-        private string Text_ColumnSelectionMode
-        {
-            get
-            {
-                StringBuilder sb = new();
-                var bounds = Bounds;
-                if (bounds.iStartLine < 0) return "";
-                //
-                for (int y = bounds.iStartLine; y <= bounds.iEndLine; y++)
-                {
-                    for (int x = bounds.iStartChar; x < bounds.iEndChar; x++)
-                    {
-                        if (x < tb[y].Count)
-                            sb.Append(tb[y][x].C);
-                    }
-                    if (bounds.iEndLine != bounds.iStartLine && y != bounds.iEndLine)
-                        sb.AppendLine();
-                }
-
-                return sb.ToString();
-            }
-        }
-
-        private int Length_ColumnSelectionMode(bool withNewLines)
-        {
-            var bounds = Bounds;
-            if (bounds.iStartLine < 0) return 0;
-            int cnt = 0;
-            //
-            for (int y = bounds.iStartLine; y <= bounds.iEndLine; y++)
-            {
-                for (int x = bounds.iStartChar; x < bounds.iEndChar; x++)
-                {
-                    if (x < tb[y].Count)
-                        cnt++;
-                }
-                if (withNewLines && bounds.iEndLine != bounds.iStartLine && y != bounds.iEndLine)
-                    cnt += Environment.NewLine.Length;
-            }
-
-            return cnt;
-        }
-
-        internal void GoDown_ColumnSelectionMode()
-        {
-            var iLine = tb.FindNextVisibleLine(End.iLine);
-            End = new Place(End.iChar, iLine);
-        }
-
-        internal void GoUp_ColumnSelectionMode()
-        {
-            var iLine = tb.FindPrevVisibleLine(End.iLine);
-            End = new Place(End.iChar, iLine);
-        }
-
-        internal void GoRight_ColumnSelectionMode()
-        {
-            End = new Place(End.iChar + 1, End.iLine);
-        }
-
-        internal void GoLeft_ColumnSelectionMode()
-        {
-            if (End.iChar > 0)
-                End = new Place(End.iChar - 1, End.iLine);
-        }
-
-        #endregion ColumnSelectionMode
     }
 
-    public struct RangeRect
-    {
-        public RangeRect(int iStartLine, int iStartChar, int iEndLine, int iEndChar)
-        {
-            this.iStartLine = iStartLine;
-            this.iStartChar = iStartChar;
-            this.iEndLine = iEndLine;
-            this.iEndChar = iEndChar;
-        }
-
-        public int iStartLine;
-        public int iStartChar;
-        public int iEndLine;
-        public int iEndChar;
-    }
 }

@@ -255,6 +255,9 @@ namespace FastColoredTextBoxNS.Text
 
         public virtual void SaveToFile(string fileName, Encoding enc)
         {
+            if (Count == 0)
+                return;
+
             using StreamWriter sw = new(fileName, false, enc);
             for (int i = 0; i < Count - 1; i++)
                 sw.WriteLine(lines[i].Text);

@@ -59,7 +59,8 @@ namespace FastColoredTextBoxNS.Input
 
         public void Undo()
         {
-            if (history.Count > 0)
+            //iterative instead of recursive: autoUndo chains can be long and recursion risks a stack overflow
+            while (history.Count > 0)
             {
                 var cmd = history.Pop();
                 //
@@ -74,13 +75,10 @@ namespace FastColoredTextBoxNS.Input
                 }
                 //
                 redoStack.Push(cmd);
-            }
-
-            //undo next autoUndo command
-            if (history.Count > 0)
-            {
-                if (history.Peek().autoUndo)
-                    Undo();
+                //
+                //continue undoing while the next command is part of the same autoUndo group
+                if (history.Count == 0 || !history.Peek().autoUndo)
+                    break;
             }
 
             TextSource.CurrentTB.OnUndoRedoStateChanged();
@@ -144,9 +142,25 @@ namespace FastColoredTextBoxNS.Input
             //call event
             RedoCompleted(this, EventArgs.Empty);
 
-            //redo command after autoUndoable command
-            if (cmd.autoUndo)
-                Redo();
+            //continue redoing while the redone command is part of the same autoUndo group (iterative: no stack overflow on long chains)
+            while (cmd.autoUndo && redoStack.Count > 0)
+            {
+                BeginDisableCommands();//prevent text changing into handlers
+                try
+                {
+                    cmd = redoStack.Pop();
+                    if (TextSource.CurrentTB.Selection.ColumnSelectionMode)
+                        TextSource.CurrentTB.Selection.ColumnSelectionMode = false;
+                    TextSource.CurrentTB.Selection.Start = cmd.sel.Start;
+                    TextSource.CurrentTB.Selection.End = cmd.sel.End;
+                    cmd.Execute();
+                    history.Push(cmd);
+                }
+                finally
+                {
+                    EndDisableCommands();
+                }
+            }
 
             TextSource.CurrentTB.OnUndoRedoStateChanged();
         }

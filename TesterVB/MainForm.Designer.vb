@@ -31,8 +31,10 @@ Partial Class MainForm
         Me.label15 = New System.Windows.Forms.Label()
         Me.button15 = New System.Windows.Forms.Button()
         Me.Label2 = New System.Windows.Forms.Label()
-        Me.Button2 = New System.Windows.Forms.Button()
-        Me.SuspendLayout()
+		Me.Button2 = New System.Windows.Forms.Button()
+		Me.Button23 = New System.Windows.Forms.Button()
+		Me.Label23 = New System.Windows.Forms.Label()
+		Me.SuspendLayout()
         '
         'label8
         '
@@ -124,15 +126,35 @@ Partial Class MainForm
         Me.Button2.Size = New System.Drawing.Size(75, 23)
         Me.Button2.TabIndex = 36
         Me.Button2.Text = "Show"
-        Me.Button2.UseVisualStyleBackColor = True
-        '
-        'MainForm
+		Me.Button2.UseVisualStyleBackColor = True
+		'
+		'Button23
+		'
+		Me.Button23.Location = New System.Drawing.Point(222, 240)
+		Me.Button23.Name = "Button23"
+		Me.Button23.Size = New System.Drawing.Size(75, 23)
+		Me.Button23.TabIndex = 38
+		Me.Button23.Text = "Show"
+		Me.Button23.UseVisualStyleBackColor = True
+		'
+		'Label23
+		'
+		Me.Label23.Location = New System.Drawing.Point(8, 240)
+		Me.Label23.Name = "Label23"
+		Me.Label23.Size = New System.Drawing.Size(208, 26)
+		Me.Label23.TabIndex = 39
+		Me.Label23.Text = "Markdown syntax highlighting sample"
+		Me.Label23.TextAlign = System.Drawing.ContentAlignment.TopRight
+		'
+		'MainForm
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(315, 254)
+        Me.ClientSize = New System.Drawing.Size(315, 280)
         Me.Controls.Add(Me.Label2)
         Me.Controls.Add(Me.Button2)
+        Me.Controls.Add(Me.Button23)
+        Me.Controls.Add(Me.Label23)
         Me.Controls.Add(Me.label15)
         Me.Controls.Add(Me.button15)
         Me.Controls.Add(Me.label16)
@@ -156,4 +178,6 @@ Partial Class MainForm
     Private WithEvents button15 As System.Windows.Forms.Button
     Private WithEvents Label2 As System.Windows.Forms.Label
     Private WithEvents Button2 As System.Windows.Forms.Button
+    Private WithEvents Label23 As System.Windows.Forms.Label
+    Private WithEvents Button23 As System.Windows.Forms.Button
 End Class

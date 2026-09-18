@@ -50,6 +50,7 @@ namespace Tester {
 		private void Button36_Click(object sender, EventArgs e) => new CustomScrollBarsSample().Show();
 		private void Button37_Click(object sender, EventArgs e) => new CustomWordWrapSample().Show();
 		private void Button38_Click(object sender, EventArgs e) => new AutoIndentCharsSample().Show();
-		private void Button39_Click(object sender, EventArgs e) => new CustomTextSourceSample2().Show();
-	}
+        private void Button39_Click(object sender, EventArgs e) => new CustomTextSourceSample2().Show();
+        private void Button40_Click(object sender, EventArgs e) => new MarkdownSample().Show();
+    }
 }

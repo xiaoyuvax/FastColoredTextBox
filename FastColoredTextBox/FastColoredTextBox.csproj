@@ -1,14 +1,11 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
-		<TargetFrameworks>net10.0-windows7.0;net9.0-windows7.0;net8.0-windows7.0;net7.0-windows7.0;</TargetFrameworks>
+		<TargetFrameworks>net10.0-windows7.0;net9.0-windows7.0;net8.0-windows7.0;net7.0-windows7.0</TargetFrameworks>
 		<OutputType>Library</OutputType>
 		<RootNamespace>FastColoredTextBoxNS</RootNamespace>
-		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
 		<UseWindowsForms>true</UseWindowsForms>
 		<ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
 		<ImplicitUsings>true</ImplicitUsings>
-		<UseWindowsForms>true</UseWindowsForms>
-		<ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
 		<LangVersion>13</LangVersion>
 		<NoWarn>WFO1000</NoWarn>
 	</PropertyGroup>
@@ -19,6 +16,7 @@
 		<AssemblyOriginatorKeyFile>FCTB_key.snk</AssemblyOriginatorKeyFile>
 		<RepositoryUrl>https://github.com/xiaoyuvax/FastColoredTextBox/</RepositoryUrl>
 		<PackageReleaseNotes>
+      - 2026/9/11 Added native Markdown syntax highlighting (Language.Markdown) with bold+color heading levels, inline code, fenced code blocks with border, blockquotes, strikethrough, links, images, lists, and HR
       - 2026/9/7 Horizontal scrolling right: text no longer slides over the line number area; CJK lines now position the first visible char by actual char widths (no left gap)
       - 2026/9/3 Undo/Redo core logic refactored (position accuracy, cross-line support)
       - Column selection mode IndexOutOfRangeException fixed
@@ -45,9 +43,9 @@
 		<PackageIcon>icon.png</PackageIcon>
 		<Title>FastColoredTextBox</Title>
 		<PackageTags>winform;control;C#;VB;TextBox;Editor;Colored;CJK</PackageTags>
-		<AssemblyVersion>2.17.0.206</AssemblyVersion>
-		<FileVersion>2.17.0.206</FileVersion>
-		<Version>2.17.0.206</Version>
+		<AssemblyVersion>2.17.0.207</AssemblyVersion>
+		<FileVersion>2.17.0.207</FileVersion>
+		<Version>2.17.0.207</Version>
 		<PackageOutputPath>D:\PUB\Nuget Packages</PackageOutputPath>
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 	</PropertyGroup>
