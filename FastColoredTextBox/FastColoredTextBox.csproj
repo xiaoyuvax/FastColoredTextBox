@@ -16,6 +16,9 @@
 		<AssemblyOriginatorKeyFile>FCTB_key.snk</AssemblyOriginatorKeyFile>
 		<RepositoryUrl>https://github.com/xiaoyuvax/FastColoredTextBox/</RepositoryUrl>
 		<PackageReleaseNotes>
+      - 2026/9/19 Markdown highlighter fixes: fenced code blocks now match across lines (missing Singleline), headings no longer swallow the next line, inline code no longer spans lines, images no longer double-styled as links, italic no longer fires on math asterisks (2 * 3 * 4)
+      - 2026/9/19 Assembly version now matches the NuGet package (was 0.0.0.0); xunit regression test suite added (FastColoredTextBox.Tests)
+      - 2026/9/19 Reliability: GDI brush leaks on language switch fixed, Ruler disposes event subscriptions, SaveToFile safe for empty documents and on write failure, EncodingDetector uses ReadExactly and no longer returns obsolete UTF-7, iterative Undo/Redo (no stack overflow on long autoUndo chains), Text/Length newline consistency, compiled regex caching for highlighting and auto-indent
       - 2026/9/11 Added native Markdown syntax highlighting (Language.Markdown) with bold+color heading levels, inline code, fenced code blocks with border, blockquotes, strikethrough, links, images, lists, and HR
       - 2026/9/7 Horizontal scrolling right: text no longer slides over the line number area; CJK lines now position the first visible char by actual char widths (no left gap)
       - 2026/9/3 Undo/Redo core logic refactored (position accuracy, cross-line support)
