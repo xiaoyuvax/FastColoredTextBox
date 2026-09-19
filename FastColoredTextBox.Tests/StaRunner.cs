@@ -1,5 +1,11 @@
 using System;
 using System.Threading;
+using Xunit;
+
+// FastColoredTextBox keeps static state (TextSource.CurrentTB) shared by all
+// instances, so FCTB instances must never live on concurrent threads.
+// Disable xUnit collection parallelization to keep control-level tests safe.
+[assembly: CollectionBehavior(DisableTestParallelization = true)]
 
 namespace FastColoredTextBoxNS.Tests
 {
