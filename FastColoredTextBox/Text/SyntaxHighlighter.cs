@@ -1476,8 +1476,13 @@ namespace FastColoredTextBoxNS.Text
             MdHeadingRegex = new Regex(@"^#{1,6}[ \t]+.+$", RegexOptions.Multiline | RegexCompiledOption);
             MdBoldRegex = new Regex(@"\*\*.+?\*\*", RegexCompiledOption);
             //(?<!\*)\*(?!\*): not part of ** (bold).
-            //(?<![\d*])...(\*(?![\d*])|$): closing star must not be preceded by digit-star; with digit-separated stars ("2 * 3 * 4") both stars are surrounded by digits, so plain arithmetic stays plain while "a*b*c" still italicizes.
-            MdItalicRegex = new Regex(@"(?<![\d*])\*(?!\*).+?(?<!\d)\*(?![\d*])", RegexCompiledOption);
+            //(?<![\d*]): opening star must not follow a digit/star ("2*3", "a*b*c" handled below).
+            //(?![\s*\d]): opening star must not be followed by whitespace/digit/star - CommonMark
+            //left-flanking rule. This keeps "2 * 3 * 4" (spaces around math stars) plain while
+            //"a*b*c" and "*emphasis*" still italicize.
+            //(?<!\d)\*(?![\d*]): closing star must not touch digits/star pairs ("2*3*4") -
+            //CommonMark right-flanking rule; a space after the closing star is fine (*x* here).
+            MdItalicRegex = new Regex(@"(?<![\d*])\*(?![\s\d*]).+?(?<!\d)\*(?![\d*])", RegexCompiledOption);
             MdStrikethroughRegex = new Regex(@"~~.+?~~", RegexCompiledOption);
             //[^`\n]: inline code must not span multiple lines
             MdCodeInlineRegex = new Regex(@"`[^`\n]+`", RegexCompiledOption);
