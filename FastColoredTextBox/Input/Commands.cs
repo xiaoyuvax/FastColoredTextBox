@@ -579,8 +579,11 @@ namespace FastColoredTextBoxNS.Input
 
                 if (iLine < ts.Count)
                     tb.Selection.SetStartAndEnd(new Place(0, iLine));
-                else
+                else if (ts.Count > 0)
                     tb.Selection.SetStartAndEnd(new Place(ts[^1].Count, ts.Count - 1));
+                else
+                    //document is empty (e.g. the only line was removed): start from nothing
+                    tb.Selection.SetStartAndEnd(Place.Empty);
 
                 InsertCharCommand.InsertLine(ts);
                 tb.Selection.SetStartAndEnd(new Place(0, iLine));
@@ -589,7 +592,8 @@ namespace FastColoredTextBoxNS.Input
                 ts[iLine].IsChanged = true;
                 if (iLine < ts.Count - 1)
                     ts[iLine + 1].IsChanged = true;
-                else
+                else if (iLine > 0)
+                    //iLine == 0 && ts.Count == 1 would index ts[-1]
                     ts[iLine - 1].IsChanged = true;
                 if (text.Trim() != string.Empty)
                     ts.OnTextChanged(iLine, iLine);

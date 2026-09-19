@@ -30,6 +30,11 @@ dotnet build FastColoredTextBox.sln -c Release
 - Test projects target older frameworks (.NET 8/9) and have WFO1000 errors on .NET 9+ (suppress with `-p:NoWarn=WFO1000`)
 - Unit tests: `FastColoredTextBox.Tests/` (xUnit, no UI required) - run with `dotnet test FastColoredTextBox.Tests`
 
+## Recent Optimizations (v2.17.0.208)
+- Undo/Redo: LimitedStack now drops the OLDEST history entry when full (was: rejected newest); RemoveLines keeps one empty line via TextSource so Undo restores removed content; RemoveLinesCommand.Undo no longer indexes ts[-1] on single-line documents
+- Tests: FastColoredTextBox.Tests (xunit, 39 tests) covers Markdown regexes, Text/Length semantics, undo/redo chains, encoding detection, SaveToFile, Ruler dispose; test parallelization disabled (TextSource.CurrentTB is static)
+- CI: GitHub Actions workflow (.github/workflows/ci.yml) builds all TFMs and runs tests on push/PR (windows-latest)
+
 ## Recent Optimizations (v2.17.0.207)
 - Native Markdown syntax highlighting (Language.Markdown): fenced code blocks, headings, inline code, links/images, blockquotes, lists, HR
 - Markdown regex fixes: fenced blocks now match across lines (Singleline), headings/inline code/blockquotes no longer span lines, images no longer double-styled as links
@@ -45,6 +50,6 @@ dotnet pack FastColoredTextBox/FastColoredTextBox.csproj -c Release -o ./nupkg
 Package config in csproj: icon.png, README.md, license.txt included.
 
 ## Git/Release
-- Version in csproj: `<Version>2.17.0.207</Version>`
+- Version in csproj: `<Version>2.17.0.208</Version>`
 - Update `PackageReleaseNotes` in csproj for releases
 - Main branch: `master`

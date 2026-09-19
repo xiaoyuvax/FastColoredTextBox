@@ -7939,7 +7939,11 @@ window.status = ""#print"";
             if (iLines.Count > 0)
                 IsChanged = true;
             if (LinesCount == 0)
-                Text = "";
+                //keep at least one (empty) line, like TextBox does. Do it through
+                //TextSource so the line is tracked and Undo of RemoveLinesCommand can
+                //still restore the removed lines; assigning Text here would bypass
+                //undo history entirely.
+                TextSource.InsertLine(0, TextSource.CreateLine());
             NeedRecalc();
             Invalidate();
         }
