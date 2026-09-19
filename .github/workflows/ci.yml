@@ -1,0 +1,48 @@
+name: CI
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-and-test:
+    # The library targets net*-windows7.0 (WinForms), so a Windows runner is required.
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET SDKs
+        uses: actions/setup-dotnet@v4
+        with:
+          # Library multi-targets net8.0/net9.0/net10.0-windows7.0 (net7.0 included
+          # there builds against the restored targeting pack); tests use net8.0.
+          dotnet-version: |
+            8.0.x
+            9.0.x
+            10.0.x
+
+      - name: Build library (all target frameworks)
+        run: dotnet build FastColoredTextBox/FastColoredTextBox.csproj -c Release
+
+      - name: Run tests
+        run: >
+          dotnet test FastColoredTextBox.Tests/FastColoredTextBox.Tests.csproj
+          -c Release
+          --logger trx
+          --results-directory TestResults
+
+      - name: Upload test results (on failure)
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          path: TestResults/**/*.trx
+          if-no-files-found: ignore
