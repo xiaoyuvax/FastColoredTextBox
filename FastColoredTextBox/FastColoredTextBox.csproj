@@ -16,6 +16,12 @@
 		<AssemblyOriginatorKeyFile>FCTB_key.snk</AssemblyOriginatorKeyFile>
 		<RepositoryUrl>https://github.com/xiaoyuvax/FastColoredTextBox/</RepositoryUrl>
 		<PackageReleaseNotes>
+      - 2026/9/25 New AllowProportionalFont property (default false): SetFont no longer rejects non-monospace fonts when enabled (rendering/caret/wrap already use per-char widths; tab/column-selection/hscroll remain approximate)
+      - 2026/9/25 New TextRenderingHint property (default SystemDefault) applied in OnPaint: lets hosts force ClearType/AntiAlias to remove small-size text aliasing (SystemDefault can degrade on the double-buffered surface)
+      - 2026/9/25 CharSizeCache.GetCharSize is now thread-safe (lock): the non-concurrent Dictionary could be corrupted by concurrent font measurement (e.g. parallel tests)
+      - 2026/9/25 TextStyle classic (non-IME) rendering advanced x by `dx` which was never set (always 0), stacking every char of a style run on the same x; a folded line (drawn as one FoldedBlockStyle run) collapsed its text at the line start. Now advances by GetCharWidth per char
+      - 2026/9/25 Folded block marker now uses per-char widths (CJK/mixed text): FoldedBlockStyle drew the box with a fixed CharWidth, so with UseCJK the collapsed line's text fell outside the box (box shifted right)
+      - 2026/9/25 Word wrap now recalculated when the client width changes (OnSizeChanged): resizing the control (scrollbar toggling, layout pass, folding-induced row height changes) previously left stale wrap cut-offs and lines could overlap
       - 2026/9/19 Undo/Redo fixes: undo history now keeps the most recent edits when the 200-entry limit is exceeded (previously kept the oldest), RemoveLines undo restores removed content even when the document becomes empty, single-line document is preserved after RemoveLines
       - 2026/9/19 Markdown highlighter fixes: fenced code blocks now match across lines (missing Singleline), headings no longer swallow the next line, inline code no longer spans lines, images no longer double-styled as links, italic no longer fires on math asterisks (2 * 3 * 4)
       - 2026/9/19 Assembly version now matches the NuGet package (was 0.0.0.0); xunit regression test suite added (FastColoredTextBox.Tests)
@@ -47,9 +53,9 @@
 		<PackageIcon>icon.png</PackageIcon>
 		<Title>FastColoredTextBox</Title>
 		<PackageTags>winform;control;C#;VB;TextBox;Editor;Colored;CJK</PackageTags>
-		<AssemblyVersion>2.17.0.208</AssemblyVersion>
-		<FileVersion>2.17.0.208</FileVersion>
-		<Version>2.17.0.208</Version>
+		<AssemblyVersion>2.17.0.216</AssemblyVersion>
+		<FileVersion>2.17.0.216</FileVersion>
+		<Version>2.17.0.216</Version>
 		<PackageOutputPath>D:\PUB\Nuget Packages</PackageOutputPath>
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 	</PropertyGroup>

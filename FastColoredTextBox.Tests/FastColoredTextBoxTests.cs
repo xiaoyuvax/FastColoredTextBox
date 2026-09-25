@@ -160,5 +160,73 @@ namespace FastColoredTextBoxNS.Tests
             });
         }
         #endregion
+
+        #region TextStyle classic draw advance
+
+        /// <summary>
+        /// Regression: the classic (non-IME) branch of TextStyle.Draw advanced x by `dx`,
+        /// which was only set in the IME branch and stayed 0 -> every char of a multi-char
+        /// run was drawn at the same x (a folded line collapsed at the line start).
+        /// </summary>
+        [Fact]
+        public void TextStyle_ClassicDraw_AdvancesPerChar()
+        {
+            StaRunner.Run(() =>
+            {
+                using var tb = new FastColoredTextBox { Width = 400, Height = 100 };
+                _ = tb.Handle;
+                tb.ImeMode = System.Windows.Forms.ImeMode.NoControl; // force the classic (non-IME) draw branch
+                tb.Font = new Font("Consolas", 9f);
+                tb.Text = "ABCDEF";
+
+                using var bmp = new Bitmap(400, 100);
+                using (var gr = Graphics.FromImage(bmp))
+                {
+                    gr.Clear(Color.White);
+                    var style = new TextStyle(Brushes.Black, null, FontStyle.Regular);
+                    style.Draw(gr, new Point(10, 10), new TextSelectionRange(tb, 0, 0, 6, 0));
+                }
+
+                int minX = int.MaxValue, maxX = -1;
+                for (int y = 0; y < bmp.Height; y++)
+                    for (int x = 0; x < bmp.Width; x++)
+                        if (bmp.GetPixel(x, y).R < 128)
+                        {
+                            if (x < minX) minX = x;
+                            if (x > maxX) maxX = x;
+                        }
+
+                Assert.True(maxX - minX > tb.CharWidth * 3,
+                    $"classic draw stacked chars at one x (span={maxX - minX}, charWidth={tb.CharWidth})");
+            });
+        }
+        #endregion
+
+        #region Word wrap on resize
+
+        /// <summary>
+        /// Regression: word wrap cut-offs depend on client width, but a size change did
+        /// not recalculate them, so resizing left stale wrapping (lines overlapped in
+        /// host layouts). OnSizeChanged must recompute the wrap.
+        /// </summary>
+        [Fact]
+        public void WordWrap_IsRecalculatedWhenWidthChanges()
+        {
+            StaRunner.Run(() =>
+            {
+                using var tb = new FastColoredTextBox { WordWrap = true, ShowLineNumbers = false };
+                _ = tb.Handle; // force creation so Recalc actually computes the wrap
+
+                tb.Text = new string('x', 400);
+                tb.Width = 100;   // narrow: wraps into many lines
+                int narrow = tb.TextHeight;
+                tb.Width = 1000;  // wide: fewer wrapped lines
+                int wide = tb.TextHeight;
+
+                Assert.True(narrow > wide,
+                    $"word wrap not recalculated on width change (narrow={narrow}, wide={wide})");
+            });
+        }
+        #endregion
     }
 }

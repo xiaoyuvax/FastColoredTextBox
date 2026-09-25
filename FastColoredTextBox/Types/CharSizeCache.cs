@@ -9,21 +9,29 @@
     {
         private static readonly Dictionary<string, SizeF> cache = [];
 
-        internal static void Clear() => cache.Clear();
+        internal static void Clear()
+        {
+            lock (cache) cache.Clear();
+        }
 
         internal static SizeF GetCharSize(Font font, char c)
         {
             var key = GetKey(font, c);
-            if (!cache.TryGetValue(key, out SizeF value))
+            // 非线程安全 Dictionary：并发（如并行测试、后台测量）同时写入会抛
+            // "Operations that change non-concurrent collections..." 并损坏内部状态。
+            lock (cache)
             {
-                Size sz2 = TextRenderer.MeasureText($"<{c}>", font);
-                Size sz3 = TextRenderer.MeasureText("<>", font);
-                float width = sz2.Width - sz3.Width + 1;
-                value = new SizeF(width, /*sz2.Height*/font.Height);
-                cache[key] = value;
-            }
+                if (!cache.TryGetValue(key, out SizeF value))
+                {
+                    Size sz2 = TextRenderer.MeasureText($"<{c}>", font);
+                    Size sz3 = TextRenderer.MeasureText("<>", font);
+                    float width = sz2.Width - sz3.Width + 1;
+                    value = new SizeF(width, /*sz2.Height*/font.Height);
+                    cache[key] = value;
+                }
 
-            return value;
+                return value;
+            }
         }
 
         /// <summary>

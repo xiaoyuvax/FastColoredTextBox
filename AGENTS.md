@@ -30,6 +30,14 @@ dotnet build FastColoredTextBox.sln -c Release
 - Test projects target older frameworks (.NET 8/9) and have WFO1000 errors on .NET 9+ (suppress with `-p:NoWarn=WFO1000`)
 - Unit tests: `FastColoredTextBox.Tests/` (xUnit, no UI required) - run with `dotnet test FastColoredTextBox.Tests`
 
+## Recent Optimizations (v2.17.0.216)
+- Word wrap recalculated on client width change (`OnSizeChanged`); stale wrap cut-offs on resize could overlap lines
+- `FoldedBlockStyle` uses per-char widths (CJK): collapsed line text no longer fell outside the marker box
+- `TextStyle` classic (non-IME) path advanced x by `dx` (always 0), stacking a style run's chars at one x; now advances by `GetCharWidth` per char (fixed folded-line text)
+- `CharSizeCache.GetCharSize` made thread-safe (lock) — non-concurrent Dictionary could be corrupted by concurrent measurement
+- New `TextRenderingHint` property (default `SystemDefault`), applied in `OnPaint`; hosts can force `ClearTypeGridFit`/`AntiAliasGridFit`
+- New `AllowProportionalFont` property (default false): `SetFont` accepts non-monospace fonts when enabled (rendering/caret/wrap use per-char widths; tab/column-selection/hscroll stay approximate)
+
 ## Recent Optimizations (v2.17.0.208)
 - Undo/Redo: LimitedStack now drops the OLDEST history entry when full (was: rejected newest); RemoveLines keeps one empty line via TextSource so Undo restores removed content; RemoveLinesCommand.Undo no longer indexes ts[-1] on single-line documents
 - Tests: FastColoredTextBox.Tests (xunit, 39 tests) covers Markdown regexes, Text/Length semantics, undo/redo chains, encoding detection, SaveToFile, Ruler dispose; test parallelization disabled (TextSource.CurrentTB is static)
@@ -50,6 +58,6 @@ dotnet pack FastColoredTextBox/FastColoredTextBox.csproj -c Release -o ./nupkg
 Package config in csproj: icon.png, README.md, license.txt included.
 
 ## Git/Release
-- Version in csproj: `<Version>2.17.0.208</Version>`
+- Version in csproj: `<Version>2.17.0.216</Version>`
 - Update `PackageReleaseNotes` in csproj for releases
 - Main branch: `master`

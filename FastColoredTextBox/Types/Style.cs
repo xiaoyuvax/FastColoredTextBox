@@ -166,7 +166,9 @@ namespace FastColoredTextBoxNS.Types
                     {
                         //draw char
                         gr.DrawString(line[i].C.ToString(), f, ForeBrush, x, y, stringFormat);
-                        x += dx;
+                        //advance by the actual char width (dx is only set in the IME branch;
+                        //leaving it 0 here stacked every char of the run on the same x)
+                        x += range.tb.GetCharWidth(line[i].C);
                     }
                 }
             }
@@ -242,14 +244,18 @@ namespace FastColoredTextBoxNS.Types
                 int firstNonSpaceSymbolX = position.X;
 
                 //find first non space symbol
+                //use per-char width (CJK/mixed text): a fixed CharWidth misplaces the box for
+                //narrow leading spaces, leaving the folded line's text outside the marker.
                 for (int i = range.Start.iChar; i < range.End.iChar; i++)
-                    if (range.tb[range.Start.iLine][i].C != ' ')
+                {
+                    char c = range.tb[range.Start.iLine][i].C;
+                    if (c != ' ')
                         break;
-                    else
-                        firstNonSpaceSymbolX += range.tb.CharWidth;
+                    firstNonSpaceSymbolX += range.tb.GetCharWidth(c);
+                }
 
-                //create marker
-                range.tb.AddVisualMarker(new FoldedAreaMarker(range.Start.iLine, new Rectangle(firstNonSpaceSymbolX, position.Y, position.X + (range.End.iChar - range.Start.iChar) * range.tb.CharWidth - firstNonSpaceSymbolX, range.tb.CharHeight)));
+                //create marker (actual range width, not chars * fixed CharWidth)
+                range.tb.AddVisualMarker(new FoldedAreaMarker(range.Start.iLine, new Rectangle(firstNonSpaceSymbolX, position.Y, position.X + GetSizeOfRange(range).Width - firstNonSpaceSymbolX, range.tb.CharHeight)));
             }
             else
             {

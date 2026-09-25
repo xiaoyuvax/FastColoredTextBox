@@ -1658,6 +1658,21 @@ namespace FastColoredTextBoxNS
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         internal ConcurrentDictionary<StyledChar, byte> BlinkSet { get; }
 
+        /// <summary>
+        /// 文字抗锯齿方式。默认 SystemDefault；设为 ClearTypeGridFit/AntiAliasGridFit 可强制
+        /// 抗锯齿，消除小字号锯齿（双缓冲位图面上 SystemDefault 可能退化为无抗锯齿）。
+        /// </summary>
+        [DefaultValue(System.Drawing.Text.TextRenderingHint.SystemDefault)]
+        public System.Drawing.Text.TextRenderingHint TextRenderingHint { get; set; } = System.Drawing.Text.TextRenderingHint.SystemDefault;
+
+        /// <summary>
+        /// 是否允许非等宽（比例）字体。默认 false（SetFont 会拒绝比例字体）。
+        /// 本 fork 的渲染/光标/换行已按字符实际宽度计算，只读场景可开启；但 Tab/列选择/
+        /// 横向滚动范围等仍按固定 CharWidth 估算，可编辑框请谨慎。
+        /// </summary>
+        [DefaultValue(false)]
+        public bool AllowProportionalFont { get; set; }
+
         private Font baseFont;
 
         /// <summary>
@@ -1680,7 +1695,7 @@ namespace FastColoredTextBoxNS
             //check monospace font
             SizeF sizeM = GetCharSize(BaseFont, 'M');
             SizeF sizeDot = GetCharSize(BaseFont, '.');
-            if (sizeM != sizeDot)
+            if (!AllowProportionalFont && sizeM != sizeDot)
                 // BaseFont = new Font("Courier New", BaseFont.SizeInPoints, FontStyle.Regular, GraphicsUnit.Point);
                 throw new Exception($"FastColoredTextBox-SetFont(): Font not supported ({newFont.Name}), FastColoredTextBox does not support Monospace fonts.");
             //calc size
@@ -5186,6 +5201,9 @@ namespace FastColoredTextBoxNS
 #endif
             visibleMarkers.Clear();
             e.Graphics.SmoothingMode = SmoothingMode.None;
+            // 文字抗锯齿：SystemDefault 在双缓冲位图面上可能不生效，显式设置可消锯齿
+            if (TextRenderingHint != System.Drawing.Text.TextRenderingHint.SystemDefault)
+                e.Graphics.TextRenderingHint = TextRenderingHint;
             //
             var servicePen = new Pen(ServiceLinesColor);
             Brush changedLineBrush = new SolidBrush(ChangedLineColor);
@@ -5771,6 +5789,24 @@ namespace FastColoredTextBoxNS
                 if (mouseIsDragDrop)
                     OnMouseClickText(e);
             }
+        }
+
+        /// <summary>上次用于自动换行的客户端宽度（-1 = 尚未计算）。</summary>
+        private int lastWrapWidth = -1;
+
+        /// <summary>
+        /// 客户端宽度变化时重算自动换行。
+        /// 换行切点取决于客户端宽度，而 WinForms 的尺寸变化不会自动触发它；
+        /// 若不重算，控件变宽/变窄（滚动条显隐、布局调整、折叠引起的行高变化）后
+        /// 仍按旧宽度折行，导致行与行重叠。
+        /// </summary>
+        protected override void OnSizeChanged(EventArgs e)
+        {
+            base.OnSizeChanged(e);
+            if (lastWrapWidth == ClientSize.Width)
+                return;
+            lastWrapWidth = ClientSize.Width;
+            NeedRecalc(true, true);
         }
 
         protected override void OnMouseDown(MouseEventArgs e)
