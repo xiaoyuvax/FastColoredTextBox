@@ -53,9 +53,9 @@
 		<PackageIcon>icon.png</PackageIcon>
 		<Title>FastColoredTextBox</Title>
 		<PackageTags>winform;control;C#;VB;TextBox;Editor;Colored;CJK</PackageTags>
-		<AssemblyVersion>2.17.0.216</AssemblyVersion>
-		<FileVersion>2.17.0.216</FileVersion>
-		<Version>2.17.0.216</Version>
+		<AssemblyVersion>2.17.0.217</AssemblyVersion>
+		<FileVersion>2.17.0.217</FileVersion>
+		<Version>2.17.0.217</Version>
 		<PackageOutputPath>D:\PUB\Nuget Packages</PackageOutputPath>
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 	</PropertyGroup>

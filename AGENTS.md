@@ -30,6 +30,9 @@ dotnet build FastColoredTextBox.sln -c Release
 - Test projects target older frameworks (.NET 8/9) and have WFO1000 errors on .NET 9+ (suppress with `-p:NoWarn=WFO1000`)
 - Unit tests: `FastColoredTextBox.Tests/` (xUnit, no UI required) - run with `dotnet test FastColoredTextBox.Tests`
 
+## Recent Optimizations (v2.17.0.217)
+- `Text` setter no longer leaves a full-selection residue: it used `SelectAll → InsertText → GoHome()`, but `GoHome` only moves the selection **Start** to (0,0) while keeping **End** — every programmatic `Text = ...` (e.g. editor binding on node change) left the whole text selected, so the first click into the box "selected everything". Now the selection is collapsed to the caret (`Selection.End = Selection.Start`, then `DoCaretVisible`) inside the same BeginUpdate block, so hosts get the same caret-home behavior without the residue. Note: `GoHome`/`Selection.Start` assignment semantics (End preserved) are intentional elsewhere — only the Text setter was affected.
+
 ## Recent Optimizations (v2.17.0.216)
 - Word wrap recalculated on client width change (`OnSizeChanged`); stale wrap cut-offs on resize could overlap lines
 - `FoldedBlockStyle` uses per-char widths (CJK): collapsed line text no longer fell outside the marker box
