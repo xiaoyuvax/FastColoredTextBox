@@ -135,15 +135,18 @@ namespace FastColoredTextBoxNS.Types
 
                     if (renderText)
                     {
-                        SizeF size = FastColoredTextBox.GetCharSize(f, line[i].C);
-                        var c = line[i].C;
-                        dx = range.tb.GetCharWidth(c);
+                        char real = line[i].C;
+                        var c = Masked(real, range.tb);
+                        SizeF size = FastColoredTextBox.GetCharSize(f, c);
+                        //advance by the real char so the caret/selection geometry (measured from the
+                        //unmasked text) stays aligned
+                        dx = range.tb.GetCharWidth(real);
 
                         var gs = gr.Save();
                         float k = size.Width > range.tb.GetCharWidth(c) + 1 ? range.tb.GetCharWidth(c) / size.Width : 1;
                         gr.TranslateTransform(x, y + (1 - k) * range.tb.CharHeight / 2);
                         gr.ScaleTransform(k, (float)Math.Sqrt(k));
-                        gr.DrawString(line[i].C.ToString(), f, ForeBrush, 0, 0, stringFormat);
+                        gr.DrawString(c.ToString(), f, ForeBrush, 0, 0, stringFormat);
                         gr.Restore(gs);
                         x += dx;
                     }
@@ -165,7 +168,7 @@ namespace FastColoredTextBoxNS.Types
                     if (renderText)
                     {
                         //draw char
-                        gr.DrawString(line[i].C.ToString(), f, ForeBrush, x, y, stringFormat);
+                        gr.DrawString(Masked(line[i].C, range.tb).ToString(), f, ForeBrush, x, y, stringFormat);
                         //advance by the actual char width (dx is only set in the IME branch;
                         //leaving it 0 here stacked every char of the run on the same x)
                         x += range.tb.GetCharWidth(line[i].C);
@@ -173,6 +176,11 @@ namespace FastColoredTextBoxNS.Types
                 }
             }
         }
+
+        /// <summary>
+        /// Applies <see cref="FastColoredTextBox.PasswordChar"/> to a char before it is rendered.
+        /// </summary>
+        private static char Masked(char c, FastColoredTextBox tb) => tb.PasswordChar == '\0' ? c : tb.PasswordChar;
 
         public override string GetCSS()
         {

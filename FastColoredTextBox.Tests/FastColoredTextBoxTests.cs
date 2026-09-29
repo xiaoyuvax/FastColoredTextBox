@@ -134,15 +134,16 @@ namespace FastColoredTextBoxNS.Tests
                 tb.SyntaxHighlighter.MarkdownSyntaxHighlight(tb.Range);
 
                 // fenced code block style is created and applied inside the fence
-                Assert.True(tb.SyntaxHighlighter.MdCodeBlockStyle is MarkdownCodeBlockStyle,
+                Assert.True(tb.SyntaxHighlighter.MdCodeBlockStyle is MarkdownBlockStyle,
                     "code block style must be created for Language.Markdown");
                 var fenceStyles = tb.GetStylesOfChar(new Place(1, 3)); // 'n' of "int x;"
-                Assert.Contains(fenceStyles, s => s is MarkdownCodeBlockStyle);
+                Assert.Contains(fenceStyles, s => s is MarkdownBlockStyle);
 
-                // heading style applied on the heading line ('T' of "# Title")
-                var headingStyles = tb.GetStylesOfChar(new Place(2, 0));
+                // heading style applied on the heading line ('T' of "# Title"), not on the '#'
+                var headingStyles = tb.GetStylesOfChar(new Place(3, 0));
                 Assert.Contains(headingStyles,
                     s => s is TextStyle ts && ts.FontStyle.HasFlag(FontStyle.Bold));
+                Assert.Empty(tb.GetStylesOfChar(new Place(0, 0)));
             });
         }
 

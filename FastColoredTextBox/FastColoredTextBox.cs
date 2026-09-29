@@ -262,9 +262,14 @@ namespace FastColoredTextBoxNS
         /// <summary>
         /// Force inserted string or char to be uppercase
         /// </summary>
+        /// <remarks>Shorthand for <c>CharacterCasing = Upper</c>, kept for backward compatibility.</remarks>
         [DefaultValue(false)]
         [Description("Force upper case.")]
-        public bool ForceUpperCase { get; set; }
+        public bool ForceUpperCase
+        {
+            get { return CharacterCasing == CharacterCasing.Upper; }
+            set { CharacterCasing = value ? CharacterCasing.Upper : CharacterCasing.Normal; }
+        }
 
         /// <summary>
         /// Colors of some service visual markers
@@ -804,14 +809,8 @@ namespace FastColoredTextBoxNS
             set { throw new NotImplementedException(); }
         }
 
-        //hide RTL
-        [Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden),
-        EditorBrowsable(EditorBrowsableState.Never)]
-        public new bool RightToLeft
-        {
-            get { throw new NotImplementedException(); }
-            set { throw new NotImplementedException(); }
-        }
+        //RTL is not implemented for rendering (text is always drawn left to right), so the inherited
+        //Control.RightToLeft is left in place instead of shadowing it with a throwing bool.
 
         /// <summary>
         /// Color of folding area indicator
@@ -1116,9 +1115,29 @@ namespace FastColoredTextBoxNS
             set
             {
                 language = value;
-                SyntaxHighlighter?.InitStyleSchema(language);
+                if (value == Language.Markdown)
+                    //the markdown styles own GDI brushes, the chars must let go of the old ones first
+                    ResetMarkdownStyles();
+                else
+                    SyntaxHighlighter?.InitStyleSchema(value);
                 Invalidate();
             }
+        }
+
+        /// <summary>
+        /// Rebuilds the markdown styles and re-styles the text.
+        /// </summary>
+        /// <remarks>
+        /// The chars hold references to the style objects, so they have to be cleared before the
+        /// brushes those styles own are disposed: ClearStyle removes by identity, and by the time the
+        /// styles are rebuilt the highlighter already points at new objects, leaving the old ones
+        /// attached with a freed brush (DrawString then throws ArgumentException).
+        /// </remarks>
+        private void ResetMarkdownStyles()
+        {
+            Range.ClearAllStyles();
+            SyntaxHighlighter?.InitStyleSchema(Language.Markdown);
+            SyntaxHighlighter?.HighlightSyntax(Language.Markdown, Range);
         }
 
         /// <summary>
@@ -1325,6 +1344,15 @@ namespace FastColoredTextBoxNS
         {
             get { return base.BackColor; }
             set { base.BackColor = value; }
+        }
+
+        protected override void OnBackColorChanged(EventArgs e)
+        {
+            base.OnBackColorChanged(e);
+            //the markdown styles derive their backgrounds from BackColor, so they have to be
+            //recreated and the text re-styled
+            if (Language == Language.Markdown)
+                ResetMarkdownStyles();
         }
 
         /// <summary>
@@ -1568,10 +1596,19 @@ namespace FastColoredTextBoxNS
         /// <summary>
         /// Text lines
         /// </summary>
+        /// <remarks>Type and accessor match <see cref="System.Windows.Forms.TextBoxBase.Lines"/> so a
+        /// migrated form compiles unchanged. The returned array is a snapshot of the current text.</remarks>
         [Browsable(false)]
-        public IList<string> Lines
+        public string[] Lines
         {
-            get { return lines.GetLines(); }
+            get
+            {
+                var accessor = lines.GetLines();
+                var result = new string[accessor.Count];
+                accessor.CopyTo(result, 0);
+                return result;
+            }
+            set { Text = string.Join(Environment.NewLine, value ?? []); }
         }
 
         /// <summary>
@@ -2205,11 +2242,12 @@ namespace FastColoredTextBoxNS
             if (place.iLine < LinesCount && place.iChar < this[place.iLine].Count)
             {
                 var c = this[place];
-                foreach (var style in c.Styles)
+                //Styles is null for a char that was never styled
+                for (int i = 0; i <= c.LastStyleIndex; i++)
                 {
-                    if (style == null)
+                    if (c.Styles[i] == null)
                         break;
-                    result.Add(style);
+                    result.Add(c.Styles[i]);
                 }
             }
 
@@ -2932,7 +2970,7 @@ namespace FastColoredTextBoxNS
                     if (Selection.IsEmpty && Selection.Start.iChar > GetLineLength(Selection.Start.iLine) && VirtualSpace)
                         InsertVirtualSpaces();
 
-                lines.Manager.ExecuteCommand(new InsertTextCommand(TextSource, ForceUpperCase ? text.ToUpper() : text));
+                lines.Manager.ExecuteCommand(new InsertTextCommand(TextSource, ApplyCasing(text)));
                 if (updating <= 0 && jumpToCaret)
                     DoCaretVisible();
             }
@@ -3182,7 +3220,7 @@ namespace FastColoredTextBoxNS
                     InsertVirtualSpaces();
 
                 //insert char
-                lines.Manager.ExecuteCommand(new InsertCharCommand(TextSource, ForceUpperCase ? char.ToUpper(c) : c));
+                lines.Manager.ExecuteCommand(new InsertCharCommand(TextSource, ApplyCasing(c)));
             }
             finally
             {
@@ -3759,7 +3797,7 @@ namespace FastColoredTextBoxNS
 
         protected override bool ProcessDialogKey(Keys keyData)
         {
-            if ((keyData & Keys.Alt) > 0)
+            if (ShortcutsEnabled && (keyData & Keys.Alt) > 0)
             {
                 if (HotkeysMapping.ContainsKey(keyData))
                 {
@@ -3787,7 +3825,7 @@ namespace FastColoredTextBoxNS
                 if (!HotkeysMapping.TryGetValue(keyData, out FCTBAction value) || (value != FCTBAction.MacroExecute && value != FCTBAction.MacroRecord))
                     macrosManager.ProcessKey(keyData);
 
-            if (HotkeysMapping.TryGetValue(keyData, out FCTBAction act))
+            if (ShortcutsEnabled && HotkeysMapping.TryGetValue(keyData, out FCTBAction act))
             {
                 DoAction(act);
                 if (scrollActions.ContainsKey(act))
@@ -4635,8 +4673,16 @@ namespace FastColoredTextBoxNS
             //insert char
             if (!Selection.ReadOnly)
             {
-                if (!DoAutocompleteBrackets(c))
-                    InsertChar(c);
+                //MaxLength limits typing only, exactly like TextBox (pasting and assigning Text are not truncated)
+                if (MaxLength <= 0 || TextLengthFast - Selection.Length + 1 <= MaxLength)
+                {
+                    if (!DoAutocompleteBrackets(c))
+                        InsertChar(c);
+
+                    //WinForms word completion: a delimiter closes the word, complete it
+                    if (!IsWordChar(c))
+                        AutoCompleteWord();
+                }
             }
 
             //do autoindent
@@ -5257,7 +5303,7 @@ namespace FastColoredTextBoxNS
             int firstChar = Math.Max(0, HorizontalScroll.Value - Paddings.Left) / CharWidth;
             int lastChar = (HorizontalScroll.Value + ClientSize.Width) / CharWidth;
             //
-            var x = LeftIndent + Paddings.Left - HorizontalScroll.Value;
+            var x = LeftIndent + Paddings.Left - HorizontalScroll.Value + TextAlignOffset;
             if (x < LeftIndent) firstChar++;
 
             //create dictionary of bookmarks
@@ -5431,6 +5477,12 @@ namespace FastColoredTextBoxNS
             PaintHintBrackets(e.Graphics);
             // draw markers
             DrawMarkers(e, servicePen);
+            // draw placeholder text while the control is empty
+            if (PlaceholderText != null && PlaceholderText.Length > 0 && LinesCount == 1 && GetLineLength(0) == 0)
+                using (var placeholderBrush = new SolidBrush(DisabledColor))
+                    e.Graphics.DrawString(PlaceholderText, Font, placeholderBrush,
+                                          new PointF(textAreaRect.Left + 1, textAreaRect.Top + LineInterval / 2f),
+                                          new StringFormat(StringFormatFlags.DirectionRightToLeft) { LineAlignment = StringAlignment.Center });
             // draw caret
             Point car = PlaceToPoint(Selection.Start);
             var caretHeight = CharHeight - lineInterval;
@@ -5726,9 +5778,10 @@ namespace FastColoredTextBoxNS
                                new TextSelectionRange(this, from + iLastFlushedChar + 1, iLine, from + lastChar + 1, iLine));
             }
 
-            //draw selection
+            //draw selection (HideSelection hides it while the control is not focused)
             if (SelectionHighlightingForLineBreaksEnabled && iWordWrapLine == lineInfo.WordWrapStringsCount - 1) lastChar++;//draw selection for CR
-            if (!Selection.IsEmpty && lastChar >= firstChar)
+            bool drawSelection = Focused || !HideSelection;
+            if (!Selection.IsEmpty && lastChar >= firstChar && drawSelection)
             {
                 gr.SmoothingMode = SmoothingMode.None;
                 var textRange = new TextSelectionRange(this, from + firstChar, iLine, from + lastChar + 1, iLine);
@@ -6652,7 +6705,7 @@ namespace FastColoredTextBoxNS
                 x += LineInfos[place.iLine].wordWrapIndent * CharWidth;
             //
             y -= VerticalScroll.Value;
-            x = LeftIndent + Paddings.Left + x - HorizontalScroll.Value;
+            x = LeftIndent + Paddings.Left + x - HorizontalScroll.Value + TextAlignOffset;
 
             return new Point(x, y);
         }
