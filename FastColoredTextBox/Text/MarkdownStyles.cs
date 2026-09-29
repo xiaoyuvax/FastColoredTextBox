@@ -3,51 +3,44 @@
 namespace FastColoredTextBoxNS.Text
 {
     /// <summary>
-    /// Custom style for Markdown code blocks with border and background.
+    /// Paints a block-level Markdown region: a tinted background that reaches the right edge of
+    /// the text area, plus a vertical bar at the start of each line of the block.
+    /// Used for fenced code blocks and blockquotes.
     /// </summary>
-    public class MarkdownCodeBlockStyle : Style
+    /// <remarks>
+    /// Deliberately a plain <see cref="Style"/> and deliberately draws no text. The control renders
+    /// only the first <see cref="TextStyle"/> of a char (see
+    /// <see cref="FastColoredTextBox.AllowSeveralTextStyleDrawing"/>), so a container that carried its
+    /// own text style would hide every bold/italic/inner-language style nested inside it. Keeping the
+    /// container non-text lets the nested styles paint the glyphs on top of the background.
+    /// </remarks>
+    public class MarkdownBlockStyle : Style
     {
-        public Brush ForeBrush { get; set; }
         public Brush BackgroundBrush { get; set; }
-        public Pen BorderPen { get; set; }
-        private readonly StringFormat stringFormat = new(StringFormatFlags.MeasureTrailingSpaces);
+        public Brush BarBrush { get; set; }
+        public int BarWidth { get; set; }
 
-        public MarkdownCodeBlockStyle(Brush foreBrush, Brush backgroundBrush, Color borderColor)
+        public MarkdownBlockStyle(Brush backgroundBrush, Brush barBrush, int barWidth = 3)
         {
-            ForeBrush = foreBrush;
             BackgroundBrush = backgroundBrush;
-            BorderPen = new Pen(borderColor, 1f);
+            BarBrush = barBrush;
+            BarWidth = barWidth;
         }
 
         public override void Draw(Graphics gr, Point position, TextSelectionRange range)
         {
             var tb = range.tb;
+            int height = tb.CharHeight;
+            //TextAreaRect already accounts for the left indent, padding and horizontal scrolling,
+            //so the tint keeps its right edge put while the user scrolls sideways
+            int right = Math.Max(tb.TextAreaRect.Right, position.X);
 
-            int width = 0;
-            for (int i = range.Start.iChar; i < range.End.iChar; i++)
-                width += tb.GetCharWidth(tb[range.Start.iLine][i].C);
-            width = Math.Max(width, tb.Width - position.X - 10);
-
-            //background
             if (BackgroundBrush != null)
-                gr.FillRectangle(BackgroundBrush, position.X, position.Y, width, tb.CharHeight);
+                gr.FillRectangle(BackgroundBrush, position.X, position.Y, right - position.X, height);
 
-            //text: build the string once and draw it in a single call instead of per-char DrawString
-            var line = tb[range.Start.iLine];
-            if (range.End.iChar > range.Start.iChar)
-            {
-                var sb = new System.Text.StringBuilder(range.End.iChar - range.Start.iChar);
-                for (int i = range.Start.iChar; i < range.End.iChar; i++)
-                    sb.Append(line[i].C);
-
-                var f = tb.Font;
-                ForeBrush ??= new SolidBrush(tb.ForeColor);
-                gr.DrawString(sb.ToString(), f, ForeBrush, position.X, position.Y, stringFormat);
-            }
-
-            //draw left border line
-            int borderGap = 2;
-            gr.DrawLine(BorderPen, borderGap, position.Y, borderGap, position.Y + tb.CharHeight);
+            //the bar marks the start of a line, not of a word-wrapped continuation segment
+            if (BarBrush != null && BarWidth > 0 && range.Start.iChar == 0)
+                gr.FillRectangle(BarBrush, position.X, position.Y, BarWidth, height);
         }
 
         public override string GetCSS()
@@ -55,77 +48,8 @@ namespace FastColoredTextBoxNS.Text
             string result = "";
             if (BackgroundBrush is SolidBrush bg)
                 result += "background-color:" + ExportToHTML.GetColorAsString(bg.Color) + ";";
-            if (ForeBrush is SolidBrush fg)
-                result += "color:" + ExportToHTML.GetColorAsString(fg.Color) + ";";
-            if (BorderPen != null)
-                result += "border-left:2px solid " + ExportToHTML.GetColorAsString(BorderPen.Color) + ";";
-            return result;
-        }
-    }
-
-    /// <summary>
-    /// Custom style for Markdown headings with different font sizes.
-    /// Draws text with a scaled font, accepting overflow beyond the fixed grid.
-    /// </summary>
-    public class MarkdownHeadingStyle : Style
-    {
-        public Brush ForeBrush { get; set; }
-        public Brush BackgroundBrush { get; set; }
-        public FontStyle FontStyle { get; set; }
-        public float FontSizeMultiplier { get; set; }
-        private readonly StringFormat stringFormat = new(StringFormatFlags.MeasureTrailingSpaces);
-
-        public MarkdownHeadingStyle(Brush foreBrush, Brush backgroundBrush, FontStyle fontStyle, float fontSizeMultiplier)
-        {
-            ForeBrush = foreBrush;
-            BackgroundBrush = backgroundBrush;
-            FontStyle = fontStyle;
-            FontSizeMultiplier = fontSizeMultiplier;
-        }
-
-        public override void Draw(Graphics gr, Point position, TextSelectionRange range)
-        {
-            var tb = range.tb;
-            float fontSize = tb.Font.Size * FontSizeMultiplier;
-
-            int width = 0;
-            for (int i = range.Start.iChar; i < range.End.iChar; i++)
-                width += tb.GetCharWidth(tb[range.Start.iLine][i].C);
-
-            //always cover the default style's text first
-            using var bgBrush = new SolidBrush(tb.BackColor);
-            gr.FillRectangle(bgBrush, position.X, position.Y, width, tb.CharHeight);
-
-            //then draw our background if specified
-            if (BackgroundBrush != null)
-                gr.FillRectangle(BackgroundBrush, position.X, position.Y, width, tb.CharHeight);
-
-            //draw text with scaled font
-            using var f = new Font(tb.Font.FontFamily, fontSize, FontStyle, tb.Font.Unit);
-            ForeBrush ??= new SolidBrush(tb.ForeColor);
-
-            float y = position.Y + (tb.CharHeight - fontSize) / 2;
-            float x = position.X;
-
-            var line = tb[range.Start.iLine];
-            if (range.End.iChar > range.Start.iChar)
-            {
-                var sb = new System.Text.StringBuilder(range.End.iChar - range.Start.iChar);
-                for (int i = range.Start.iChar; i < range.End.iChar; i++)
-                    sb.Append(line[i].C);
-                gr.DrawString(sb.ToString(), f, ForeBrush, x, y, stringFormat);
-            }
-        }
-
-        public override string GetCSS()
-        {
-            string result = "";
-            if (BackgroundBrush is SolidBrush bg)
-                result += "background-color:" + ExportToHTML.GetColorAsString(bg.Color) + ";";
-            if (ForeBrush is SolidBrush fg)
-                result += "color:" + ExportToHTML.GetColorAsString(fg.Color) + ";";
-            if ((FontStyle & FontStyle.Bold) != 0) result += "font-weight:bold;";
-            if ((FontStyle & FontStyle.Italic) != 0) result += "font-style:oblique;";
+            if (BarBrush is SolidBrush bar)
+                result += "border-left:" + BarWidth + "px solid " + ExportToHTML.GetColorAsString(bar.Color) + ";";
             return result;
         }
     }

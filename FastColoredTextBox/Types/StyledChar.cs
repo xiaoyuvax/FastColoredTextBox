@@ -60,8 +60,6 @@ namespace FastColoredTextBoxNS.Types
         /// <exception cref="InvalidOperationException">You cannot add more than {LastStyleIndex} styles to a character</exception>
         public Style AddStyle(Style style)
         {
-            ++LastStyleIndex;
-
             // Update Readonly status if needed
             if (style is ReadOnlyStyle)
                 _ReadOnly = true;
@@ -70,19 +68,22 @@ namespace FastColoredTextBoxNS.Types
             if (style is BlinkingStyle)
                 _Blinking = true;
 
+            // Already there? Adding it twice used to bump LastStyleIndex without filling the slot,
+            // leaving a null in Styles - and the renderer stops at the first null, which silently
+            // hid every style added to that char afterwards.
+            if (Styles != null && Styles.Contains(style))
+                return style;
+
+            ++LastStyleIndex;
+
             // Initialize storage, fetch existing style or expand the storage array if needed
             if (Styles == null)
                 Styles = new Style[2];
-            else if (LastStyleIndex != 0)
-            {
-                if (Styles.Contains(style))
-                    return style;
-                if (LastStyleIndex == Styles.Length)
-                    if (LastStyleIndex == int.MaxValue)
-                        throw new InvalidOperationException($"You cannot add more than {LastStyleIndex} styles to a character");
-                    else
-                        Array.Resize(ref Styles, Styles.Length > int.MaxValue / 2 ? int.MaxValue : Styles.Length * 2);
-            }
+            else if (LastStyleIndex == Styles.Length)
+                if (LastStyleIndex == int.MaxValue)
+                    throw new InvalidOperationException($"You cannot add more than {LastStyleIndex} styles to a character");
+                else
+                    Array.Resize(ref Styles, Styles.Length > int.MaxValue / 2 ? int.MaxValue : Styles.Length * 2);
 
             return Styles[LastStyleIndex] = style;
         }

@@ -1115,9 +1115,29 @@ namespace FastColoredTextBoxNS
             set
             {
                 language = value;
-                SyntaxHighlighter?.InitStyleSchema(language);
+                if (value == Language.Markdown)
+                    //the markdown styles own GDI brushes, the chars must let go of the old ones first
+                    ResetMarkdownStyles();
+                else
+                    SyntaxHighlighter?.InitStyleSchema(value);
                 Invalidate();
             }
+        }
+
+        /// <summary>
+        /// Rebuilds the markdown styles and re-styles the text.
+        /// </summary>
+        /// <remarks>
+        /// The chars hold references to the style objects, so they have to be cleared before the
+        /// brushes those styles own are disposed: ClearStyle removes by identity, and by the time the
+        /// styles are rebuilt the highlighter already points at new objects, leaving the old ones
+        /// attached with a freed brush (DrawString then throws ArgumentException).
+        /// </remarks>
+        private void ResetMarkdownStyles()
+        {
+            Range.ClearAllStyles();
+            SyntaxHighlighter?.InitStyleSchema(Language.Markdown);
+            SyntaxHighlighter?.HighlightSyntax(Language.Markdown, Range);
         }
 
         /// <summary>
@@ -1324,6 +1344,15 @@ namespace FastColoredTextBoxNS
         {
             get { return base.BackColor; }
             set { base.BackColor = value; }
+        }
+
+        protected override void OnBackColorChanged(EventArgs e)
+        {
+            base.OnBackColorChanged(e);
+            //the markdown styles derive their backgrounds from BackColor, so they have to be
+            //recreated and the text re-styled
+            if (Language == Language.Markdown)
+                ResetMarkdownStyles();
         }
 
         /// <summary>
@@ -2205,11 +2234,12 @@ namespace FastColoredTextBoxNS
             if (place.iLine < LinesCount && place.iChar < this[place.iLine].Count)
             {
                 var c = this[place];
-                foreach (var style in c.Styles)
+                //Styles is null for a char that was never styled
+                for (int i = 0; i <= c.LastStyleIndex; i++)
                 {
-                    if (style == null)
+                    if (c.Styles[i] == null)
                         break;
-                    result.Add(style);
+                    result.Add(c.Styles[i]);
                 }
             }
 

@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
 		<TargetFrameworks>net10.0-windows7.0;net9.0-windows7.0;net8.0-windows7.0;net7.0-windows7.0</TargetFrameworks>
 		<OutputType>Library</OutputType>
@@ -16,6 +16,17 @@
 		<AssemblyOriginatorKeyFile>FCTB_key.snk</AssemblyOriginatorKeyFile>
 		<RepositoryUrl>https://github.com/xiaoyuvax/FastColoredTextBox/</RepositoryUrl>
 		<PackageReleaseNotes>
+      - 2026/9/29 Markdown highlighter rewritten around a fenced-code-block state machine: a fence is now a protected region, so "# heading", "- list", "**bold**" and "[link](x)" inside a code block are no longer highlighted as markdown
+      - 2026/9/29 Fenced code blocks are highlighted with the language named in the info string (```csharp, ```js, ```sql, ... via the built-in modes), with a guard against a ```markdown fence recursing
+      - 2026/9/29 New markdown syntax: __strong__, _emphasis_, autolinks (&lt;https://host&gt;), task list checkboxes (- [x]), ordered lists with ")", thematic breaks with spaces (- - -), backslash-escaped markers; "#" only starts a heading when followed by a space
+      - 2026/9/29 Heading style covers the text only: the leading #'s and the optional closing #'s are left unstyled, and the levels are told apart by shade (a scaled font would break the caret/selection/word-wrap geometry of the fixed-width grid)
+      - 2026/9/29 Markdown backgrounds and bars are derived from BackColor instead of hardcoded light colours, and are rebuilt when BackColor changes, so a dark theme works; the left bar of a code block follows the text position instead of being glued 2px from the control edge
+      - 2026/9/29 Markdown styles are ordered so the control renders them correctly: the block tint is a plain Style (not a TextStyle), so bold/italic/code nested in a quote or a code block are no longer swallowed by the container
+      - 2026/9/29 AutoIndentNeeded handles markdown: the line after a list item is indented (AutoIndentEventArgs can only add whitespace, so the "- " marker is not copied); blockquotes are not indented
+      - 2026/9/29 Markdown no longer widens the highlight range to the visible range on every keystroke; set HighlightingRangeType = VisibleRange (as the samples do) if you want the whole viewport re-highlighted
+      - 2026/9/29 StyledChar.AddStyle no longer bumps LastStyleIndex when the style is already on the char, which left a null in Styles and silently hid every style added to that char afterwards
+      - 2026/9/29 GetStylesOfChar no longer throws NullReferenceException for a char that carries no style
+      - 2026/9/29 Breaking: MarkdownCodeBlockStyle and MarkdownHeadingStyle are replaced by MarkdownBlockStyle (background + left bar, draws no text); MdCodeInlineStyle is renamed MdInlineCodeStyle, and MdAutoLinkStyle, MdUnderscoreItalicStyle and MdTaskListDoneStyle are new
       - 2026/9/29 TextBox migration: the 15 public properties a WinForms form needs but FCTB lacked are implemented, so a TextBox can be swapped for a FastColoredTextBox without touching the call site: MaxLength, CharacterCasing, CanUndo, Modified, HideSelection, PasswordChar, UseSystemPasswordChar, PlaceholderText, PreferredHeight, ScrollBars, ShortcutsEnabled, TextAlign, AutoCompleteMode, AutoCompleteSource, AutoCompleteCustomSource
       - 2026/9/29 Lines now returns string[] (was IList&lt;string&gt;) and has a setter, matching TextBoxBase.Lines
       - 2026/9/29 Removed the `new bool RightToLeft` shadow that threw NotImplementedException: the inherited Control.RightToLeft (System.Windows.Forms.RightToLeft) is used again
@@ -57,9 +68,9 @@
 		<PackageIcon>icon.png</PackageIcon>
 		<Title>FastColoredTextBox</Title>
 		<PackageTags>winform;control;C#;VB;TextBox;Editor;Colored;CJK</PackageTags>
-		<AssemblyVersion>2.18.0.220</AssemblyVersion>
-		<FileVersion>2.18.0.220</FileVersion>
-		<Version>2.18.0.220</Version>
+		<AssemblyVersion>2.19.0.220</AssemblyVersion>
+		<FileVersion>2.19.0.220</FileVersion>
+		<Version>2.19.0.220</Version>
 		<PackageOutputPath>D:\PUB\Nuget Packages</PackageOutputPath>
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 	</PropertyGroup>

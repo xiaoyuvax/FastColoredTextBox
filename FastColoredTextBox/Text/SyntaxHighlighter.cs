@@ -101,17 +101,22 @@ namespace FastColoredTextBoxNS.Text
         protected Regex PHPVarRegex;
 
         protected Regex MdHeadingRegex,
+                      MdHrRegex,
+                      MdQuoteRegex,
+                      MdListRegex,
+                      MdFenceOpenRegex,
+                      MdFenceCloseRegex,
                       MdBoldRegex,
                       MdItalicRegex,
+                      MdUnderscoreItalicRegex,
                       MdStrikethroughRegex,
-                      MdCodeInlineRegex,
-                      MdCodeBlockRegex,
+                      MdInlineCodeRegex,
                       MdLinkRegex,
                       MdImageRegex,
-                      MdBlockquoteRegex,
-                      MdHrRegex,
-                      MdUnorderedListRegex,
-                      MdOrderedListRegex;
+                      MdAutoLinkRegex;
+
+        //GDI objects created by InitStyleSchema for the markdown styles
+        private readonly List<Brush> mdBrushes = new(8);
 
         protected Regex SQLCommentRegex1,
                       SQLCommentRegex2,
@@ -262,6 +267,7 @@ namespace FastColoredTextBoxNS.Text
                     break;
 
                 case Language.Markdown:
+                    MarkdownAutoIndentNeeded(sender, args);
                     break;
 
                 default:
@@ -764,18 +770,29 @@ namespace FastColoredTextBoxNS.Text
                     //dispose previously created brushes/styles before recreating them,
                     //InitStyleSchema is called every time the Language property changes
                     DisposeMarkdownStyles();
-                    MdH1Style = new TextStyle(((TextStyle)BlueBoldStyle).ForeBrush, null, FontStyle.Bold);
-                    MdH2Style = new TextStyle(((TextStyle)BlueBoldStyle).ForeBrush, null, FontStyle.Bold | FontStyle.Italic);
-                    MdH3Style = new TextStyle(((TextStyle)BlueStyle).ForeBrush, null, FontStyle.Bold);
-                    MdHeadingStyle = new TextStyle(((TextStyle)BlueStyle).ForeBrush, null, FontStyle.Bold);
+                    //every background is derived from the control's BackColor so the highlighter
+                    //follows light and dark themes instead of hardcoding a white page
+                    Color page = currentTb?.BackColor ?? SystemColors.Window;
+                    bool darkPage = page.GetBrightness() < 0.5f;
+                    Color blue = ((TextStyle)BlueStyle).ForeBrush is SolidBrush b ? b.Color : Color.Blue;
+                    Color green = ((TextStyle)GreenStyle).ForeBrush is SolidBrush g ? g.Color : Color.Green;
+                    //heading levels are told apart by shade: the control is a fixed-width grid, so a
+                    //scaled font would break caret, selection and word-wrap geometry
+                    MdH1Style = new TextStyle(MdBrush(Shade(blue, 0.35f, darkPage)), null, FontStyle.Bold);
+                    MdH2Style = new TextStyle(MdBrush(Shade(blue, 0.15f, darkPage)), null, FontStyle.Bold);
+                    MdH3Style = new TextStyle(MdBrush(blue), null, FontStyle.Bold);
+                    MdHeadingStyle = new TextStyle(MdBrush(Shade(blue, -0.15f, darkPage)), null, FontStyle.Bold);
                     MdBoldStyle = BoldStyle;
                     MdItalicStyle = BrownStyle;
+                    MdUnderscoreItalicStyle = BrownStyle;
                     MdStrikethroughStyle = GrayStyle;
-                    MdCodeInlineStyle = new TextStyle(((TextStyle)MagentaStyle).ForeBrush, new SolidBrush(Color.FromArgb(240, 240, 240)), FontStyle.Regular);
-                    MdCodeBlockStyle = new MarkdownCodeBlockStyle(((TextStyle)BlackStyle).ForeBrush, new SolidBrush(Color.FromArgb(245, 245, 245)), Color.FromArgb(200, 200, 200));
+                    MdInlineCodeStyle = new TextStyle(((TextStyle)MagentaStyle).ForeBrush, MdBrush(Shade(page, 0.12f, darkPage)), FontStyle.Regular);
+                    MdCodeBlockStyle = new MarkdownBlockStyle(MdBrush(Shade(page, 0.05f, darkPage)), MdBrush(Shade(page, 0.30f, darkPage)));
+                    MdBlockquoteStyle = new MarkdownBlockStyle(MdBrush(Shade(page, 0.07f, darkPage)), MdBrush(Shade(green, 0.10f, darkPage)));
                     MdLinkStyle = new TextStyle(((TextStyle)BlueStyle).ForeBrush, null, FontStyle.Underline);
-                    MdImageStyle = BlueStyle;
-                    MdBlockquoteStyle = new TextStyle(((TextStyle)GreenStyle).ForeBrush, new SolidBrush(Color.FromArgb(230, 245, 230)), FontStyle.Italic);
+                    MdAutoLinkStyle = MdLinkStyle;
+                    MdImageStyle = new TextStyle(((TextStyle)MagentaStyle).ForeBrush, null, FontStyle.Regular);
+                    MdTaskListDoneStyle = new TextStyle(MdBrush(Shade(green, 0.15f, darkPage)), null, FontStyle.Bold);
                     MdHrStyle = GrayStyle;
                     MdListStyle = MaroonStyle;
                     break;
@@ -783,25 +800,38 @@ namespace FastColoredTextBoxNS.Text
         }
 
         /// <summary>
+        /// Moves a colour away from the page background: darker on a light page, lighter on a dark
+        /// one. A negative amount moves it back towards the background (less prominent).
+        /// </summary>
+        private static Color Shade(Color color, float amount, bool darkPage)
+        {
+            float a = Math.Abs(amount);
+            bool lighten = amount > 0 ? darkPage : !darkPage;
+            return lighten ? ControlPaint.Light(color, a) : ControlPaint.Dark(color, a);
+        }
+
+        /// <summary>
+        /// Solid brush owned by the markdown styles, disposed by <see cref="DisposeMarkdownStyles"/>
+        /// </summary>
+        private Brush MdBrush(Color color)
+        {
+            var brush = new SolidBrush(color);
+            mdBrushes.Add(brush);
+            return brush;
+        }
+
+        /// <summary>
         /// Disposes the GDI brushes created by InitStyleSchema for Markdown styles
         /// </summary>
         protected virtual void DisposeMarkdownStyles()
         {
-            DisposeStyleBrushes(MdCodeInlineStyle);
-            DisposeStyleBrushes(MdBlockquoteStyle);
-            if (MdCodeBlockStyle is MarkdownCodeBlockStyle codeBlockStyle)
-            {
-                codeBlockStyle.BackgroundBrush?.Dispose();
-                codeBlockStyle.BorderPen?.Dispose();
-            }
-            MdCodeBlockStyle = null;
+            foreach (var brush in mdBrushes)
+                brush.Dispose();
+            mdBrushes.Clear();
+            //
+            MdCodeBlockStyle = MdBlockquoteStyle = null;
             MdH1Style = MdH2Style = MdH3Style = MdHeadingStyle = null;
-        }
-
-        private static void DisposeStyleBrushes(Style style)
-        {
-            if (style is TextStyle ts)
-                ts.BackgroundBrush?.Dispose();
+            MdInlineCodeStyle = MdTaskListDoneStyle = null;
         }
 
         /// <summary>
@@ -1472,120 +1502,364 @@ namespace FastColoredTextBoxNS.Text
 
         protected void InitMarkdownRegex()
         {
-            //[ \t] instead of \s: \s would also swallow line breaks and merge the next line into the match
-            MdHeadingRegex = new Regex(@"^#{1,6}[ \t]+.+$", RegexOptions.Multiline | RegexCompiledOption);
-            MdBoldRegex = new Regex(@"\*\*.+?\*\*", RegexCompiledOption);
-            //(?<!\*)\*(?!\*): not part of ** (bold).
-            //(?<![\d*]): opening star must not follow a digit/star ("2*3", "a*b*c" handled below).
-            //(?![\s*\d]): opening star must not be followed by whitespace/digit/star - CommonMark
-            //left-flanking rule. This keeps "2 * 3 * 4" (spaces around math stars) plain while
-            //"a*b*c" and "*emphasis*" still italicize.
-            //(?<!\d)\*(?![\d*]): closing star must not touch digits/star pairs ("2*3*4") -
-            //CommonMark right-flanking rule; a space after the closing star is fine (*x* here).
-            MdItalicRegex = new Regex(@"(?<![\d*])\*(?![\s\d*]).+?(?<!\d)\*(?![\d*])", RegexCompiledOption);
-            MdStrikethroughRegex = new Regex(@"~~.+?~~", RegexCompiledOption);
-            //[^`\n]: inline code must not span multiple lines
-            MdCodeInlineRegex = new Regex(@"`[^`\n]+`", RegexCompiledOption);
-            //Singleline is required so that '.' matches line breaks between the fences
-            MdCodeBlockRegex = new Regex(@"^```.*?^```", RegexOptions.Multiline | RegexOptions.Singleline | RegexCompiledOption);
-            //(?<!!): image syntax ![alt](url) must not also be styled as a link
-            MdLinkRegex = new Regex(@"(?<!!)\[(?<text>[^\]]+)\]\((?<url>[^)]+)\)", RegexCompiledOption);
-            MdImageRegex = new Regex(@"!\[(?<text>[^\]]*)\]\((?<url>[^)]+)\)", RegexCompiledOption);
-            MdBlockquoteRegex = new Regex(@"^>[^\n]*$", RegexOptions.Multiline | RegexCompiledOption);
-            MdHrRegex = new Regex(@"^(-{3,}|\*{3,}|_{3,})$", RegexOptions.Multiline | RegexCompiledOption);
-            MdUnorderedListRegex = new Regex(@"^[\s]*[-*+][ \t]", RegexOptions.Multiline | RegexCompiledOption);
-            MdOrderedListRegex = new Regex(@"^[\s]*\d+\.[ \t]", RegexOptions.Multiline | RegexCompiledOption);
+            //Line constructs are matched at the position where the line content starts, so none of
+            //them is anchored with '^' (the caller checks Match.Index). Only the fence constructs
+            //are anchored: they are about the whole line.
+
+            //#{1,6} followed by whitespace: '#tag' and a lone '#' are not headings
+            MdHeadingRegex = new Regex(@"#{1,6}(?=[ \t])[^\n]*", RegexCompiledOption);
+            //thematic break: 3+ of the same char, spaces allowed between them ("- - -", "***")
+            //but the line must hold nothing else
+            MdHrRegex = new Regex(@"(?<c>[-*_])(?:[ \t]*\k<c>){2,}[ \t]*$", RegexCompiledOption);
+            MdQuoteRegex = new Regex(@"(?: {0,3}>[ \t]?)+", RegexCompiledOption);
+            //list bullet / task checkbox; the checkbox is optional and its own group so it can be
+            //styled separately
+            MdListRegex = new Regex(@"(?<bullet>[-*+]|\d{1,9}[.)])[ \t]+(?<task>\[[ xX]\][ \t]+)?", RegexCompiledOption);
+            //fenced code block: 3+ backticks or tildes, indented by at most 3 spaces. A backtick
+            //info string may not contain a backtick, a closing fence carries nothing else.
+            MdFenceOpenRegex = new Regex(@"^[ ]{0,3}(?<fence>`{3,}|~{3,})[ \t]*(?<lang>[^`\n]*)$", RegexCompiledOption);
+            MdFenceCloseRegex = new Regex(@"^[ ]{0,3}(?<fence>`{3,}|~{3,})[ \t]*$", RegexCompiledOption);
+
+            //Inline constructs. The control renders only the first TextStyle of a char, so these are
+            //applied in CommonMark precedence order: the first one applied is the one that shows.
+            //Strong, both **x** and __x__; the (?<!\\) guards keep a backslash-escaped run literal.
+            MdBoldRegex = new Regex(@"(\*\*|__)(?<!\\)(?=\S)[^\n]+?(?<!\\)\1", RegexCompiledOption);
+            //Emphasis with *. The opener may not be part of ** and may not be followed by
+            //whitespace, which is what keeps "2 * 3 * 4" plain, while the CommonMark examples
+            //"*em*", "a*b*c" and "2*3*4" still emphasize.
+            MdItalicRegex = new Regex(@"(?<![\*\\])\*(?!\s)[^*\n]+?(?<!\s)\*(?!\*)", RegexCompiledOption);
+            //Emphasis with _. Intraword underscores are not emphasis, so snake_case stays plain.
+            MdUnderscoreItalicRegex = new Regex(@"(?<![\w\\])_(?!\s)[^_\n]+?(?<!\s)_(?!\w)", RegexCompiledOption);
+            MdStrikethroughRegex = new Regex(@"~~(?=\S)[^~\n]+?(?<!\\)~~", RegexCompiledOption);
+            MdInlineCodeRegex = new Regex(@"`[^`\n]+`", RegexCompiledOption);
+            //(?<!!): an image ![alt](url) must not also be styled as a link
+            MdLinkRegex = new Regex(@"(?<!!)\[(?<text>[^\]\n]+)\]\((?<url>[^)\n]*)\)", RegexCompiledOption);
+            MdImageRegex = new Regex(@"!\[(?<text>[^\]\n]*)\]\((?<url>[^)\n]*)\)", RegexCompiledOption);
+            //<https://host/path> and <user@host>
+            MdAutoLinkRegex = new Regex(@"<(?<url>(?:[a-z][a-z0-9+.-]*://|mailto:)[^>\s]+|[^ >@\[\]\n]+@[^ >@\[\]\n]+)>",
+                                        RegexCompiledOption | RegexOptions.IgnoreCase);
         }
 
         /// <summary>
         /// Highlights Markdown text
         /// </summary>
+        /// <remarks>
+        /// Line oriented by design: markdown is a container format, so the highlighter walks the
+        /// lines of the range keeping the fenced-code-block state, and inline constructs are only
+        /// matched inside lines that are not code. That is what keeps "# not a heading", "**not
+        /// bold**" and "[not a link](x)" inside a fence from being highlighted as markdown.
+        /// </remarks>
         /// <param name="range"></param>
         public virtual void MarkdownSyntaxHighlight(TextSelectionRange range)
         {
             var tb = range.tb;
-
-            //Fenced code blocks span multiple lines, so the highlighted range must
-            //contain complete blocks. With the default ChangedRange strategy, typing
-            //inside a block would clear the style of the lines outside the change.
-            if (tb.HighlightingRangeType == HighlightingRangeType.ChangedRange)
-                range = tb.VisibleRange.GetUnionWith(range);
-
-            range.tb.CommentPrefix = null;
-            range.tb.LeftBracket = '(';
-            range.tb.RightBracket = ')';
-            range.tb.LeftBracket2 = '[';
-            range.tb.RightBracket2 = ']';
-            range.tb.LeftBracket3 = '\x0';
-            range.tb.RightBracket3 = '\x0';
-
-            range.tb.AutoIndentCharsPatterns = @"";
-
-            //clear style of changed range
-            range.ClearStyle(MdHeadingStyle, MdH1Style, MdH2Style, MdH3Style,
-                             MdBoldStyle, MdItalicStyle, MdStrikethroughStyle,
-                             MdCodeInlineStyle, MdCodeBlockStyle, MdLinkStyle, MdImageStyle,
-                             MdBlockquoteStyle, MdHrStyle, MdListStyle);
+            range.Normalize();
 
             if (MdHeadingRegex == null)
                 InitMarkdownRegex();
 
-            //code block (fenced) - highest priority
-            range.SetStyle(MdCodeBlockStyle, MdCodeBlockRegex);
-            //inline code
-            range.SetStyle(MdCodeInlineStyle, MdCodeInlineRegex);
+            //clear style of changed range
+            range.ClearStyle(MdH1Style, MdH2Style, MdH3Style, MdHeadingStyle,
+                             MdBoldStyle, MdItalicStyle, MdUnderscoreItalicStyle, MdStrikethroughStyle,
+                             MdInlineCodeStyle, MdCodeBlockStyle, MdLinkStyle, MdAutoLinkStyle,
+                             MdImageStyle, MdBlockquoteStyle, MdHrStyle, MdListStyle, MdTaskListDoneStyle);
 
-            //heading with per-level styling
-            foreach (TextSelectionRange r in range.GetRanges(MdHeadingRegex))
+            int fromLine = Math.Max(0, range.Start.iLine);
+            int toLine = range.End.iLine;
+
+            var fence = new FenceState();
+            RewindFenceState(tb, fromLine, fence);
+            //code blocks seen inside the range, highlighted with their own language afterwards
+            var codeBlocks = new List<(int startLine, int endLine, Language language)>();
+
+            for (int iLine = fromLine; iLine <= toLine; iLine++)
             {
-                //determine heading level from the ### prefix
-                string headingText = r.Text;
-                int level = 0;
-                while (level < headingText.Length && headingText[level] == '#')
-                    level++;
+                Line line = tb[iLine];
+                string text = line.Text;
+                bool isCode = FenceStep(text, fence, iLine, codeBlocks);
 
-                //apply style to THIS match only
-                switch (level)
+                int from = iLine == fromLine ? range.Start.iChar : 0;
+                int to = iLine == toLine ? Math.Min(range.End.iChar, line.Count) : line.Count;
+                if (to <= from)
+                    continue;
+
+                if (isCode)
                 {
-                    case 1:
-                        r.SetStyle(MdH1Style);
-                        break;
-                    case 2:
-                        r.SetStyle(MdH2Style);
-                        break;
-                    case 3:
-                        r.SetStyle(MdH3Style);
-                        break;
-                    default:
-                        r.SetStyle(MdHeadingStyle);
-                        break;
+                    new TextSelectionRange(tb, from, iLine, to, iLine).SetStyle(MdCodeBlockStyle);
+                    continue;
                 }
+
+                HighlightMarkdownLine(tb, text, from, to, iLine);
+            }
+            //an unterminated fence runs to the end of the document, as in CommonMark
+            if (fence.Inside)
+                codeBlocks.Add((Math.Max(fence.StartLine, fromLine), toLine, fence.Language));
+
+            //highlight the content of every fence with the language named in its info string
+            foreach (var (startLine, endLine, language) in codeBlocks)
+            {
+                if (language == Language.Custom || language == Language.Markdown)
+                    continue;
+                //the nested highlighters paint with the shared style slots, which only exist once
+                //InitStyleSchema ran for that language; every built-in schema sets StringStyle or
+                //CommentStyle, so this does not touch a host that set its styles up itself
+                if (StringStyle == null && CommentStyle == null)
+                    InitStyleSchema(language);
+                HighlightSyntax(language, new TextSelectionRange(tb, 0, startLine, tb[endLine].Count, endLine));
             }
 
-            //bold
-            range.SetStyle(MdBoldStyle, MdBoldRegex);
-            //italic
-            range.SetStyle(MdItalicStyle, MdItalicRegex);
-            //strikethrough
-            range.SetStyle(MdStrikethroughStyle, MdStrikethroughRegex);
-            //image (before link to avoid conflict)
-            range.SetStyle(MdImageStyle, MdImageRegex);
-            //link
-            range.SetStyle(MdLinkStyle, MdLinkRegex);
-            //blockquote
-            range.SetStyle(MdBlockquoteStyle, MdBlockquoteRegex);
-            //horizontal rule
-            range.SetStyle(MdHrStyle, MdHrRegex);
-            //unordered list
-            range.SetStyle(MdListStyle, MdUnorderedListRegex);
-            //ordered list
-            range.SetStyle(MdListStyle, MdOrderedListRegex);
+            //control-wide state is set last: the nested highlighters above overwrite it
+            tb.CommentPrefix = null;
+            tb.LeftBracket = '(';
+            tb.RightBracket = ')';
+            tb.LeftBracket2 = '[';
+            tb.RightBracket2 = ']';
+            tb.LeftBracket3 = '\x0';
+            tb.RightBracket3 = '\x0';
+            tb.AutoIndentCharsPatterns = @"";
 
             //clear folding markers
             range.ClearFoldingMarkers();
             //set folding markers for fenced code blocks
-            range.SetFoldingMarkers(@"^```", @"^```", RegexOptions.Multiline);
+            range.SetFoldingMarkers(@"^(?:`{3,}|~{3,})", RegexOptions.Multiline);
         }
+
+        /// <summary>
+        /// Applies every markdown style that fits a single line of prose
+        /// </summary>
+        /// <param name="tb"></param>
+        /// <param name="text">Text of the whole line</param>
+        /// <param name="from">First char of the line inside the highlighted range</param>
+        /// <param name="to">Char after the last one</param>
+        /// <param name="iLine">Line index</param>
+        private void HighlightMarkdownLine(FastColoredTextBox tb, string text, int from, int to, int iLine)
+        {
+            int lineTo = to - from;
+            TextSelectionRange Line(int start, int end) => new(tb, from + start, iLine, from + Math.Min(end, lineTo), iLine);
+            int content = SkipIndent(text, 0);
+
+            //blockquote: the tint and bar cover the markers too, the content is parsed behind them
+            var quote = MdQuoteRegex.Match(text, content);
+            if (quote.Success && quote.Index == content)
+            {
+                Line(content, lineTo).SetStyle(MdBlockquoteStyle);
+                content = SkipIndent(text, quote.Index + quote.Length);
+            }
+            if (content >= lineTo)
+                return;
+
+            //heading: style the text only, not the #'s and not the optional closing #'s
+            var heading = MdHeadingRegex.Match(text, content);
+            if (heading.Success && heading.Index == content)
+            {
+                int end = heading.Index + heading.Length;
+                while (end > content && (text[end - 1] == '#' || text[end - 1] == ' ' || text[end - 1] == '\t'))
+                    end--;
+                int level = 0;
+                while (level < heading.Length && text[content + level] == '#')
+                    level++;
+                int start = content + level;
+                while (start < end && (text[start] == ' ' || text[start] == '\t'))
+                    start++;
+                var style = level switch
+                {
+                    1 => MdH1Style,
+                    2 => MdH2Style,
+                    3 => MdH3Style,
+                    _ => MdHeadingStyle
+                };
+                if (end > start)
+                    Line(start, end).SetStyle(style);
+                return;
+            }
+
+            //thematic break: checked before the list so that "- - -" is a rule, not a bullet
+            var rule = MdHrRegex.Match(text, content);
+            if (rule.Success && rule.Index == content && rule.Index + rule.Length == text.Length)
+            {
+                Line(content, text.Length).SetStyle(MdHrStyle);
+                return;
+            }
+
+            //list: the bullet gets the list colour, the task checkbox its own
+            var list = MdListRegex.Match(text, content);
+            if (list.Success && list.Index == content)
+            {
+                var bullet = list.Groups["bullet"];
+                Line(bullet.Index, bullet.Index + bullet.Length).SetStyle(MdListStyle);
+                content = SkipIndent(text, bullet.Index + bullet.Length);
+                var task = list.Groups["task"];
+                if (task.Success)
+                {
+                    int end = task.Index + task.Value.TrimEnd(' ', '\t').Length;
+                    //only a ticked box is worth pointing at, an open one keeps the plain text
+                    if (task.Value[1] != ' ')
+                        Line(task.Index, end).SetStyle(MdTaskListDoneStyle);
+                    content = SkipIndent(text, end);
+                }
+            }
+            if (content >= lineTo)
+                return;
+
+            //inline constructs, outermost first: the control shows the first TextStyle of a char
+            var inline = Line(content, lineTo);
+            inline.SetStyle(MdInlineCodeStyle, MdInlineCodeRegex);
+            inline.SetStyle(MdImageStyle, MdImageRegex);
+            inline.SetStyle(MdLinkStyle, MdLinkRegex);
+            inline.SetStyle(MdAutoLinkStyle, MdAutoLinkRegex);
+            inline.SetStyle(MdBoldStyle, MdBoldRegex);
+            inline.SetStyle(MdItalicStyle, MdItalicRegex);
+            inline.SetStyle(MdUnderscoreItalicStyle, MdUnderscoreItalicRegex);
+            inline.SetStyle(MdStrikethroughStyle, MdStrikethroughRegex);
+        }
+
+        /// <summary>
+        /// Returns the position after the block indent of a line: at most 3 spaces, a deeper indent
+        /// is an indented code block and must not match any block construct
+        /// </summary>
+        private static int SkipIndent(string text, int i)
+        {
+            int skipped = 0;
+            while (skipped < 3 && i < text.Length && text[i] == ' ')
+            {
+                i++;
+                skipped++;
+            }
+            return i;
+        }
+
+        /// <summary>
+        /// Runs the fenced-code-block state machine over one line.
+        /// Returns true when the line belongs to a code block.
+        /// </summary>
+        private bool FenceStep(string text, FenceState fence, int iLine, List<(int, int, Language)> codeBlocks)
+        {
+            if (fence.Inside)
+            {
+                var close = MdFenceCloseRegex.Match(text);
+                if (!close.Success || close.Groups["fence"].Value[0] != fence.Char
+                                  || close.Groups["fence"].Value.Length < fence.Length)
+                    return true;
+
+                //an unterminated block above the highlighted range has an unknown fence, so only
+                //blocks that opened inside the range can be reported for nested highlighting
+                if (fence.Char != '\0')
+                    codeBlocks.Add((fence.StartLine, iLine, fence.Language));
+                fence.Inside = false;
+                fence.StartLine = -1;
+                return true;
+            }
+
+            var open = MdFenceOpenRegex.Match(text);
+            if (!open.Success)
+                return false;
+
+            fence.Char = open.Groups["fence"].Value[0];
+            fence.Length = open.Groups["fence"].Value.Length;
+            fence.StartLine = iLine;
+            fence.Inside = true;
+            fence.Language = LanguageDetector.StringToLanguage(open.Groups["lang"].Value);
+            return true;
+        }
+
+        /// <summary>
+        /// Restores the fenced-code-block state for a highlight pass that starts in the middle of the
+        /// document: the nearest fence line above decides, an opening one meaning we are inside a
+        /// block and a closing one meaning we are not.
+        /// </summary>
+        private void RewindFenceState(FastColoredTextBox tb, int fromLine, FenceState fence)
+        {
+            //ponytail: 2000 lines of lookback. A fence that opens further up than that is shown as
+            //markdown until the caret moves back into it; raise the limit if that ever bites
+            int limit = Math.Max(0, fromLine - 2000);
+            //"```" with nothing after it is both an opener and a closer, so the next fence line up
+            //is needed to tell which one it was
+            bool bareFenceSeen = false;
+
+            for (int i = fromLine - 1; i >= limit; i--)
+            {
+                Line line = tb[i];
+                if (line.Count == 0)
+                    continue;
+                //a fence line starts with at most 3 spaces and then a backtick or a tilde
+                int j = 0;
+                while (j < 3 && j < line.Count && line[j].C == ' ')
+                    j++;
+                if (j >= line.Count || (line[j].C != '`' && line[j].C != '~'))
+                    continue;
+
+                var open = MdFenceOpenRegex.Match(line.Text);
+                if (!open.Success)
+                    continue;
+
+                string info = open.Groups["lang"].Value;
+                if (info.Length == 0)
+                {
+                    bareFenceSeen = true;
+                    continue;
+                }
+
+                //a fence with an info string is always an opener, so the bare fence below it (if
+                //any) was its closer and we are outside a block
+                if (bareFenceSeen)
+                    return;
+
+                fence.Char = open.Groups["fence"].Value[0];
+                fence.Length = open.Groups["fence"].Value.Length;
+                fence.Language = LanguageDetector.StringToLanguage(info);
+                fence.Inside = true;
+                //the opener is above the range: only the part inside the range gets re-highlighted
+                fence.StartLine = fromLine;
+                return;
+            }
+
+            if (bareFenceSeen)
+            {
+                //a bare fence with nothing above it opened a block that was never closed
+                fence.Inside = true;
+                fence.StartLine = fromLine;
+            }
+        }
+
+        /// <summary>
+        /// Fenced-code-block state kept while walking the lines of a highlight pass
+        /// </summary>
+        private sealed class FenceState
+        {
+            /// <summary>Fence character of the opening fence, '\0' when it is above the range</summary>
+            public char Char;
+            public int Length;
+            public Language Language = Language.Custom;
+            public bool Inside;
+            public int StartLine = -1;
+        }
+
+        /// <summary>
+        /// Indents the line after a list item so nested content keeps its place.
+        /// </summary>
+        /// <remarks>
+        /// AutoIndentEventArgs can only add or remove leading whitespace, so this indents instead of
+        /// copying the "- " marker text, and a blockquote gets nothing (its continuation is not
+        /// indented). Copying the marker needs a key handler (tb.ProcessKey), not an auto-indent hook.
+        /// </remarks>
+        protected void MarkdownAutoIndentNeeded(object sender, AutoIndentEventArgs args)
+        {
+            if (args.Shift != 0 || args.LineText == null)
+                return;
+
+            int start = SkipIndent(args.LineText, 0);
+            var list = MdListRegex.Match(args.LineText, start);
+            if (!list.Success || list.Index != start)
+                return;
+
+            //a thematic break looks like a bullet but is not a list
+            var rule = MdHrRegex.Match(args.LineText, start);
+            if (rule.Success && rule.Index == start && rule.Index + rule.Length == args.LineText.Length)
+                return;
+
+            args.ShiftNextLines = args.TabLength;
+        }
+
 
         #region Styles
 
@@ -1705,12 +1979,7 @@ namespace FastColoredTextBoxNS.Text
         public Style TypesStyle { get; set; }
 
         /// <summary>
-        /// Markdown heading style
-        /// </summary>
-        public Style MdHeadingStyle { get; set; }
-
-        /// <summary>
-        /// Markdown H1 style (largest)
+        /// Markdown H1 style
         /// </summary>
         public Style MdH1Style { get; set; }
 
@@ -1725,14 +1994,24 @@ namespace FastColoredTextBoxNS.Text
         public Style MdH3Style { get; set; }
 
         /// <summary>
+        /// Markdown H4-H6 style
+        /// </summary>
+        public Style MdHeadingStyle { get; set; }
+
+        /// <summary>
         /// Markdown bold style
         /// </summary>
         public Style MdBoldStyle { get; set; }
 
         /// <summary>
-        /// Markdown italic style
+        /// Markdown italic style (*text*)
         /// </summary>
         public Style MdItalicStyle { get; set; }
+
+        /// <summary>
+        /// Markdown italic style (_text_)
+        /// </summary>
+        public Style MdUnderscoreItalicStyle { get; set; }
 
         /// <summary>
         /// Markdown strikethrough style
@@ -1742,10 +2021,10 @@ namespace FastColoredTextBoxNS.Text
         /// <summary>
         /// Markdown inline code style
         /// </summary>
-        public Style MdCodeInlineStyle { get; set; }
+        public Style MdInlineCodeStyle { get; set; }
 
         /// <summary>
-        /// Markdown fenced code block style
+        /// Markdown fenced code block style, a <see cref="MarkdownBlockStyle"/>
         /// </summary>
         public Style MdCodeBlockStyle { get; set; }
 
@@ -1755,12 +2034,17 @@ namespace FastColoredTextBoxNS.Text
         public Style MdLinkStyle { get; set; }
 
         /// <summary>
+        /// Markdown autolink style (&lt;https://host&gt;)
+        /// </summary>
+        public Style MdAutoLinkStyle { get; set; }
+
+        /// <summary>
         /// Markdown image style
         /// </summary>
         public Style MdImageStyle { get; set; }
 
         /// <summary>
-        /// Markdown blockquote style
+        /// Markdown blockquote style, a <see cref="MarkdownBlockStyle"/>
         /// </summary>
         public Style MdBlockquoteStyle { get; set; }
 
@@ -1770,9 +2054,14 @@ namespace FastColoredTextBoxNS.Text
         public Style MdHrStyle { get; set; }
 
         /// <summary>
-        /// Markdown list style
+        /// Markdown list bullet style
         /// </summary>
         public Style MdListStyle { get; set; }
+
+        /// <summary>
+        /// Markdown task list checkbox style, applied to the [x] of a finished item
+        /// </summary>
+        public Style MdTaskListDoneStyle { get; set; }
 
         #endregion Styles
     }
