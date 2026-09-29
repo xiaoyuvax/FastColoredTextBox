@@ -29,10 +29,14 @@
 		<Content Include="TabStrip.dll" />
 	</ItemGroup>
 	<PropertyGroup>
+		<!-- the mkdir is required: "copy" to a missing Binary creates a FILE named Binary in the
+		     repo root instead of the folder, and that file got committed by accident -->
+		<BinaryOutDir>$(MSBuildProjectDirectory)\..\Binary\</BinaryOutDir>
 		<PostBuildEvent>
-			copy "$(TargetDir)Tester.exe" "$(SolutionDir)Binary"
-			copy "$(TargetDir)*.dll" "$(SolutionDir)Binary"
-			copy "$(TargetDir)*.xml" "$(SolutionDir)Binary"
+			if not exist "$(BinaryOutDir)" mkdir "$(BinaryOutDir)"
+			copy /Y "$(TargetDir)Tester.exe" "$(BinaryOutDir)"
+			copy /Y "$(TargetDir)*.dll" "$(BinaryOutDir)"
+			copy /Y "$(TargetDir)*.xml" "$(BinaryOutDir)"
 		</PostBuildEvent>
 	</PropertyGroup>
 </Project>
