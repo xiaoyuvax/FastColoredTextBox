@@ -1,24 +1,66 @@
 # FastColoredTextBox - Agent Instructions
 
-## Build / Test / Pack
+## Project Structure
+- **FastColoredTextBox/** - Main library (C# WinForms UserControl)
+- **Tester/** - C# demo/test application
+- **TesterVB/** - VB.NET demo/test application
+- Solution: `FastColoredTextBox.sln`
 
+## Build Commands
 ```bash
-# Main library only (recommended)
+# Build main library only (recommended)
 dotnet build FastColoredTextBox/FastColoredTextBox.csproj -c Release
 
-# Full solution
+# Build full solution (test projects have errors on .NET 9+)
 dotnet build FastColoredTextBox.sln -c Release
-
-# Unit tests (xUnit, no UI required)
-dotnet test FastColoredTextBox.Tests
-
-# NuGet package
-dotnet pack FastColoredTextBox/FastColoredTextBox.csproj -c Release -o ./nupkg
 ```
 
-## Hard constraints / verified pitfalls
+## Key Project Settings (FastColoredTextBox.csproj)
+- **Target Frameworks**: net7.0-windows7.0;net8.0-windows7.0;net9.0-windows7.0;net10.0-windows7.0
+- **LangVersion**: 13
+- **AllowUnsafeBlocks**: true
+- **Signed Assembly**: Yes (FCTB_key.snk)
+- **Package ID**: Vax-FCTB (NuGet)
+- **Output**: Post-build copies to `Binary/` folder
 
-- Tester/TesterVB (the demo projects in the full solution) fail on .NET 9+ with `WFO1000`; build the library alone, or pass `-p:NoWarn=WFO1000` when the full solution is required.
-- `FastColoredTextBox.Tests` disables test parallelization: `TextSource.CurrentTB` is static.
-- Version lives only in `FastColoredTextBox/FastColoredTextBox.csproj`; keep `PackageReleaseNotes` updated for releases.
-- CI (`.github/workflows/ci.yml`) builds all TFMs and runs tests on push/PR (windows-latest).
+## Development Notes
+- Main control: `FastColoredTextBox.cs` (~314 KB)
+- Key components: AutocompleteMenu, DocumentMap, Ruler, Find/Replace/GoTo forms
+- CJK/WordWrap improvements in recent versions
+- Test projects target older frameworks (.NET 8/9) and have WFO1000 errors on .NET 9+ (suppress with `-p:NoWarn=WFO1000`)
+- Unit tests: `FastColoredTextBox.Tests/` (xUnit, no UI required) - run with `dotnet test FastColoredTextBox.Tests`
+
+## Recent Optimizations (v2.17.0.217)
+- `Text` setter no longer leaves a full-selection residue: it used `SelectAll → InsertText → GoHome()`, but `GoHome` only moves the selection **Start** to (0,0) while keeping **End** — every programmatic `Text = ...` (e.g. editor binding on node change) left the whole text selected, so the first click into the box "selected everything". Now the selection is collapsed to the caret (`Selection.End = Selection.Start`, then `DoCaretVisible`) inside the same BeginUpdate block, so hosts get the same caret-home behavior without the residue. Note: `GoHome`/`Selection.Start` assignment semantics (End preserved) are intentional elsewhere — only the Text setter was affected.
+
+## Recent Optimizations (v2.17.0.216)
+- Word wrap recalculated on client width change (`OnSizeChanged`); stale wrap cut-offs on resize could overlap lines
+- `FoldedBlockStyle` uses per-char widths (CJK): collapsed line text no longer fell outside the marker box
+- `TextStyle` classic (non-IME) path advanced x by `dx` (always 0), stacking a style run's chars at one x; now advances by `GetCharWidth` per char (fixed folded-line text)
+- `CharSizeCache.GetCharSize` made thread-safe (lock) — non-concurrent Dictionary could be corrupted by concurrent measurement
+- New `TextRenderingHint` property (default `SystemDefault`), applied in `OnPaint`; hosts can force `ClearTypeGridFit`/`AntiAliasGridFit`
+- New `AllowProportionalFont` property (default false): `SetFont` accepts non-monospace fonts when enabled (rendering/caret/wrap use per-char widths; tab/column-selection/hscroll stay approximate)
+
+## Recent Optimizations (v2.17.0.208)
+- Undo/Redo: LimitedStack now drops the OLDEST history entry when full (was: rejected newest); RemoveLines keeps one empty line via TextSource so Undo restores removed content; RemoveLinesCommand.Undo no longer indexes ts[-1] on single-line documents
+- Tests: FastColoredTextBox.Tests (xunit, 39 tests) covers Markdown regexes, Text/Length semantics, undo/redo chains, encoding detection, SaveToFile, Ruler dispose; test parallelization disabled (TextSource.CurrentTB is static)
+- CI: GitHub Actions workflow (.github/workflows/ci.yml) builds all TFMs and runs tests on push/PR (windows-latest)
+
+## Recent Optimizations (v2.17.0.207)
+- Native Markdown syntax highlighting (Language.Markdown): fenced code blocks, headings, inline code, links/images, blockquotes, lists, HR
+- Markdown regex fixes: fenced blocks now match across lines (Singleline), headings/inline code/blockquotes no longer span lines, images no longer double-styled as links
+- Highlighting performance: RegexCompiledOption now always Compiled, regex cache in TextSelectionRange.GetRanges, precompiled auto-indent regexes
+- Stability: GDI brush disposal for Markdown styles, Ruler Dispose (event unsubscribe), FileTextSource.SaveToFile failure-safe temp file handling, ReadExactly in EncodingDetector, UTF-7 BOM no longer returned
+- Assembly version fixed: GenerateAssemblyInfo re-enabled (DLL version was 0.0.0.0)
+- Repo hygiene: stale AnalysisReport.sarif / .NET Framework app.config removed
+
+## NuGet Packaging
+```bash
+dotnet pack FastColoredTextBox/FastColoredTextBox.csproj -c Release -o ./nupkg
+```
+Package config in csproj: icon.png, README.md, license.txt included.
+
+## Git/Release
+- Version in csproj: `<Version>2.17.0.216</Version>`
+- Update `PackageReleaseNotes` in csproj for releases
+- Main branch: `master`

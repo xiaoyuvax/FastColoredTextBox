@@ -1558,13 +1558,21 @@ namespace FastColoredTextBoxNS
                 SetAsCurrentTB();
 
                 Selection.ColumnSelectionMode = false;
-
                 Selection.BeginUpdate();
                 try
                 {
-                    Selection.SelectAll();
-                    InsertText(value);
-                    GoHome();
+                    Selection.BeginUpdate();
+                    try
+                    {
+                        Selection.SelectAll();
+                        InsertText(value);
+                        Selection.End = Selection.Start; // 收拢选区（GoHome 只移 Start，会留全选残留）
+                        DoCaretVisible();
+                    }
+                    finally
+                    {
+                        Selection.EndUpdate();
+                    }
                 }
                 finally
                 {
