@@ -10,6 +10,14 @@ It has such settings as foreground color, font style, background color which can
 [中文文档](README_CN.md)
 
 ## Update Logs   
+29-09-2026 (V2.18.0.220)
+- **TextBox migration**: the public properties a WinForms form needs but FCTB lacked are now implemented, so a `TextBox` can be replaced by a `FastColoredTextBox` without touching the call site: `MaxLength`, `CharacterCasing`, `CanUndo`, `Modified`, `HideSelection`, `PasswordChar`, `UseSystemPasswordChar`, `PlaceholderText`, `PreferredHeight`, `ScrollBars`, `ShortcutsEnabled`, `TextAlign`, `AutoCompleteMode`, `AutoCompleteSource`, `AutoCompleteCustomSource`
+- `Lines` now returns `string[]` and has a setter, matching `TextBoxBase.Lines`
+- Removed the `new bool RightToLeft` shadow that threw `NotImplementedException`; the inherited `Control.RightToLeft` is used again
+- `ForceUpperCase` is now a shorthand for `CharacterCasing = Upper`
+
+See [Migrating from TextBox](#migrating-from-textbox) below.
+
 07-09-2026 (V2.17.0.206)
 - Horizontal scroll text overlapping line number area fully fixed (CJK line re-evaluation, non-uniform char width support)
 
@@ -48,6 +56,38 @@ It has such settings as foreground color, font style, background color which can
 - Multitargeting net6.0-8.0
 - Upgrade to C#12 sematics
 
+
+## Migrating from TextBox
+
+Every public instance property of `System.Windows.Forms.TextBox` exists on
+`FastColoredTextBox` with the same type and the same public accessors, so dropping one
+control in place of the other compiles. The members that had to be added, and how far
+they go:
+
+| Member | Behaviour |
+| --- | --- |
+| `MaxLength` | Limits typing, like `TextBoxBase`. Assigning `Text`/`SelectedText` is not truncated (same as `TextBox`). Negative values throw. |
+| `CharacterCasing` | Applied to every char that enters the control, typed or inserted. `ForceUpperCase` is a shorthand for `CharacterCasing = Upper`. |
+| `CanUndo` | `true` while there is something to undo. |
+| `Modified` | Mirrors `IsChanged`; settable. |
+| `HideSelection` | Hides the selection while the control is unfocused (default `true`). |
+| `PasswordChar` / `UseSystemPasswordChar` | Masks the rendered glyphs. The text itself, the clipboard and the exporters are untouched. |
+| `PlaceholderText` | Drawn while the control is empty. |
+| `PreferredHeight` | Height of one text line. |
+| `ScrollBars` | `None`/`Both` map onto `ShowScrollBars`. `Vertical`/`Horizontal` behave as `Both`: the scrollbars are driven by `ScrollableControl.AutoScroll` and cannot be shown one axis at a time. |
+| `ShortcutsEnabled` | `false` suppresses the hotkeys of `HotkeysMapping`; typing is unaffected. |
+| `TextAlign` | Offsets a single-line control's text. Ignored while `Multiline` or `WordWrap` is set. |
+| `AutoCompleteMode` / `AutoCompleteSource` / `AutoCompleteCustomSource` | `Append` and `SuggestAppend` append the missing tail when a delimiter is typed (`SuggestAppend` leaves it selected). Single-line only, like `TextBox`. The inline ghost hint of `Suggest` is not drawn - use `AutocompleteMenu` for that. |
+
+Still not carried over (used far less often, add them if you need them):
+`DeselectAll`, `Paste(string)`, `GetCharFromPosition`, `GetCharIndexFromPosition`,
+`GetPositionFromCharIndex`, `GetLineFromCharIndex`, `GetFirstCharIndexFromLine`,
+`GetFirstCharIndexOfCurrentLine`, and the `*Changed` events for `ReadOnly`, `Multiline`,
+`AcceptsTab`, `BorderStyle`, `HideSelection`, `Modified` and `TextAlign`.
+
+Two signatures deliberately differ from `TextBox` because FCTB's own API depends on them:
+`TextChanged` carries `TextChangedEventArgs` rather than `EventArgs`, and right-to-left
+text is not rendered (`RightToLeft` is accepted but ignored).
 
 ## Known Issues
 - Wordwrapped lines may exceed controlwidth in some cases, but can be solved by setting PaddingRight property.

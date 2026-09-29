@@ -16,6 +16,10 @@
 		<AssemblyOriginatorKeyFile>FCTB_key.snk</AssemblyOriginatorKeyFile>
 		<RepositoryUrl>https://github.com/xiaoyuvax/FastColoredTextBox/</RepositoryUrl>
 		<PackageReleaseNotes>
+      - 2026/9/29 TextBox migration: the 15 public properties a WinForms form needs but FCTB lacked are implemented, so a TextBox can be swapped for a FastColoredTextBox without touching the call site: MaxLength, CharacterCasing, CanUndo, Modified, HideSelection, PasswordChar, UseSystemPasswordChar, PlaceholderText, PreferredHeight, ScrollBars, ShortcutsEnabled, TextAlign, AutoCompleteMode, AutoCompleteSource, AutoCompleteCustomSource
+      - 2026/9/29 Lines now returns string[] (was IList&lt;string&gt;) and has a setter, matching TextBoxBase.Lines
+      - 2026/9/29 Removed the `new bool RightToLeft` shadow that threw NotImplementedException: the inherited Control.RightToLeft (System.Windows.Forms.RightToLeft) is used again
+      - 2026/9/29 ForceUpperCase is now a shorthand for CharacterCasing = Upper (it was previously only applied on insert, and is now honoured for Lower/Normal too)
       - 2026/9/25 New AllowProportionalFont property (default false): SetFont no longer rejects non-monospace fonts when enabled (rendering/caret/wrap already use per-char widths; tab/column-selection/hscroll remain approximate)
       - 2026/9/25 New TextRenderingHint property (default SystemDefault) applied in OnPaint: lets hosts force ClearType/AntiAlias to remove small-size text aliasing (SystemDefault can degrade on the double-buffered surface)
       - 2026/9/25 CharSizeCache.GetCharSize is now thread-safe (lock): the non-concurrent Dictionary could be corrupted by concurrent font measurement (e.g. parallel tests)
@@ -53,9 +57,9 @@
 		<PackageIcon>icon.png</PackageIcon>
 		<Title>FastColoredTextBox</Title>
 		<PackageTags>winform;control;C#;VB;TextBox;Editor;Colored;CJK</PackageTags>
-		<AssemblyVersion>2.17.0.216</AssemblyVersion>
-		<FileVersion>2.17.0.216</FileVersion>
-		<Version>2.17.0.216</Version>
+		<AssemblyVersion>2.18.0.220</AssemblyVersion>
+		<FileVersion>2.18.0.220</FileVersion>
+		<Version>2.18.0.220</Version>
 		<PackageOutputPath>D:\PUB\Nuget Packages</PackageOutputPath>
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 	</PropertyGroup>
