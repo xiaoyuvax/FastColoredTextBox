@@ -3434,6 +3434,23 @@ namespace FastColoredTextBoxNS
                     break;
             }
 
+            // 极窄控件（布局瞬间 ClientSize 近零、分隔条拖到头）时 maxWidth 可为 0/负值：
+            // CalcCutOffsByMaxWidth 的回退补偿 i = cutOff - 1 会抵消 for 的 i++，当单个字符宽度
+            // ≥ maxWidth 时循环永不前进，CutOffPositions 无限增长直至 OOM（UI 线程随之长时间假死）。
+            // 宽度不足 4 个基准字符宽时跳过换行切分（清空切点即可，宽度恢复后会重算）。
+            if (maxWidth < CharWidth * 4)
+            {
+                for (int iLine = fromLine; iLine <= toLine; iLine++)
+                    if (lines.IsLineLoaded(iLine))
+                    {
+                        LineInfo li = LineInfos[iLine];
+                        li.CutOffPositions.Clear();
+                        LineInfos[iLine] = li;
+                    }
+                needRecalc = true;
+                return;
+            }
+
             for (int iLine = fromLine; iLine <= toLine; iLine++)
                 if (lines.IsLineLoaded(iLine))
                 {

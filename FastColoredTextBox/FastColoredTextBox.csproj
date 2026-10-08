@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
 		<TargetFrameworks>net10.0-windows7.0;net9.0-windows7.0;net8.0-windows7.0;net7.0-windows7.0</TargetFrameworks>
 		<OutputType>Library</OutputType>
@@ -16,6 +16,7 @@
 		<AssemblyOriginatorKeyFile>FCTB_key.snk</AssemblyOriginatorKeyFile>
 		<RepositoryUrl>https://github.com/xiaoyuvax/FastColoredTextBox/</RepositoryUrl>
 		<PackageReleaseNotes>
+      - 2026/10/8 Word-wrap recalc on a near-zero-width control no longer hangs the UI thread and OOMs ("Array dimensions exceeded supported range"): CalcCutOffsByMaxWidth's back-set compensation can out-run the loop increment when a single char is at least as wide as the available width (ClientSize collapses through layout passes / splitter drags), letting CutOffPositions grow unboundedly. RecalcWordWrap now skips cut-off calculation while maxWidth &lt; CharWidth * 4 and recalculates once the width recovers
       - 2026/9/29 Text setter no longer leaves a full-selection residue: it did SelectAll -> InsertText -> GoHome, but GoHome only moves the selection Start to (0,0) and keeps End, so every programmatic Text = ... left the whole text selected and the first click into the box "selected everything". The selection is now collapsed to the caret (Selection.End = Selection.Start, then DoCaretVisible) inside the same BeginUpdate block
       - 2026/9/29 Markdown highlighter rewritten around a fenced-code-block state machine: a fence is now a protected region, so "# heading", "- list", "**bold**" and "[link](x)" inside a code block are no longer highlighted as markdown
       - 2026/9/29 Fenced code blocks are highlighted with the language named in the info string (```csharp, ```js, ```sql, ... via the built-in modes), with a guard against a ```markdown fence recursing
@@ -69,9 +70,9 @@
 		<PackageIcon>icon.png</PackageIcon>
 		<Title>FastColoredTextBox</Title>
 		<PackageTags>winform;control;C#;VB;TextBox;Editor;Colored;CJK</PackageTags>
-		<AssemblyVersion>2.19.0.220</AssemblyVersion>
-		<FileVersion>2.19.0.220</FileVersion>
-		<Version>2.19.0.220</Version>
+		<AssemblyVersion>2.19.0.221</AssemblyVersion>
+		<FileVersion>2.19.0.221</FileVersion>
+		<Version>2.19.0.221</Version>
 		<PackageOutputPath>D:\PUB\Nuget Packages</PackageOutputPath>
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 	</PropertyGroup>
