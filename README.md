@@ -10,6 +10,11 @@ It has such settings as foreground color, font style, background color which can
 [中文文档](README_CN.md)
 
 ## Update Logs   
+18-10-2026 (V2.19.0.223)
+- **Word wrap**: the continuation indent is now deducted from the wrap width. With `WordWrapAutoIndent`, continuation lines are drawn shifted right by `LineInfo.wordWrapIndent` chars, but the wrap calculation still used the full available width, so every continuation line of an indented line stuck out past the right edge (visible as soon as a host indents a block). New overload `CalcCutOffsByMaxWidth(..., continuationIndentChars)`: the first segment keeps the full width, later ones reserve the indent
+- A word-wrap recalculation on a near-zero-width control no longer freezes the UI or exhausts memory (`Array dimensions exceeded supported range`): cut-off calculation is skipped while the available width is below `CharWidth * 4` and recalculated once it recovers
+- The Find/Replace dialogs can be themed by hosts through the new `FastColoredTextBox.FindReplaceFormShown` callback (fired after the dialog is shown)
+
 29-09-2026 (V2.18.0.220)
 - **TextBox migration**: the public properties a WinForms form needs but FCTB lacked are now implemented, so a `TextBox` can be replaced by a `FastColoredTextBox` without touching the call site: `MaxLength`, `CharacterCasing`, `CanUndo`, `Modified`, `HideSelection`, `PasswordChar`, `UseSystemPasswordChar`, `PlaceholderText`, `PreferredHeight`, `ScrollBars`, `ShortcutsEnabled`, `TextAlign`, `AutoCompleteMode`, `AutoCompleteSource`, `AutoCompleteCustomSource`
 - `Lines` now returns `string[]` and has a setter, matching `TextBoxBase.Lines`

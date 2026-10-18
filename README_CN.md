@@ -10,6 +10,13 @@ Fast Colored TextBox 是一个适用于 .NET 的文本编辑器组件，支持�
 [English](README.md)
 
 ## 更新日志
+2026-10-18 (V2.19.0.223)
+- **自动换行**：续行缩进现在会从换行宽度中扣除。开启 `WordWrapAutoIndent` 时，续行会向右偏移 `LineInfo.wordWrapIndent` 个字符渲染，但换行宽度仍按整行可用宽度计算，导致被缩进行的每个续行都会超出行右边界（只要宿主缩进一个文本块就能看到）。新增
+  `CalcCutOffsByMaxWidth(..., continuationIndentChars)` 重载：首段保持完整宽度，后续段预留该缩进
+- 控件宽度接近 0 时的自动换行重算不再冻结 UI / 耗尽内存（`Array dimensions exceeded supported range`）：
+  可用宽度小于 `CharWidth * 4` 时跳过切割点计算，宽度恢复后再重算
+- 查找/替换窗体可由宿主通过新增的 `FastColoredTextBox.FindReplaceFormShown` 回调进行主题化（窗体显示后触发）
+
 2026-09-29 (V2.18.0.220)
 - **从 TextBox 迁移**：`System.Windows.Forms.TextBox` 的所有 public 实例属性现在在
   `FastColoredTextBox` 上都存在，且类型与读写器一致，可直接替换控件、调用代码无需改动：

@@ -2553,6 +2553,12 @@ namespace FastColoredTextBoxNS
         public virtual void ShowFindDialog() => ShowFindDialog(null);
 
         /// <summary>
+        /// Invoked every time the Find/Replace dialog is shown (after it is visible),
+        /// so host applications can theme it. Argument is the dialog form.
+        /// </summary>
+        public static Action<Form> FindReplaceFormShown;
+
+        /// <summary>
         /// Shows find dialog
         /// </summary>
         public virtual void ShowFindDialog(string findText)
@@ -2566,6 +2572,7 @@ namespace FastColoredTextBoxNS
 
             FindForm.tbFind.SelectAll();
             FindForm.Show();
+            FindReplaceFormShown?.Invoke(FindForm);
             FindForm.Focus();
         }
 
@@ -2590,6 +2597,7 @@ namespace FastColoredTextBoxNS
 
             ReplaceForm.tbFind.SelectAll();
             ReplaceForm.Show();
+            FindReplaceFormShown?.Invoke(ReplaceForm);
             ReplaceForm.Focus();
         }
 
@@ -3468,7 +3476,7 @@ namespace FastColoredTextBoxNS
                         {
                             WordWrapNeeded?.Invoke(this, new WordWrapNeededEventArgs(li.CutOffPositions, ImeAllowed, line));
                         }
-                        else CalcCutOffsByMaxWidth(li.CutOffPositions, maxWidth, charWrap, line);
+                        else CalcCutOffsByMaxWidth(li.CutOffPositions, maxWidth, charWrap, line, li.wordWrapIndent);
 
                         LineInfos[iLine] = li;
                     }
@@ -3546,8 +3554,23 @@ namespace FastColoredTextBoxNS
         /// Calculates wordwrap cutoffs by max width, supports CJKL mix mode.
         /// </summary>
         public void CalcCutOffsByMaxWidth(List<int> cutOffPositions, int maxWidth, bool charWrap, Line line)
+            => CalcCutOffsByMaxWidth(cutOffPositions, maxWidth, charWrap, line, 0);
+
+        /// <summary>
+        /// Same as the 4-arg overload, but reserves <paramref name="continuationIndentChars"/> chars of width for
+        /// every *continuation* segment: wrapped continuation lines are rendered with a horizontal offset of
+        /// WordWrapAutoIndent/WordWrapIndent (LineInfo.wordWrapIndent) chars, and that offset was previously not
+        /// deducted from the wrap width - so each continuation line could stick out of the control's right edge by
+        /// exactly that indent. The first segment keeps the full width (the first line is not indented).
+        /// </summary>
+        public void CalcCutOffsByMaxWidth(List<int> cutOffPositions, int maxWidth, bool charWrap, Line line,
+            int continuationIndentChars)
         {
             int segmentWidth = 0, excessiveWidth;
+            int segmentMaxWidth = maxWidth;                                              // first segment: full width
+            int continuationMaxWidth = continuationIndentChars > 0
+                ? Math.Max(CharWidth, maxWidth - continuationIndentChars * CharWidth)    // continuation: indent deducted
+                : maxWidth;
             int cutOff = 0, prevCutOff = 0;
             int w, backSet;
             char c;
@@ -3566,7 +3589,7 @@ namespace FastColoredTextBoxNS
 
                 w = GetCharWidth(c);
                 segmentWidth += w;
-                excessiveWidth = segmentWidth - maxWidth;
+                excessiveWidth = segmentWidth - segmentMaxWidth;
                 if (excessiveWidth > 0) //超宽时确定是否采用推荐切割位置，否则继续累积宽度，要求i>0是为了避免极端情况下指定的换行宽度过小导致第一个字符就超宽
                 {
                     if (cutOff == 0 || (cutOffPositions.Count > 0 && cutOff == cutOffPositions[^1])) cutOff = i + 1;
@@ -3594,6 +3617,7 @@ namespace FastColoredTextBoxNS
                         }
                     }
                     segmentWidth = 0;
+                    segmentMaxWidth = continuationMaxWidth;   // next segment is a wrapped continuation line
                 }
                 prevCutOff = cutOff;
             }

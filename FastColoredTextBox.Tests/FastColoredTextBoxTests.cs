@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using FastColoredTextBoxNS;
@@ -226,6 +227,54 @@ namespace FastColoredTextBoxNS.Tests
 
                 Assert.True(narrow > wide,
                     $"word wrap not recalculated on width change (narrow={narrow}, wide={wide})");
+            });
+        }
+
+        /// <summary>
+        /// Regression: with WordWrapAutoIndent the continuation lines are rendered shifted right by
+        /// LineInfo.wordWrapIndent chars (line.StartSpacesCount + WordWrapIndent), but that indent was NOT
+        /// deducted from the wrap width - so every continuation line stuck out of the right edge by that indent
+        /// (visible as soon as a host indents a block, e.g. VeniceMan's prompt block with 4 leading spaces).
+        /// First segment keeps the full width; every later segment must fit available - indent.
+        /// </summary>
+        [Fact]
+        public void WordWrap_ContinuationIndent_IsDeductedFromWrapWidth()
+        {
+            StaRunner.Run(() =>
+            {
+                const int indentChars = 4;
+                using var tb = new FastColoredTextBox
+                {
+                    WordWrap = true,
+                    WordWrapAutoIndent = true,
+                    ShowScrollBars = false,
+                    ShowLineNumbers = false,
+                    Font = new Font("Consolas", 10f),
+                    Width = 220,
+                    Height = 200,
+                };
+                _ = tb.Handle;   // CharWidth needs a created handle
+                string words = string.Join(" ", Enumerable.Repeat("film-style photorealistic lighting detail", 12));
+                tb.Text = new string(' ', indentChars) + words;
+
+                var line = tb[0];
+                int avail = tb.ClientSize.Width - tb.LeftIndent - tb.Paddings.Left - tb.Paddings.Right;
+                int charWidth = tb.GetCharWidth('a');
+                var cutOffs = new List<int>();
+                tb.CalcCutOffsByMaxWidth(cutOffs, avail, false, line, indentChars);
+
+                Assert.NotEmpty(cutOffs);
+                int start = 0;
+                for (int seg = 0; seg <= cutOffs.Count; seg++)
+                {
+                    int end = seg < cutOffs.Count ? cutOffs[seg] : line.Count;
+                    int width = 0;
+                    for (int i = start; i < end; i++) width += tb.GetCharWidth(line[i].C);
+                    int limit = seg == 0 ? avail : avail - indentChars * charWidth;
+                    Assert.True(width <= limit,
+                        $"segment {seg} width {width} exceeds limit {limit} (wrap width must deduct the continuation indent)");
+                    start = end;
+                }
             });
         }
         #endregion

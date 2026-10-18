@@ -30,6 +30,12 @@ dotnet build FastColoredTextBox.sln -c Release
 - Test projects target older frameworks (.NET 8/9) and have WFO1000 errors on .NET 9+ (suppress with `-p:NoWarn=WFO1000`)
 - Unit tests: `FastColoredTextBox.Tests/` (xUnit, no UI required) - run with `dotnet test FastColoredTextBox.Tests`
 
+## Recent Optimizations (v2.19.0.223)
+- Word-wrap continuation indent deducted from wrap width: with `WordWrapAutoIndent`, continuation lines are rendered shifted right by `LineInfo.wordWrapIndent` (`StartSpacesCount + WordWrapIndent`) chars, but `CalcCutOffsByMaxWidth` only ever used the full available width — so every continuation line of an indented line stuck out past the right edge by that indent (visible whenever a host indents a block). New 5-arg overload `CalcCutOffsByMaxWidth(..., continuationIndentChars)` reserves the indent for all segments after the first; `RecalcWordWrap` passes `li.wordWrapIndent`. Regression test: `WordWrap_ContinuationIndent_IsDeductedFromWrapWidth`
+- Near-zero-width word-wrap no longer hangs/OOMs (`Array dimensions exceeded supported range`): `RecalcWordWrap` skips cut-off calculation while `maxWidth < CharWidth * 4` (back-set compensation could out-run the loop increment when one char ≥ available width)
+- New static hook `FastColoredTextBox.FindReplaceFormShown` (`Action<Form>`), fired after the Find/Replace dialog is shown, so hosts can theme it
+- Tests: FastColoredTextBox.Tests now 82 tests
+
 ## Recent Optimizations (v2.17.0.217)
 - `Text` setter no longer leaves a full-selection residue: it used `SelectAll → InsertText → GoHome()`, but `GoHome` only moves the selection **Start** to (0,0) while keeping **End** — every programmatic `Text = ...` (e.g. editor binding on node change) left the whole text selected, so the first click into the box "selected everything". Now the selection is collapsed to the caret (`Selection.End = Selection.Start`, then `DoCaretVisible`) inside the same BeginUpdate block, so hosts get the same caret-home behavior without the residue. Note: `GoHome`/`Selection.Start` assignment semantics (End preserved) are intentional elsewhere — only the Text setter was affected.
 
