@@ -16,6 +16,8 @@
 		<AssemblyOriginatorKeyFile>FCTB_key.snk</AssemblyOriginatorKeyFile>
 		<RepositoryUrl>https://github.com/xiaoyuvax/FastColoredTextBox/</RepositoryUrl>
 		<PackageReleaseNotes>
+      - 2026/10/23 Proportional-font drawing no longer clips the first glyph at the text-area left edge: TextStyle started every run at position.X - CharWidth/3, but with a wide proportional glyph that offset exceeded the host padding (visible in a log FCTB with 2px padding). Drawing now starts at the range origin; the right side is covered by the host's Paddings.Right. Test: ProportionalDraw_DoesNotShiftFirstGlyphLeftOfOrigin
+      - 2026/10/23 AllowProportionalFont now really switches the layout mode: in proportional mode GetCharWidth measures every glyph (previously ASCII still used the fixed CharWidth), and toggling the flag re-measures and re-wraps live; indentation, tab guides and click positioning use the measured space width. A monospace font keeps the same advance in either mode. Regression test: FastColoredTextBoxTests.AllowProportionalFont_UsesPerCharWidths_AndSwitchesLive
       - 2026/10/18 Word-wrap continuation indent is now deducted from the wrap width: with WordWrapAutoIndent, continuation lines are rendered shifted right by LineInfo.wordWrapIndent chars (line.StartSpacesCount + WordWrapIndent), but CalcCutOffsByMaxWidth only ever used the full available width — so every continuation line of an indented line stuck out of the control's right edge by that indent (visible whenever a host indents a block, e.g. a 4-space prompt block). New 5-arg overload reserves the indent for all segments after the first; RecalcWordWrap passes li.wordWrapIndent. Regression test: FastColoredTextBoxTests.WordWrap_ContinuationIndent_IsDeductedFromWrapWidth
       - 2026/10/18 New static hook FastColoredTextBox.FindReplaceFormShown (Action&lt;Form&gt;), fired after the Find/Replace dialog is shown, so hosts can theme it
       - 2026/10/8 Word-wrap recalc on a near-zero-width control no longer hangs the UI thread and OOMs ("Array dimensions exceeded supported range"): CalcCutOffsByMaxWidth's back-set compensation can out-run the loop increment when a single char is at least as wide as the available width (ClientSize collapses through layout passes / splitter drags), letting CutOffPositions grow unboundedly. RecalcWordWrap now skips cut-off calculation while maxWidth &lt; CharWidth * 4 and recalculates once the width recovers
@@ -72,9 +74,9 @@
 		<PackageIcon>icon.png</PackageIcon>
 		<Title>FastColoredTextBox</Title>
 		<PackageTags>winform;control;C#;VB;TextBox;Editor;Colored;CJK</PackageTags>
-		<AssemblyVersion>2.19.0.223</AssemblyVersion>
-		<FileVersion>2.19.0.223</FileVersion>
-		<Version>2.19.0.223</Version>
+		<AssemblyVersion>2.19.0.225</AssemblyVersion>
+		<FileVersion>2.19.0.225</FileVersion>
+		<Version>2.19.0.225</Version>
 		<PackageOutputPath>D:\PUB\Nuget Packages</PackageOutputPath>
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 	</PropertyGroup>

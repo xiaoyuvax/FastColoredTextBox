@@ -1710,13 +1710,35 @@ namespace FastColoredTextBoxNS
         [DefaultValue(System.Drawing.Text.TextRenderingHint.SystemDefault)]
         public System.Drawing.Text.TextRenderingHint TextRenderingHint { get; set; } = System.Drawing.Text.TextRenderingHint.SystemDefault;
 
+        private bool allowProportionalFont;
+
         /// <summary>
         /// 是否允许非等宽（比例）字体。默认 false（SetFont 会拒绝比例字体）。
-        /// 本 fork 的渲染/光标/换行已按字符实际宽度计算，只读场景可开启；但 Tab/列选择/
-        /// 横向滚动范围等仍按固定 CharWidth 估算，可编辑框请谨慎。
+        /// true 时渲染/光标/换行/缩进均按每个字符的实际宽度计算，可随时切换：
+        /// 代码等宽场景用 false（固定 CharWidth，快），聊天/正文等非代码场景用 true。
+        /// Tab 宽度、列选择、横向滚动范围仍按固定 CharWidth 估算。
+        /// 关闭前必须先把 Font 换回等宽字体，否则 SetFont 会拒绝并抛异常。
         /// </summary>
         [DefaultValue(false)]
-        public bool AllowProportionalFont { get; set; }
+        public bool AllowProportionalFont
+        {
+            get => allowProportionalFont;
+            set
+            {
+                if (allowProportionalFont == value) return;
+                allowProportionalFont = value;
+                if (baseFont == null) return;
+                try
+                {
+                    SetFont(baseFont);   // 重新量 CharWidth/CharCnWidth，并按新模式重排换行
+                }
+                catch
+                {
+                    allowProportionalFont = !value;
+                    throw;
+                }
+            }
+        }
 
         private Font baseFont;
 
@@ -1742,7 +1764,7 @@ namespace FastColoredTextBoxNS
             SizeF sizeDot = GetCharSize(BaseFont, '.');
             if (!AllowProportionalFont && sizeM != sizeDot)
                 // BaseFont = new Font("Courier New", BaseFont.SizeInPoints, FontStyle.Regular, GraphicsUnit.Point);
-                throw new Exception($"FastColoredTextBox-SetFont(): Font not supported ({newFont.Name}), FastColoredTextBox does not support Monospace fonts.");
+                throw new Exception($"FastColoredTextBox-SetFont(): Font not supported ({newFont.Name}), set AllowProportionalFont = true to use a proportional font.");
             //calc size
             SizeF size = GetCharSize(BaseFont, 'M');
             CharWidth = (int)Math.Round(size.Width * 1f /*0.85*/) - 1 /*0*/;
@@ -3569,7 +3591,7 @@ namespace FastColoredTextBoxNS
             int segmentWidth = 0, excessiveWidth;
             int segmentMaxWidth = maxWidth;                                              // first segment: full width
             int continuationMaxWidth = continuationIndentChars > 0
-                ? Math.Max(CharWidth, maxWidth - continuationIndentChars * CharWidth)    // continuation: indent deducted
+                ? Math.Max(CharWidth, maxWidth - GetSpacesWidth(continuationIndentChars)) // continuation: indent deducted
                 : maxWidth;
             int cutOff = 0, prevCutOff = 0;
             int w, backSet;
@@ -5274,7 +5296,7 @@ namespace FastColoredTextBoxNS
                 {
                     y = lineInfo.startY + iWordWrapLine * CharHeight - startY;
                     //indent
-                    var indent = iWordWrapLine == 0 ? 0 : lineInfo.wordWrapIndent * CharWidth;
+                    var indent = iWordWrapLine == 0 ? 0 : GetSpacesWidth(lineInfo.wordWrapIndent);
                     //draw chars
                     DrawLineChars(gr, firstChar, lastChar, iLine, iWordWrapLine, -startX + indent, y);
                 }
@@ -5452,10 +5474,10 @@ namespace FastColoredTextBoxNS
 
                     // draw text block indent guide
                     if (ShowTextBlockIndentationGuides)
-                        DrawBlockIndentGuide(e, startingIndent + Paddings.Left + line.StartSpacesCount * CharWidth - HorizontalScroll.Value - TabLength, y);
+                        DrawBlockIndentGuide(e, startingIndent + Paddings.Left + GetSpacesWidth(line.StartSpacesCount) - HorizontalScroll.Value - TabLength, y);
 
                     //indent
-                    var indent = iWordWrapLine == 0 ? 0 : lineInfo.wordWrapIndent * CharWidth;
+                    var indent = iWordWrapLine == 0 ? 0 : GetSpacesWidth(lineInfo.wordWrapIndent);
 
                     //draw chars
                     DrawLineChars(e.Graphics, firstChar, lastChar, iLine, iWordWrapLine, x + indent, y, LeftIndent);
@@ -5587,7 +5609,7 @@ namespace FastColoredTextBoxNS
 
         private void DrawBlockIndentGuide(PaintEventArgs e, int x, int y)
         {
-            x -= CharWidth * TabLength / 2;
+            x -= GetSpacesWidth(TabLength) / 2;
             e.Graphics.SmoothingMode = SmoothingMode.None;
             using var pen = new Pen(Color.FromArgb(200, ServiceLinesColor), 2) { DashStyle = DashStyle.Dot };
             int y2 = y + charHeight;
@@ -5595,7 +5617,7 @@ namespace FastColoredTextBoxNS
                 while (x >= LeftIndent + Paddings.Left)
                 {
                     e.Graphics.DrawLine(pen, x, y >= 0 ? y : 0, x, y2 < ClientSize.Height ? y2 : ClientSize.Height);
-                    x -= TabLength * CharWidth;
+                    x -= GetSpacesWidth(TabLength);
                 }
         }
 
@@ -5739,7 +5761,7 @@ namespace FastColoredTextBoxNS
                     else
                         continue;
 
-                    int x = LeftIndent + Paddings.Left + line.StartSpacesCount * CharWidth - HorizontalScroll.Value;
+                    int x = LeftIndent + Paddings.Left + GetSpacesWidth(line.StartSpacesCount) - HorizontalScroll.Value;
                     if (x >= LeftIndent + Paddings.Left)
                         e.Graphics.DrawLine(pen, x, y >= 0 ? y : 0, x,
                                             y2 < ClientSize.Height ? y2 : ClientSize.Height);
@@ -5754,7 +5776,7 @@ namespace FastColoredTextBoxNS
             int to = lineInfo.GetWordWrapStringFinishPosition(iWordWrapLine, line);
 
             //Re-evaluation of lastChar for each line (mixed char widths)
-            if (UseCJK != CJKMode.Disabled)
+            if (UseCJK != CJKMode.Disabled || AllowProportionalFont)
             {
                 lastChar = XToCharIndex(HorizontalScroll.Value + ClientSize.Width, line, from);
             }
@@ -5765,7 +5787,7 @@ namespace FastColoredTextBoxNS
             //the first rendered char must be positioned at startX + skippedWidth, otherwise the whole text slides
             //left over the line numbers when the horizontal scrollbar is scrolled to the right.
             int skippedWidth = 0;
-            if (UseCJK == CJKMode.Disabled)
+            if (UseCJK == CJKMode.Disabled && !AllowProportionalFont)
             {
                 skippedWidth = firstChar * CharWidth;
             }
@@ -5839,16 +5861,26 @@ namespace FastColoredTextBoxNS
         public CJKMode UseCJK { get; set; } = CJKMode.Hanzi;
 
         /// <summary>
-        /// Get char width according to CJK mode.
+        /// Get char width according to CJK mode (monospace) or to the glyph itself (proportional mode).
         /// </summary>
         /// <param name="c"></param>
         /// <returns></returns>
-        public int GetCharWidth(char c) => UseCJK switch
+        public int GetCharWidth(char c)
         {
-            CJKMode.CJK when EncodingDetector.IsCJK(c) => (int)GetCharSize(Font, c).Width,
-            CJKMode.Hanzi when EncodingDetector.IsCJK(c) => CharCnWidth,
-            _ => CharWidth
-        };
+            if (AllowProportionalFont)
+                // CharSizeCache adds 1px to TextRenderer's overhang padding; subtract it so the
+                // advance matches the GDI+ draw origin (and CharWidth = round(M) - 1).
+                return Math.Max(1, (int)Math.Round(GetCharSize(Font, c).Width) - 1);
+            return UseCJK switch
+            {
+                CJKMode.CJK when EncodingDetector.IsCJK(c) => (int)GetCharSize(Font, c).Width,
+                CJKMode.Hanzi when EncodingDetector.IsCJK(c) => CharCnWidth,
+                _ => CharWidth
+            };
+        }
+
+        /// <summary>Width of <paramref name="count"/> spaces (proportional spaces are not CharWidth wide).</summary>
+        private int GetSpacesWidth(int count) => count <= 0 ? 0 : count * GetCharWidth(' ');
 
         private void FlushRendering(Graphics gr, IEnumerable<Style> styles, Point pos, TextSelectionRange range)
         {
@@ -6353,9 +6385,10 @@ namespace FastColoredTextBoxNS
             var line = lines[iLine];
             int start = LineInfos[iLine].GetWordWrapStringStartPosition(iWordWrapLine);
             int finish = LineInfos[iLine].GetWordWrapStringFinishPosition(iWordWrapLine, line);
-            var x = XToCharIndex(point.X, line, start);
-            if (iWordWrapLine > 0)
-                x -= LineInfos[iLine].wordWrapIndent;
+            int clickX = iWordWrapLine > 0
+                ? point.X - GetSpacesWidth(LineInfos[iLine].wordWrapIndent)
+                : point.X;
+            var x = XToCharIndex(clickX, line, start);
 
             x = x < 0 ? start : start + x;
             if (x > finish) x = finish + 1;
@@ -6743,7 +6776,7 @@ namespace FastColoredTextBoxNS
             if (text.Length > 0) for (; i < place.iChar && i < text.Length; i++) x += GetCharWidth(text[i]);
 
             if (iWordWrapIndex > 0)
-                x += LineInfos[place.iLine].wordWrapIndent * CharWidth;
+                x += GetSpacesWidth(LineInfos[place.iLine].wordWrapIndent);
             //
             y -= VerticalScroll.Value;
             x = LeftIndent + Paddings.Left + x - HorizontalScroll.Value + TextAlignOffset;

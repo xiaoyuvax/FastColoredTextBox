@@ -115,7 +115,7 @@ namespace FastColoredTextBoxNS.Types
             Line line = range.tb[range.Start.iLine];
 
             float y = position.Y + range.tb.LineInterval / 2;
-            float x = position.X - range.tb.CharWidth / 3;
+            float x = position.X;
             var renderText = true;
 
             ForeBrush ??= new SolidBrush(range.tb.ForeColor);

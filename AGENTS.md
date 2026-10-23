@@ -30,6 +30,12 @@ dotnet build FastColoredTextBox.sln -c Release
 - Test projects target older frameworks (.NET 8/9) and have WFO1000 errors on .NET 9+ (suppress with `-p:NoWarn=WFO1000`)
 - Unit tests: `FastColoredTextBox.Tests/` (xUnit, no UI required) - run with `dotnet test FastColoredTextBox.Tests`
 
+## Recent Optimizations (v2.19.0.225)
+- Proportional-font horizontal clipping: `TextStyle.Draw` started glyphs at `position.X - CharWidth/3`; with a proportional font the offset is larger than the host's 2px padding, so the first letters were clipped at the text-area left border (VeniceMan log FCTB). Drawing now starts at the range origin; hosts keep `Paddings` for the inset. Right-side overhang is covered by the padding. Regression test: `ProportionalDraw_DoesNotShiftFirstGlyphLeftOfOrigin` (84 tests)
+
+## Recent Optimizations (v2.19.0.224)
+- `AllowProportionalFont` now switches the actual layout mode: `GetCharWidth` measures each glyph in proportional mode (previously ASCII chars still advanced by the fixed `CharWidth`), and toggling the flag calls `SetFont` to re-measure and re-wrap live. Indentation/tab guides and click→caret mapping use the measured space width (`GetSpacesWidth`), and the per-char clipping path also runs when `UseCJK` is disabled. Disabling the flag with a proportional font still throws and rolls the flag back; a monospace font keeps the exact same advance in both modes (`CharWidth = round(M) - 1`). Regression test: `AllowProportionalFont_UsesPerCharWidths_AndSwitchesLive` (83 tests)
+
 ## Recent Optimizations (v2.19.0.223)
 - Word-wrap continuation indent deducted from wrap width: with `WordWrapAutoIndent`, continuation lines are rendered shifted right by `LineInfo.wordWrapIndent` (`StartSpacesCount + WordWrapIndent`) chars, but `CalcCutOffsByMaxWidth` only ever used the full available width — so every continuation line of an indented line stuck out past the right edge by that indent (visible whenever a host indents a block). New 5-arg overload `CalcCutOffsByMaxWidth(..., continuationIndentChars)` reserves the indent for all segments after the first; `RecalcWordWrap` passes `li.wordWrapIndent`. Regression test: `WordWrap_ContinuationIndent_IsDeductedFromWrapWidth`
 - Near-zero-width word-wrap no longer hangs/OOMs (`Array dimensions exceeded supported range`): `RecalcWordWrap` skips cut-off calculation while `maxWidth < CharWidth * 4` (back-set compensation could out-run the loop increment when one char ≥ available width)

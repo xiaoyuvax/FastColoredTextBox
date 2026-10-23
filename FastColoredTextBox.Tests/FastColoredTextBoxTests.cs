@@ -278,5 +278,83 @@ namespace FastColoredTextBoxNS.Tests
             });
         }
         #endregion
+
+        #region Proportional (non-monospace) font mode
+
+        /// <summary>
+        /// AllowProportionalFont must lay text out with per-glyph widths: in a proportional font
+        /// 'i' is narrower than 'M', PlaceToPoint agrees with GetCharWidth, and switching the flag
+        /// back to monospace restores the fixed CharWidth advance. Regression for the flag only
+        /// relaxing the SetFont check while GetCharWidth still returned CharWidth for every ASCII char.
+        /// </summary>
+        [Fact]
+        public void AllowProportionalFont_UsesPerCharWidths_AndSwitchesLive()
+        {
+            StaRunner.Run(() =>
+            {
+                using var tb = new FastColoredTextBox { WordWrap = true, ShowLineNumbers = false };
+                _ = tb.Handle;
+
+                tb.AllowProportionalFont = true;
+                tb.Font = new Font("Arial", 14f);
+                int narrow = tb.GetCharWidth('i');
+                int wide = tb.GetCharWidth('M');
+                Assert.True(wide > narrow,
+                    $"proportional mode must measure each glyph (i={narrow}, M={wide})");
+
+                tb.Text = "iM";
+                _ = tb.Handle;
+                int x0 = tb.PlaceToPoint(new Place(0, 0)).X;
+                int x1 = tb.PlaceToPoint(new Place(1, 0)).X;
+                int x2 = tb.PlaceToPoint(new Place(2, 0)).X;
+                Assert.Equal(narrow, x1 - x0);
+                Assert.Equal(wide, x2 - x1);
+
+                // disabling the mode requires a monospace font; the failed switch must roll back
+                Assert.Throws<Exception>(() => tb.AllowProportionalFont = false);
+                Assert.True(tb.AllowProportionalFont);
+                Assert.Equal(wide, tb.GetCharWidth('M'));
+
+                tb.Font = new Font("Consolas", 12f);
+                // a monospace font keeps the exact same advance in either mode
+                tb.AllowProportionalFont = true;
+                Assert.Equal(tb.CharWidth, tb.GetCharWidth('i'));
+                Assert.Equal(tb.CharWidth, tb.GetCharWidth('M'));
+
+                tb.AllowProportionalFont = false;
+                Assert.Equal(tb.CharWidth, tb.GetCharWidth('i'));
+                Assert.Equal(tb.CharWidth, tb.GetCharWidth('M'));
+            });
+        }
+
+        /// <summary>
+        /// Regression: the classic draw path started glyphs at position.X - CharWidth/3. With a wide
+        /// proportional glyph that offset pushed the first letter outside the text area (clipped by the
+        /// left border). The origin must be the range position; only padding decides the inset.
+        /// </summary>
+        [Fact]
+        public void ProportionalDraw_DoesNotShiftFirstGlyphLeftOfOrigin()
+        {
+            StaRunner.Run(() =>
+            {
+                using var tb = new FastColoredTextBox { ShowLineNumbers = false, AllowProportionalFont = true };
+                tb.Font = new Font("Arial", 30f);
+                tb.Text = "A";
+
+                using var bmp = new Bitmap(160, 100);
+                using var gr = Graphics.FromImage(bmp);
+                gr.Clear(Color.White);
+                var style = new TextStyle(Brushes.Black, null, FontStyle.Regular);
+                style.Draw(gr, new Point(2, 2), new TextSelectionRange(tb, 0, 0, 1, 0));
+
+                int minX = int.MaxValue;
+                for (int y = 0; y < bmp.Height; y++)
+                    for (int x = 0; x < bmp.Width; x++)
+                        if (bmp.GetPixel(x, y).R < 128 && x < minX) minX = x;
+
+                Assert.True(minX >= 2, $"first glyph was drawn left of the text origin (minX={minX})");
+            });
+        }
+        #endregion
     }
 }
