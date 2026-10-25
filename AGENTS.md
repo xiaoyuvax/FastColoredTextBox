@@ -30,6 +30,10 @@ dotnet build FastColoredTextBox.sln -c Release
 - Test projects target older frameworks (.NET 8/9) and have WFO1000 errors on .NET 9+ (suppress with `-p:NoWarn=WFO1000`)
 - Unit tests: `FastColoredTextBox.Tests/` (xUnit, no UI required) - run with `dotnet test FastColoredTextBox.Tests`
 
+## Recent Optimizations (v2.19.0.226)
+- Styled latin characters no longer garbled in proportional mode: `TextStyle.Draw` used a non-typographic StringFormat whose GDI+ layout padding shifts the glyph right by ~1/6 em (~7px at 250% DPI) while the run advances by the GDI glyph width — in a narrow cell the glyph spilled into the next char's cell and was painted over by that char's background (inline code in ChatFlow showed corrupted letters). Drawing now uses a typographic StringFormat (no padding). Regression test: `ProportionalFontRenderingTests.StyledRun_IsLaidOutWhereNormalTextRenderingPutsIt`
+- Creating the control on a non-STA thread no longer throws "DragDrop registration failed" (`ThreadStateException` from `Control.SetAcceptDrops`): OLE needs an STA thread, so the drop target is skipped when the handle is created off the UI thread (and `AllowDrop` is ignored then) instead of crashing the host. Regression test: `HandleCreationTests.HandleCreatedOnMtaThread_DoesNotThrow` (86 tests)
+
 ## Recent Optimizations (v2.19.0.225)
 - Proportional-font horizontal clipping: `TextStyle.Draw` started glyphs at `position.X - CharWidth/3`; with a proportional font the offset is larger than the host's 2px padding, so the first letters were clipped at the text-area left border (VeniceMan log FCTB). Drawing now starts at the range origin; hosts keep `Paddings` for the inset. Right-side overhang is covered by the padding. Regression test: `ProportionalDraw_DoesNotShiftFirstGlyphLeftOfOrigin` (84 tests)
 

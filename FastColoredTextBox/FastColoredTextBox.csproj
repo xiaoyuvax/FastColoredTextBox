@@ -14,8 +14,9 @@
 	</PropertyGroup>
 	<PropertyGroup>
 		<AssemblyOriginatorKeyFile>FCTB_key.snk</AssemblyOriginatorKeyFile>
-		<RepositoryUrl>https://github.com/xiaoyuvax/FastColoredTextBox/</RepositoryUrl>
-		<PackageReleaseNotes>
+		<RepositoryUrl>https://github.com/xiaoyuvax/FastColoredTextBox/</RepositoryUrl>    <PackageReleaseNotes>
+      - 2026/10/25 Styled latin characters are no longer garbled in proportional mode: TextStyle drew every char with a non-typographic StringFormat, whose GDI+ layout padding shifts the glyph right by ~1/6 em (~7px at 250% DPI) while the run advances by the GDI glyph width (GetCharWidth). In a narrow cell the glyph spilled into the next char's cell and was painted over by that char's background — inline code in ChatFlow showed corrupted letters. Drawing now uses a typographic StringFormat (no padding), so glyphs land on the advance the layout reserves. Regression test: ProportionalFontRenderingTests.StyledRun_IsLaidOutWhereNormalTextRenderingPutsIt
+      - 2026/10/25 Creating the control on a non-STA thread no longer throws "DragDrop registration failed" (ThreadStateException from Control.SetAcceptDrops): OLE needs an STA thread, so the drop target is skipped when the handle is created off the UI thread (and AllowDrop = true is ignored then) instead of crashing the host. Regression test: HandleCreationTests.HandleCreatedOnMtaThread_DoesNotThrow
       - 2026/10/23 Proportional-font drawing no longer clips the first glyph at the text-area left edge: TextStyle started every run at position.X - CharWidth/3, but with a wide proportional glyph that offset exceeded the host padding (visible in a log FCTB with 2px padding). Drawing now starts at the range origin; the right side is covered by the host's Paddings.Right. Test: ProportionalDraw_DoesNotShiftFirstGlyphLeftOfOrigin
       - 2026/10/23 AllowProportionalFont now really switches the layout mode: in proportional mode GetCharWidth measures every glyph (previously ASCII still used the fixed CharWidth), and toggling the flag re-measures and re-wraps live; indentation, tab guides and click positioning use the measured space width. A monospace font keeps the same advance in either mode. Regression test: FastColoredTextBoxTests.AllowProportionalFont_UsesPerCharWidths_AndSwitchesLive
       - 2026/10/18 Word-wrap continuation indent is now deducted from the wrap width: with WordWrapAutoIndent, continuation lines are rendered shifted right by LineInfo.wordWrapIndent chars (line.StartSpacesCount + WordWrapIndent), but CalcCutOffsByMaxWidth only ever used the full available width — so every continuation line of an indented line stuck out of the control's right edge by that indent (visible whenever a host indents a block, e.g. a 4-space prompt block). New 5-arg overload reserves the indent for all segments after the first; RecalcWordWrap passes li.wordWrapIndent. Regression test: FastColoredTextBoxTests.WordWrap_ContinuationIndent_IsDeductedFromWrapWidth
@@ -76,7 +77,7 @@
 		<PackageTags>winform;control;C#;VB;TextBox;Editor;Colored;CJK</PackageTags>
 		<AssemblyVersion>2.19.0.225</AssemblyVersion>
 		<FileVersion>2.19.0.225</FileVersion>
-		<Version>2.19.0.225</Version>
+		<Version>2.19.0.226</Version>
 		<PackageOutputPath>D:\PUB\Nuget Packages</PackageOutputPath>
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 	</PropertyGroup>

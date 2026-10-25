@@ -99,7 +99,13 @@ namespace FastColoredTextBoxNS.Types
             ForeBrush = foreBrush;
             BackgroundBrush = backgroundBrush;
             FontStyle = fontStyle;
-            stringFormat = new StringFormat(StringFormatFlags.MeasureTrailingSpaces);
+            //Text is drawn char by char at the run origin accumulated with GetCharWidth (the GDI
+            //glyph advance), so the drawing format must not add its own layout padding: a
+            //non-typographic StringFormat shifts every glyph right by ~1/6 em, which at 250% DPI is
+            //several pixels inside a narrow proportional cell. The overflowing part was then
+            //painted over by the next char's background (inline code in ChatFlow looked garbled).
+            //GenericTypographic draws the glyph at the requested origin, matching the advance.
+            stringFormat = (StringFormat)StringFormat.GenericTypographic.Clone();
         }
 
         public override void Draw(Graphics gr, Point position, TextSelectionRange range)

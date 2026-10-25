@@ -325,7 +325,16 @@ namespace FastColoredTextBoxNS
         public override bool AllowDrop
         {
             get { return base.AllowDrop; }
-            set { base.AllowDrop = value; }
+            set
+            {
+                //Control.SetAcceptDrops registers an OLE drop target on an already created handle and
+                //throws ThreadStateException when the thread is MTA (see OnHandleCreated). Ignore the
+                //request then instead of crashing the host.
+                if (value && IsHandleCreated
+                    && System.Threading.Thread.CurrentThread.GetApartmentState() != System.Threading.ApartmentState.STA)
+                    return;
+                base.AllowDrop = value;
+            }
         }
 
         /// <summary>
@@ -2548,6 +2557,13 @@ namespace FastColoredTextBoxNS
 
         protected override void OnHandleCreated(EventArgs e)
         {
+            //Control.OnHandleCreated registers the OLE drop target when AllowDrop is set, which
+            //throws ThreadStateException ("current thread must be set to single thread apartment")
+            //on an MTA thread. A control whose handle is first created off the UI thread (a host
+            //refreshing the view from a background call) must not crash; drag-drop is simply
+            //unavailable for that instance.
+            if (System.Threading.Thread.CurrentThread.GetApartmentState() != System.Threading.ApartmentState.STA)
+                AllowDrop = false;
             base.OnHandleCreated(e);
             foreach (var timer in new List<Timer>(timersToReset.Keys))
                 ResetTimer(timer);
