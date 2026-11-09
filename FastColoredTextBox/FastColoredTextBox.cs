@@ -3610,6 +3610,7 @@ namespace FastColoredTextBoxNS
                 ? Math.Max(CharWidth, maxWidth - GetSpacesWidth(continuationIndentChars)) // continuation: indent deducted
                 : maxWidth;
             int cutOff = 0, prevCutOff = 0;
+            int lastCut = 0;                                                             // 已采用的最后一个切割位置（必须严格递增）
             int w, backSet;
             char c;
             bool wrapByChar;
@@ -3630,30 +3631,18 @@ namespace FastColoredTextBoxNS
                 excessiveWidth = segmentWidth - segmentMaxWidth;
                 if (excessiveWidth > 0) //超宽时确定是否采用推荐切割位置，否则继续累积宽度，要求i>0是为了避免极端情况下指定的换行宽度过小导致第一个字符就超宽
                 {
-                    if (cutOff == 0 || (cutOffPositions.Count > 0 && cutOff == cutOffPositions[^1])) cutOff = i + 1;
-                    else
+                    // 切割位置必须严格前进：超长单词（整行没有可切字符）时原逻辑会在同一位置反复切割，
+                    // cutOffPositions 无限增长直到耗尽内存、UI 线程卡死。
+                    if (wrapByChar)
                     {
-                        if (wrapByChar)
-                        {
-                            backSet = excessiveWidth >= w ? 2 : excessiveWidth >= 0 ? 1 : 0;
-                            cutOff -= backSet;
-                            cutOffPositions.Add(cutOff);
-                            i = cutOff - 1;  //回退1字符，因为cutOff为选定的字符之后，且for会先+1,所以-1，以便下次循环从cutOff开始
-                        }
-                        else
-                        {
-                            if (cutOffPositions.Count > 0 && prevCutOff == cutOffPositions[^1])
-                            {
-                                cutOffPositions.Add(cutOff);  //特殊情况：如果prevCutOff位置刚好已被采用，则采用当前推荐切割位置，虽然已超宽。
-                                i = cutOff - 1;
-                            }
-                            else
-                            {
-                                cutOffPositions.Add(prevCutOff); //如果上一个推荐切割位置未被采用，则采用上一个推荐切割位置
-                                i = prevCutOff - 1;
-                            }
-                        }
+                        backSet = excessiveWidth >= w ? 2 : excessiveWidth >= 0 ? 1 : 0;
+                        cutOff -= backSet;
                     }
+                    else if (prevCutOff > lastCut) cutOff = prevCutOff; //优先采用上一个推荐切割位置
+                    if (cutOff <= lastCut) cutOff = i + 1;              //没有更靠后的推荐位置：硬切
+                    cutOffPositions.Add(cutOff);
+                    lastCut = cutOff;
+                    i = cutOff - 1;  //回退1字符，因为cutOff为选定的字符之后，且for会先+1,所以-1，以便下次循环从cutOff开始
                     segmentWidth = 0;
                     segmentMaxWidth = continuationMaxWidth;   // next segment is a wrapped continuation line
                 }
