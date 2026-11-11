@@ -83,6 +83,9 @@ namespace FastColoredTextBoxNS
         private TextSelectionRange leftBracketPosition3;
         private int leftPadding;
         private int lineInterval;
+        private Graphics metricsDc;   // 本控件所在显示器的测量 DC（惰性创建，DPI 变化时丢弃）
+        private IntPtr metricsHandle; // metricsDc 对应的窗口句柄，句柄重建后要跟着换
+        private int metricsDpi;       // metricsDc 的 DPI：缓存键用它，保证「按什么 DPI 量的就存在什么键下」
         private Color lineNumberColor;
         private uint lineNumberStartValue;
         private LineNumberFormatting lineNumberFormatting;
@@ -1768,20 +1771,53 @@ namespace FastColoredTextBoxNS
         private void SetFont(Font newFont)
         {
             BaseFont = newFont;
+            RefreshMetrics();
+        }
+
+        /// <summary>
+        /// 重算 CharWidth / CharCnWidth / CharHeight。字体或所在显示器的 DPI 变了都要走这里：
+        /// 这三个是设备像素值，同一点数在不同 DPI 的屏幕上不一样大。
+        /// </summary>
+        private void RefreshMetrics()
+        {
             //check monospace font
-            SizeF sizeM = GetCharSize(BaseFont, 'M');
-            SizeF sizeDot = GetCharSize(BaseFont, '.');
+            SizeF sizeM = MeasureChar('M');
+            SizeF sizeDot = MeasureChar('.');
             if (!AllowProportionalFont && sizeM != sizeDot)
-                // BaseFont = new Font("Courier New", BaseFont.SizeInPoints, FontStyle.Regular, GraphicsUnit.Point);
-                throw new Exception($"FastColoredTextBox-SetFont(): Font not supported ({newFont.Name}), set AllowProportionalFont = true to use a proportional font.");
+                throw new Exception($"FastColoredTextBox-SetFont(): Font not supported ({BaseFont.Name}), set AllowProportionalFont = true to use a proportional font.");
             //calc size
-            SizeF size = GetCharSize(BaseFont, 'M');
+            SizeF size = sizeM;
             CharWidth = (int)Math.Round(size.Width * 1f /*0.85*/) - 1 /*0*/;
-            CharCnWidth = (int)Math.Round(GetCharSize(BaseFont, '中').Width * 1f) - 1;
+            CharCnWidth = (int)Math.Round(MeasureChar('国').Width * 1f) - 1;
             CharHeight = lineInterval + (int)Math.Round(size.Height * 1f /*0.9*/) - 1 /*0*/;
             //
             NeedRecalc(false, wordWrap);
             Invalidate();
+        }
+
+        /// <summary>测量用的设备上下文：跟随本控件所在显示器的 DPI；句柄未建时退回屏幕 DC。</summary>
+        private IDeviceContext MetricsContext
+        {
+            get
+            {
+                // 句柄被重建（属性变更、DPI 变化）后旧 DC 失效，必须跟着换
+                IntPtr h = IsHandleCreated ? Handle : IntPtr.Zero;
+                if (metricsDc != null && metricsHandle != h) ResetMetricsContext();
+                if (metricsDc == null)
+                {
+                    metricsDc = Graphics.FromHwnd(h);
+                    metricsHandle = h;
+                    metricsDpi = (int)Math.Round(metricsDc.DpiX);
+                }
+                return metricsDc;
+            }
+        }
+
+        /// <summary>取当前 DC 所在 DPI 下的字符度量（缓存按 DPI 隔离，多实例共享）。</summary>
+        internal SizeF MeasureChar(char c)
+        {
+            var dc = MetricsContext;
+            return CharSizeCache.GetCharSize(dc, BaseFont, c, metricsDpi);
         }
 
         public new Size AutoScrollMinSize
@@ -2569,7 +2605,30 @@ namespace FastColoredTextBoxNS
                 ResetTimer(timer);
             timersToReset.Clear();
 
+            // 句柄建立前拿不到本屏 DPI（DeviceDpi 还是默认值、DC 退回主屏）：建好后按真实 DPI 重算一次
+            ResetMetricsContext();
+            RefreshMetrics();
+
             OnScrollbarsUpdated();
+        }
+
+        /// <summary>
+        /// 窗口被拖到另一块 DPI 不同的显示器：缓存按 DPI 隔离，这里丢掉旧 DC 并按新 DPI
+        /// 重算 CharWidth / CharCnWidth / CharHeight，换行与光标位置随之重排。
+        /// </summary>
+        protected override void OnDpiChangedAfterParent(EventArgs e)
+        {
+            // 先丢弃旧 DC：base 里可能因自动缩放重设 Font 并触发测量，用旧 DC 会把错值记到新 DPI 键下
+            ResetMetricsContext();
+            base.OnDpiChangedAfterParent(e);
+            RefreshMetrics();
+        }
+
+        private void ResetMetricsContext()
+        {
+            metricsDc?.Dispose();
+            metricsDc = null;
+            metricsHandle = IntPtr.Zero;
         }
 
         /// <summary>
@@ -5866,19 +5925,25 @@ namespace FastColoredTextBoxNS
         public CJKMode UseCJK { get; set; } = CJKMode.Hanzi;
 
         /// <summary>
-        /// Get char width according to CJK mode (monospace) or to the glyph itself (proportional mode).
+        /// 取字符步进宽度：比例字体逐字实测，但 Hanzi 模式下所有 CJK 统一用 <see cref="CharCnWidth"/>
+        /// （全角 1em）；等宽模式按 <see cref="UseCJK"/> 决定用固定宽还是逐字量。
         /// </summary>
         /// <param name="c"></param>
         /// <returns></returns>
         public int GetCharWidth(char c)
         {
             if (AllowProportionalFont)
+            {
+                // Hanzi 模式本身只承诺支持汉字：CJK 直接取全角宽，省掉每字符一次缓存查找
+                // （实测换行热路径 495ns → 17ns/字符）。CJK 模式仍逐字量，韩文/符号保持准确。
+                if (UseCJK == CJKMode.Hanzi && EncodingDetector.IsCJK(c)) return CharCnWidth;
                 // CharSizeCache adds 1px to TextRenderer's overhang padding; subtract it so the
                 // advance matches the GDI+ draw origin (and CharWidth = round(M) - 1).
-                return Math.Max(1, (int)Math.Round(GetCharSize(Font, c).Width) - 1);
+                return Math.Max(1, (int)Math.Round(MeasureChar(c).Width) - 1);
+            }
             return UseCJK switch
             {
-                CJKMode.CJK when EncodingDetector.IsCJK(c) => (int)GetCharSize(Font, c).Width,
+                CJKMode.CJK when EncodingDetector.IsCJK(c) => (int)MeasureChar(c).Width,
                 CJKMode.Hanzi when EncodingDetector.IsCJK(c) => CharCnWidth,
                 _ => CharWidth
             };
@@ -7895,6 +7960,7 @@ window.status = ""#print"";
                 TextSource?.Dispose();
 
                 ToolTip?.Dispose();
+                ResetMetricsContext();   // 测量 DC 是本控件的 GDI 资源，别漏
             }
         }
 
