@@ -7233,9 +7233,23 @@ namespace FastColoredTextBoxNS
         private VisualMarker FindVisualMarkerForPoint(Point p)
         {
             foreach (VisualMarker m in visibleMarkers)
-                if (m.rectangle.Contains(p))
+                if (m.rectangle.Contains(p) || FoldingMarkerHitArea(m).Contains(p))
                     return m;
             return null;
+        }
+
+        /// <summary>折叠标记的鼠标感知区域：绘制矩形只有 DefaultMarkerSize 见方（默认 8px），
+        /// 按它命中几乎点不中。纵向放宽到整行高，横向左让一个标记宽、右让半个；绘制尺寸不变。</summary>
+        private Rectangle FoldingMarkerHitArea(VisualMarker marker)
+        {
+            if (marker is not (CollapseFoldingMarker or ExpandFoldingMarker))
+                return Rectangle.Empty;
+
+            var r = marker.rectangle;
+            int padY = Math.Max(0, (CharHeight - r.Height) / 2);
+            int padLeft = Math.Max(2, r.Width);
+            int padRight = Math.Max(2, r.Width / 2);
+            return new Rectangle(r.Left - padLeft, r.Top - padY, r.Width + padLeft + padRight, r.Height + padY * 2);
         }
 
         /// <summary>

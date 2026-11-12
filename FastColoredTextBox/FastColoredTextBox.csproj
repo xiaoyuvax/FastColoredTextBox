@@ -15,6 +15,7 @@
 	<PropertyGroup>
 		<AssemblyOriginatorKeyFile>FCTB_key.snk</AssemblyOriginatorKeyFile>
 		<RepositoryUrl>https://github.com/xiaoyuvax/FastColoredTextBox/</RepositoryUrl>    <PackageReleaseNotes>
+      - 2026/11/12 Folding marker hit area is now larger than the 8px glyph: FindVisualMarkerForPoint used the draw rectangle (DefaultMarkerSize square), so a collapse/expand +/- only reacted when clicked dead-on. Hover/click now also accept the full line height vertically and one marker width to the left / half to the right; the drawn marker size is unchanged. Regression test: FoldingMarkerHitTests.ClickJustOutsideMarker_TogglesFolding
       - 2026/11/11 Proportional fonts now size CJK with the fixed full-width advance in Hanzi mode: GetCharWidth returned a per-glyph measurement for every char, which made word wrap pay a cache lookup (~495ns) per CJK char. Hanzi mode only promises Han support, so CJK now returns CharCnWidth (64k chars wrap: 27.6ms -> 1.1ms). CJKMode.CJK still measures every glyph, so Hangul and wide symbols keep their real advance. Regression test: CharMetricsTests.Proportional_cjk_width_follows_mode
       - 2026/11/11 Character metrics are now per DPI: CharSizeCache keys became a record struct that includes the DPI of the measuring device context (the string key carried no DPI), so the same font measured in another DPI context (per-monitor scale change, DPI-unaware host, gdiScaling manifest) can no longer reuse a value measured in different units; CharWidth/CharCnWidth/CharHeight are recomputed when the font or the window DPI changes, and the measuring DC follows a recreated handle. The structured key also removes the per-char string allocation (cached hit: 364ns -> 207ns). Regression test: CharMetricsTests
       - 2026/11/9 Word wrap no longer hangs the UI thread and OOMs on a long unbreakable run: when a segment exceeded the wrap width but no recommended cut position was farther ahead than the last adopted one, CalcCutOffsByMaxWidth re-adopted the same offset forever, so CutOffPositions grew without bound (e.g. a long word in a control whose continuation width is under one glyph). Cut positions now always advance; when no later word boundary exists the run is hard-cut at the current char. Regression test: WordWrapProgressTests.Wrap_of_glyphs_wider_than_the_continuation_width_terminates
@@ -78,9 +79,9 @@
 		<PackageIcon>icon.png</PackageIcon>
 		<Title>FastColoredTextBox</Title>
 		<PackageTags>winform;control;C#;VB;TextBox;Editor;Colored;CJK</PackageTags>
-		<AssemblyVersion>2.19.0.228</AssemblyVersion>
-		<FileVersion>2.19.0.228</FileVersion>
-		<Version>2.19.0.228</Version>
+		<AssemblyVersion>2.19.0.229</AssemblyVersion>
+		<FileVersion>2.19.0.229</FileVersion>
+		<Version>2.19.0.229</Version>
 		<PackageOutputPath>D:\PUB\Nuget Packages</PackageOutputPath>
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 	</PropertyGroup>

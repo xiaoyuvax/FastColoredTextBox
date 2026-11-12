@@ -30,6 +30,9 @@ dotnet build FastColoredTextBox.sln -c Release
 - Test projects target older frameworks (.NET 8/9) and have WFO1000 errors on .NET 9+ (suppress with `-p:NoWarn=WFO1000`)
 - Unit tests: `FastColoredTextBox.Tests/` (xUnit, no UI required) - run with `dotnet test FastColoredTextBox.Tests`
 
+## Recent Optimizations (v2.19.0.229)
+- Folding-marker hit area widened (draw size unchanged): `FindVisualMarkerForPoint` only tested the `DefaultMarkerSize` square (8px), so collapse/expand `+`/`-` reacted only on a dead-on click. `FoldingMarkerHitArea` accepts the full line height vertically and one marker width left / half right; hover cursor and click both use it. Regression test: `FoldingMarkerHitTests.ClickJustOutsideMarker_TogglesFolding` (91 tests)
+
 ## Recent Optimizations (v2.19.0.228)
 - Proportional fonts size CJK with the fixed full-width advance in `Hanzi` mode (`GetCharWidth` returned a per-glyph measurement for everything, cost ~495ns per CJK char in wrap): 64k Han chars wrap in 1.1ms instead of 27.6ms. `CJKMode.CJK` still measures each glyph, so Hangul and wide symbols keep their real advance. Test: `CharMetricsTests.Proportional_cjk_width_follows_mode`
 - Character metrics are per DPI: `CharSizeCache` keys are a `record struct` including the measuring DC's DPI (the string key had none), so a value measured in another DPI context (per-monitor scale change, DPI-unaware host, `gdiScaling` manifest) is never reused; `CharWidth/CharCnWidth/CharHeight` are recomputed on font or window-DPI change and the measuring DC follows a recreated handle. Structured key also drops the per-char string allocation (cached hit 364ns -> 207ns). `CharCnWidth` probe char is now `国`. Test: `CharMetricsTests` (90 tests)
