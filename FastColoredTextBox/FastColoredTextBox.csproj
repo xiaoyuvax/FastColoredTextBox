@@ -15,6 +15,7 @@
 	<PropertyGroup>
 		<AssemblyOriginatorKeyFile>FCTB_key.snk</AssemblyOriginatorKeyFile>
 		<RepositoryUrl>https://github.com/xiaoyuvax/FastColoredTextBox/</RepositoryUrl>    <PackageReleaseNotes>
+      - 2026/11/17 Markdown marker hiding is now complete. An inline construct inside a heading (## **bold**, ## `code`, ## [text](url)) keeps its markers hidden too: the heading branch used to return before the inline pass, so the bold/code/link delimiters of a heading stayed on screen. HTML export, RTF export and therefore Print no longer emit hidden markers either (they wrote every char of the line, so a printed or exported markdown document still carried its #'s and **'s). Verified by rendering: drawing a line with its hidden markers produces exactly the bitmap of the visible text (new test MarkersAreNotPainted). Tests: MarkdownHighlightTests (116 total)
       - 2026/11/17 Markdown tables can be aligned: new SyntaxHighlighter.AlignMarkdownTables(range) rewrites every table whose header lies in the range so its columns line up, and returns how many tables it formatted. Alignment happens in the text (the control renders on a character grid), so cells are padded with spaces: a column is as wide as its widest cell (at least 3, a CJK char counting as two columns), contents follow the :-- / :--: / --: markers of the delimiter row, a missing leading or trailing pipe is added, escaped (\|) and code-span pipes stay inside their cell, and a row with more cells widens the table instead of losing text. The whole table is replaced in one edit (one undo restores it), the selection is kept, and formatting twice changes nothing. Tests: MarkdownTableAlignTests (112 total)
       - 2026/11/17 Markdown source markers are hidden once the highlighter renders the formatting: a heading shows its title without the leading #'s and the optional closing ones, **bold** / *italic* / _emphasis_ / ~~strike~~ / `code` show the styled text without their delimiters, and a link or image keeps only its label ([text](url), ![alt](url) and angle autolinks lose their syntax). A hidden char is neither painted nor given any width, so the caret, selection, click-to-caret mapping and word wrap see "**bold**" as the four characters it renders as. List bullets, task checkboxes, thematic breaks and code fences stay visible (they are the rendered element), and markdown inside a code span or a fenced block is untouched. Switching away from Language.Markdown reveals the markers again. New Style.Hidden, FastColoredTextBox.IsCharHidden and MarkdownMarkerStyle. Tests: MarkdownHighlightTests, 10 new cases (101 total)
       - 2026/11/12 Folding marker hit area is now larger than the 8px glyph: FindVisualMarkerForPoint used the draw rectangle (DefaultMarkerSize square), so a collapse/expand +/- only reacted when clicked dead-on. Hover/click now also accept the full line height vertically and one marker width to the left / half to the right; the drawn marker size is unchanged. Regression test: FoldingMarkerHitTests.ClickJustOutsideMarker_TogglesFolding
@@ -81,9 +82,9 @@
 		<PackageIcon>icon.png</PackageIcon>
 		<Title>FastColoredTextBox</Title>
 		<PackageTags>winform;control;C#;VB;TextBox;Editor;Colored;CJK</PackageTags>
-		<AssemblyVersion>2.19.0.231</AssemblyVersion>
-		<FileVersion>2.19.0.231</FileVersion>
-		<Version>2.19.0.231</Version>
+		<AssemblyVersion>2.19.0.232</AssemblyVersion>
+		<FileVersion>2.19.0.232</FileVersion>
+		<Version>2.19.0.232</Version>
 		<PackageOutputPath>D:\PUB\Nuget Packages</PackageOutputPath>
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 	</PropertyGroup>

@@ -1705,32 +1705,37 @@ namespace FastColoredTextBoxNS.Text
                     Line(start, end).SetStyle(style);
                 Hide(content, start);
                 Hide(end, headingEnd);
-                return;
+                //an inline construct inside the heading still gets its markers hidden, so
+                //"## **title**" reads as the title; the inline pass below stays inside the heading
+                content = start;
+                lineTo = Math.Min(lineTo, end);
             }
-
-            //thematic break: checked before the list so that "- - -" is a rule, not a bullet
-            var rule = MdHrRegex.Match(text, content);
-            if (rule.Success && rule.Index == content && rule.Index + rule.Length == text.Length)
+            else
             {
-                Line(content, text.Length).SetStyle(MdHrStyle);
-                return;
-            }
-
-            //list: the bullet gets the list colour, the task checkbox its own
-            var list = MdListRegex.Match(text, content);
-            if (list.Success && list.Index == content)
-            {
-                var bullet = list.Groups["bullet"];
-                Line(bullet.Index, bullet.Index + bullet.Length).SetStyle(MdListStyle);
-                content = SkipIndent(text, bullet.Index + bullet.Length);
-                var task = list.Groups["task"];
-                if (task.Success)
+                //thematic break: checked before the list so that "- - -" is a rule, not a bullet
+                var rule = MdHrRegex.Match(text, content);
+                if (rule.Success && rule.Index == content && rule.Index + rule.Length == text.Length)
                 {
-                    int end = task.Index + task.Value.TrimEnd(' ', '\t').Length;
-                    //only a ticked box is worth pointing at, an open one keeps the plain text
-                    if (task.Value[1] != ' ')
-                        Line(task.Index, end).SetStyle(MdTaskListDoneStyle);
-                    content = SkipIndent(text, end);
+                    Line(content, text.Length).SetStyle(MdHrStyle);
+                    return;
+                }
+
+                //list: the bullet gets the list colour, the task checkbox its own
+                var list = MdListRegex.Match(text, content);
+                if (list.Success && list.Index == content)
+                {
+                    var bullet = list.Groups["bullet"];
+                    Line(bullet.Index, bullet.Index + bullet.Length).SetStyle(MdListStyle);
+                    content = SkipIndent(text, bullet.Index + bullet.Length);
+                    var task = list.Groups["task"];
+                    if (task.Success)
+                    {
+                        int end = task.Index + task.Value.TrimEnd(' ', '\t').Length;
+                        //only a ticked box is worth pointing at, an open one keeps the plain text
+                        if (task.Value[1] != ' ')
+                            Line(task.Index, end).SetStyle(MdTaskListDoneStyle);
+                        content = SkipIndent(text, end);
+                    }
                 }
             }
             if (content >= lineTo)

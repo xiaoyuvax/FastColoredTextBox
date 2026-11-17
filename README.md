@@ -10,6 +10,11 @@ It has such settings as foreground color, font style, background color which can
 [中文文档](README_CN.md)
 
 ## Update Logs   
+17-11-2026 (V2.19.0.232)
+- **Markdown markers, completed**: an inline construct inside a heading (`## **bold**`, `` ## `code` ``, `## [text](url)`) now hides its markers too. The heading branch returned before the inline pass, so a formatted heading still showed its `**`/backticks/`[]()`; the markers of the heading itself were already hidden
+- **Exports**: `ExportToHTML`, `ExportToRTF` and therefore `Print` skip hidden markers instead of emitting every char of the line, so an exported or printed markdown document no longer carries the `#`'s and `**`'s that the control does not draw
+- Rendering is covered by a bitmap regression test: drawing a line with hidden markers produces exactly the bitmap of its visible text
+
 17-11-2026 (V2.19.0.231)
 - **Markdown tables**: `SyntaxHighlighter.AlignMarkdownTables(range)` rewrites the tables of a range so their columns line up, and returns how many tables it formatted. The control renders on a character grid, so the alignment is done in the source text by padding the cells: a column is as wide as its widest cell (at least 3, a CJK char counting as two columns), the `:--` / `:--:` / `--:` markers of the delimiter row decide left/center/right, and a missing leading or trailing pipe is added. Escaped (`\|`) and code-span pipes stay inside their cell, and a row with more cells widens the table instead of losing text. The whole table is replaced in one edit (one undo restores it), the selection is kept, and formatting twice changes nothing. Call it from a menu item, a shortcut or a save hook
 

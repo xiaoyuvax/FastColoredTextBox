@@ -3693,7 +3693,7 @@ namespace FastColoredTextBoxNS
                     cutOff = Math.Min(i + 1, line.Count - 1); //推荐的切割的位置为当前字符之后
                 }
 
-                w = GetCharWidth(c);
+                w = GetCharWidth(line, i);
                 segmentWidth += w;
                 excessiveWidth = segmentWidth - segmentMaxWidth;
                 if (excessiveWidth > 0) //超宽时确定是否采用推荐切割位置，否则继续累积宽度，要求i>0是为了避免极端情况下指定的换行宽度过小导致第一个字符就超宽

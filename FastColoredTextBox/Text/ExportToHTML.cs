@@ -81,6 +81,9 @@ namespace FastColoredTextBoxNS.Text
             foreach (Place p in r)
             {
                 StyledChar c = r.tb[p.iLine][p.iChar];
+                //a hidden char (markdown source marker) is not rendered, so it is not exported either
+                if (r.tb.IsCharHidden(r.tb[p.iLine], p.iChar))
+                    continue;
                 if ((currentStyles == null && c.Styles != null) ||
                     (currentStyles != null && c.Styles == null) ||
                     (currentStyles != null && !currentStyles.SequenceEqual(c.Styles)))

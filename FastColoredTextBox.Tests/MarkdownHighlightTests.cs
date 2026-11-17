@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using FastColoredTextBoxNS.Text;
@@ -470,6 +471,81 @@ namespace FastColoredTextBoxNS.Tests
             {
                 using var tb = Highlight(@"\*not italic\*");
                 Assert.Equal(@"\*not italic\*", Visible(tb, 0));
+            });
+        }
+
+        [Fact]
+        public void HeadingWithInlineFormatting_HidesEveryMarker()
+        {
+            StaRunner.Run(() =>
+            {
+                //the heading branch used to return before the inline pass, so the bold/code/link
+                //markers inside a heading stayed on screen
+                using var tb = Highlight("## a **b** `c` [d](e)");
+                Assert.Equal("a b c d", Visible(tb, 0));
+                Assert.Equal("H2", Col(tb, 0, 3));
+            });
+        }
+
+        [Fact]
+        public void MarkersAreNotPainted()
+        {
+            StaRunner.Run(() =>
+            {
+                using var tb = Highlight("## abc");
+                var style = tb.SyntaxHighlighter.MdH2Style;
+                //drawing the whole line must produce exactly the bitmaps of its visible chars
+                using var full = new Bitmap(240, tb.CharHeight + 20);
+                using var visible = new Bitmap(full.Width, full.Height);
+                using (var g = Graphics.FromImage(full))
+                    style.Draw(g, new Point(4, 4), new TextSelectionRange(tb, 0, 0, tb[0].Count, 0));
+                using (var g = Graphics.FromImage(visible))
+                    style.Draw(g, new Point(4, 4), new TextSelectionRange(tb, 3, 0, tb[0].Count, 0));
+
+                bool paintedMarkers = false;
+                for (int y = 0; y < full.Height && !paintedMarkers; y++)
+                    for (int x = 0; x < full.Width; x++)
+                        if (full.GetPixel(x, y) != visible.GetPixel(x, y))
+                        {
+                            paintedMarkers = true;
+                            break;
+                        }
+
+                Assert.False(paintedMarkers, "the hidden # markers must not be painted");
+                Assert.Contains("abc", Visible(tb, 0));
+            });
+        }
+
+        [Fact]
+        public void HtmlExport_LeavesMarkersOut()
+        {
+            StaRunner.Run(() =>
+            {
+                using var tb = Highlight("## head\n**bold** [t](u)");
+                string html = new ExportToHTML().GetHtml(tb.Range);
+
+                Assert.DoesNotContain("##", html);
+                Assert.DoesNotContain("**", html);
+                Assert.DoesNotContain("](u)", html);
+                Assert.Contains("head", html);
+                Assert.Contains("bold", html);
+                Assert.Contains(">t<", html);
+            });
+        }
+
+        [Fact]
+        public void RtfExport_LeavesMarkersOut()
+        {
+            StaRunner.Run(() =>
+            {
+                using var tb = Highlight("## head\n**bold** [t](u)");
+                string rtf = new ExportToRTF().GetRtf(tb);
+
+                Assert.DoesNotContain("##", rtf);
+                Assert.DoesNotContain("**", rtf);
+                Assert.DoesNotContain("](u)", rtf);
+                Assert.Contains("head", rtf);
+                Assert.Contains("bold", rtf);
             });
         }
 
