@@ -10,6 +10,9 @@ It has such settings as foreground color, font style, background color which can
 [中文文档](README_CN.md)
 
 ## Update Logs   
+17-11-2026 (V2.19.0.231)
+- **Markdown tables**: `SyntaxHighlighter.AlignMarkdownTables(range)` rewrites the tables of a range so their columns line up, and returns how many tables it formatted. The control renders on a character grid, so the alignment is done in the source text by padding the cells: a column is as wide as its widest cell (at least 3, a CJK char counting as two columns), the `:--` / `:--:` / `--:` markers of the delimiter row decide left/center/right, and a missing leading or trailing pipe is added. Escaped (`\|`) and code-span pipes stay inside their cell, and a row with more cells widens the table instead of losing text. The whole table is replaced in one edit (one undo restores it), the selection is kept, and formatting twice changes nothing. Call it from a menu item, a shortcut or a save hook
+
 17-11-2026 (V2.19.0.230)
 - **Markdown rendering**: source markers of a formatted construct are no longer drawn. A heading renders as its title (the leading `#`s and the optional closing ones are hidden), `**bold**`, `*italic*`, `_emphasis_`, `~~strike~~` and `` `code` `` render as the styled text alone, and a link or image keeps only its label (`[text](url)`, `![alt](url)` and `<https://host>` lose their syntax)
 - A hidden marker takes no width, so the caret, selection, click-to-caret mapping and word wrap treat `**bold**` as the four characters it renders as. List bullets, task checkboxes, thematic breaks and code fences stay visible (they are the rendered element), and markdown inside a code span or a fenced block is untouched; switching away from `Language.Markdown` reveals everything again

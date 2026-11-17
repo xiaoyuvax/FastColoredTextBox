@@ -1,5 +1,6 @@
 ﻿using FastColoredTextBoxNS.Types;
 using System.Globalization;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml;
 
@@ -113,7 +114,8 @@ namespace FastColoredTextBoxNS.Text
                       MdInlineCodeRegex,
                       MdLinkRegex,
                       MdImageRegex,
-                      MdAutoLinkRegex;
+                      MdAutoLinkRegex,
+                      MdTableSeparatorRegex;
 
         //GDI objects created by InitStyleSchema for the markdown styles
         private readonly List<Brush> mdBrushes = new(8);
@@ -1538,6 +1540,9 @@ namespace FastColoredTextBoxNS.Text
             //<https://host/path> and <user@host>
             MdAutoLinkRegex = new Regex(@"<(?<url>(?:[a-z][a-z0-9+.-]*://|mailto:)[^>\s]+|[^ >@\[\]\n]+@[^ >@\[\]\n]+)>",
                                         RegexCompiledOption | RegexOptions.IgnoreCase);
+            //table delimiter row: cells of hyphens, optionally with a leading/trailing colon
+            MdTableSeparatorRegex = new Regex(@"^[ \t]*\|?[ \t]*:?-+:?[ \t]*(?:\|[ \t]*:?-+:?[ \t]*)*\|?[ \t]*$",
+                                              RegexCompiledOption);
         }
 
         /// <summary>
@@ -1928,6 +1933,237 @@ namespace FastColoredTextBoxNS.Text
             args.ShiftNextLines = args.TabLength;
         }
 
+        #region Table alignment
+
+        /// <summary>
+        /// Rewrites the markdown tables of the range so their columns line up, and returns how many
+        /// tables were reformatted.
+        /// </summary>
+        /// <remarks>
+        /// Alignment has to happen in the text: the control renders on a character grid, so a table
+        /// is lined up by padding its cells with spaces. A table whose header is in the range is
+        /// taken whole and replaced in one edit (one undo restores it); formatting an already
+        /// formatted table changes nothing. Each column is aligned the way its delimiter cell says
+        /// (<c>:--</c> left, <c>:--:</c> center, <c>--:</c> right), and a CJK char counts as two
+        /// columns wide so Chinese and latin cells line up.
+        /// </remarks>
+        /// <param name="range">Range holding the tables to format</param>
+        /// <returns>Number of tables formatted</returns>
+        public virtual int AlignMarkdownTables(TextSelectionRange range)
+        {
+            if (range == null)
+                return 0;
+            var tb = range.tb;
+            if (MdTableSeparatorRegex == null)
+                InitMarkdownRegex();
+
+            range.Normalize();
+            int fromLine = Math.Max(0, range.Start.iLine);
+            int toLine = Math.Min(range.End.iLine, tb.LinesCount - 1);
+            int formatted = 0;
+
+            //bottom-up: replacing a table changes the line count below it, the lines above stay put
+            for (int iLine = toLine; iLine >= fromLine; iLine--)
+            {
+                if (!IsTableStart(tb, iLine))
+                    continue;
+                int lastLine = iLine + 1;
+                while (lastLine + 1 < tb.LinesCount && IsTableRow(tb[lastLine + 1].Text))
+                    lastLine++;
+                if (FormatTable(tb, iLine, lastLine))
+                    formatted++;
+            }
+
+            return formatted;
+        }
+
+        /// <summary>
+        /// True when the line is a table header, i.e. the line below it is a delimiter row.
+        /// </summary>
+        /// <remarks>
+        /// The delimiter row has to carry a pipe of its own: "a" over "---" is a setext heading,
+        /// not a one-column table.
+        /// </remarks>
+        private bool IsTableStart(FastColoredTextBox tb, int iLine)
+        {
+            if (iLine + 1 >= tb.LinesCount)
+                return false;
+            string separator = tb[iLine + 1].Text;
+            return tb[iLine].Text.IndexOf('|') >= 0
+                   && separator.IndexOf('|') >= 0
+                   && MdTableSeparatorRegex.IsMatch(separator);
+        }
+
+        /// <summary>True when the line can be a row of a table that is already open</summary>
+        private static bool IsTableRow(string text) => text.Trim().Length > 0 && text.IndexOf('|') >= 0;
+
+        /// <summary>
+        /// Rewrites one table. Returns false when it already was aligned, so a command that opens a
+        /// document of aligned tables does not push undo entries that change nothing.
+        /// </summary>
+        private bool FormatTable(FastColoredTextBox tb, int firstLine, int lastLine)
+        {
+            int rowCount = lastLine - firstLine + 1;
+            var rows = new List<string[]>(rowCount);
+            for (int i = 0; i < rowCount; i++)
+                rows.Add(SplitTableRow(tb[firstLine + i].Text));
+
+            //a short row is padded with empty cells and a long one widens the table: dropping the
+            //extra cells (as GFM rendering does) would delete text the user typed
+            int columns = 1;
+            foreach (var row in rows)
+                columns = Math.Max(columns, row.Length);
+
+            //the delimiter needs room for at least "---"
+            var widths = new int[columns];
+            var alignment = new int[columns];
+            for (int c = 0; c < columns; c++)
+            {
+                widths[c] = 3;
+                foreach (var row in rows)
+                    if (c < row.Length)
+                        widths[c] = Math.Max(widths[c], DisplayWidth(row[c]));
+            }
+            for (int c = 0; c < rows[1].Length && c < columns; c++)
+            {
+                string cell = rows[1][c];
+                bool left = cell.StartsWith(":");
+                bool right = cell.EndsWith(":");
+                alignment[c] = left && right ? 2 : right ? 3 : left ? 1 : 0;
+            }
+
+            var sb = new StringBuilder();
+            for (int r = 0; r < rowCount; r++)
+            {
+                if (r > 0)
+                    sb.Append('\n');
+                sb.Append('|');
+                for (int c = 0; c < columns; c++)
+                {
+                    string cell = c < rows[r].Length ? rows[r][c] : "";
+                    sb.Append(r == 1 ? SeparatorCell(widths[c], alignment[c])
+                                     : ContentCell(cell, widths[c], alignment[c]));
+                    sb.Append('|');
+                }
+            }
+
+            var block = new TextSelectionRange(tb, 0, firstLine, tb[lastLine].Count, lastLine);
+            string text = sb.ToString();
+            if (block.Text == text)
+                return false;
+
+            ReplaceRange(block, text);
+            return true;
+        }
+
+        /// <summary>
+        /// Splits a table row into its cells: pipes in a code span or escaped with a backslash are
+        /// cell content, the pipe at each end is optional.
+        /// </summary>
+        private static string[] SplitTableRow(string text)
+        {
+            int from = 0;
+            int to = text.Length;
+            while (from < to && text[from] == ' ')
+                from++;
+            while (to > from && text[to - 1] == ' ')
+                to--;
+            if (from < to && text[from] == '|')
+                from++;
+            if (to > from && text[to - 1] == '|' && !IsEscaped(text, to - 1))
+                to--;
+
+            var cells = new List<string>();
+            var sb = new StringBuilder();
+            bool inCode = false;
+            for (int i = from; i < to; i++)
+            {
+                char c = text[i];
+                if (c == '\\' && i + 1 < to)
+                {
+                    sb.Append(c).Append(text[++i]);
+                    continue;
+                }
+                if (c == '`')
+                    inCode = !inCode;
+                if (c == '|' && !inCode)
+                {
+                    cells.Add(sb.ToString().Trim());
+                    sb.Clear();
+                    continue;
+                }
+                sb.Append(c);
+            }
+            cells.Add(sb.ToString().Trim());
+            return cells.ToArray();
+        }
+
+        /// <summary>True when the char at <paramref name="i"/> is preceded by an odd run of backslashes</summary>
+        private static bool IsEscaped(string text, int i)
+        {
+            int backslashes = 0;
+            for (int j = i - 1; j >= 0 && text[j] == '\\'; j--)
+                backslashes++;
+            return backslashes % 2 == 1;
+        }
+
+        /// <summary>Width of a cell in columns; a CJK char takes two, an escape pair renders as one</summary>
+        private static int DisplayWidth(string text)
+        {
+            int width = 0;
+            for (int i = 0; i < text.Length; i++)
+            {
+                char c = text[i];
+                if (c == '\\' && i + 1 < text.Length)
+                {
+                    i++;
+                    width++;
+                    continue;
+                }
+                width += EncodingDetector.IsCJK(c) ? 2 : 1;
+            }
+            return width;
+        }
+
+        /// <summary>Cell of a content row, padded to the column width and placed by its alignment</summary>
+        private static string ContentCell(string text, int width, int alignment)
+        {
+            int pad = Math.Max(0, width - DisplayWidth(text));
+            int left = alignment == 2 ? pad / 2 : alignment == 3 ? pad : 0;
+            return " " + new string(' ', left) + text + new string(' ', pad - left) + " ";
+        }
+
+        /// <summary>
+        /// Delimiter cell (<c>---</c>, <c>:--</c>, <c>:--:</c>, <c>--:</c>) padded like a content cell
+        /// </summary>
+        private static string SeparatorCell(int width, int alignment) => alignment switch
+        {
+            1 => " :" + new string('-', width - 1) + " ",
+            2 => " :" + new string('-', width - 2) + ": ",
+            3 => " " + new string('-', width - 1) + ": ",
+            _ => " " + new string('-', width) + " ",
+        };
+
+        /// <summary>
+        /// Replaces a range and puts the selection back where it was, shifted by the length change.
+        /// </summary>
+        private static void ReplaceRange(TextSelectionRange range, string text)
+        {
+            var tb = range.tb;
+            int start = tb.PlaceToPosition(tb.Selection.Start);
+            int end = tb.PlaceToPosition(tb.Selection.End);
+            int at = tb.PlaceToPosition(range.Start);
+            int delta = text.Length - range.Length;
+
+            tb.Selection.BeginUpdate();
+            tb.Selection = range;
+            tb.InsertText(text, false);
+            tb.Selection.Start = tb.PositionToPlace(start >= at ? start + delta : start);
+            tb.Selection.End = tb.PositionToPlace(end >= at ? end + delta : end);
+            tb.Selection.EndUpdate();
+        }
+
+        #endregion
 
         #region Styles
 

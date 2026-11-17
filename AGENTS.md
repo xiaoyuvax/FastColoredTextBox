@@ -30,6 +30,9 @@ dotnet build FastColoredTextBox.sln -c Release
 - Test projects target older frameworks (.NET 8/9) and have WFO1000 errors on .NET 9+ (suppress with `-p:NoWarn=WFO1000`)
 - Unit tests: `FastColoredTextBox.Tests/` (xUnit, no UI required) - run with `dotnet test FastColoredTextBox.Tests`
 
+## Recent Optimizations (v2.19.0.231)
+- Markdown tables can be aligned: `SyntaxHighlighter.AlignMarkdownTables(range)` rewrites the tables whose header is in the range (one `InsertText` per table through `ReplaceRange`, so one undo step, selection kept) and returns the count. Alignment is a text rewrite, not rendering: the control draws on a char grid. Column width = max cell display width (min 3, `EncodingDetector.IsCJK` chars count 2), `:--`/`:--:`/`--:` of the delimiter row pick left/center/right, rows are padded/extended to the widest row, `\|` and code-span pipes are not separators, and an already aligned table is skipped (`FormatTable` returns false) so a whole-document run adds no undo entries. Test: `MarkdownTableAlignTests` (112 tests)
+
 ## Recent Optimizations (v2.19.0.230)
 - Markdown markers are hidden where a construct is rendered: `Style.Hidden` + `MarkdownMarkerStyle` make a char invisible and zero-width (`FastColoredTextBox.IsCharHidden`/`GetCharWidth(Line,int)`, used by `TextStyle.Draw`, `DrawLineChars`, `XToCharIndex`, `PlaceToPoint`, word wrap and `Style.GetSizeOfRange`), so caret/selection/click/wrap follow the rendered text. Hidden: heading `#`s (leading and closing), `**`/`*`/`_`/`~~`/backtick delimiters, link/image `[]()` and `<>` autolinks, blockquote `>`s. Kept: list bullets, task checkboxes, rules, fences (they are the rendered element) and anything inside a code span or fence. Leaving `Language.Markdown` clears the marker style. Test: `MarkdownHighlightTests` rendered-markers region (101 tests)
 
