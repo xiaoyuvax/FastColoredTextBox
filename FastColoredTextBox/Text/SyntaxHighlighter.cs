@@ -1562,7 +1562,8 @@ namespace FastColoredTextBoxNS.Text
             range.ClearStyle(MdH1Style, MdH2Style, MdH3Style, MdHeadingStyle,
                              MdBoldStyle, MdItalicStyle, MdUnderscoreItalicStyle, MdStrikethroughStyle,
                              MdInlineCodeStyle, MdCodeBlockStyle, MdLinkStyle, MdAutoLinkStyle,
-                             MdImageStyle, MdBlockquoteStyle, MdHrStyle, MdListStyle, MdTaskListDoneStyle);
+                             MdImageStyle, MdBlockquoteStyle, MdHrStyle, MdListStyle, MdTaskListDoneStyle,
+                             MdMarkerStyle);
 
             int fromLine = Math.Max(0, range.Start.iLine);
             int toLine = range.End.iLine;
@@ -1625,8 +1626,14 @@ namespace FastColoredTextBoxNS.Text
         }
 
         /// <summary>
-        /// Applies every markdown style that fits a single line of prose
+        /// Applies every markdown style that fits a single line of prose.
         /// </summary>
+        /// <remarks>
+        /// A construct that is rendered as formatted text also gets its source markers hidden
+        /// (<see cref="MdMarkerStyle"/>), so a heading reads as its title and <c>**bold**</c> as
+        /// bold. Markers that are themselves the rendered element (list bullets, task checkboxes,
+        /// rules, fences) stay visible: hiding them would remove the element instead of the syntax.
+        /// </remarks>
         /// <param name="tb"></param>
         /// <param name="text">Text of the whole line</param>
         /// <param name="from">First char of the line inside the highlighted range</param>
@@ -1635,24 +1642,45 @@ namespace FastColoredTextBoxNS.Text
         private void HighlightMarkdownLine(FastColoredTextBox tb, string text, int from, int to, int iLine)
         {
             int lineTo = to - from;
-            TextSelectionRange Line(int start, int end) => new(tb, from + start, iLine, from + Math.Min(end, lineTo), iLine);
             int content = SkipIndent(text, 0);
+            TextSelectionRange Line(int start, int end) => new(tb, from + start, iLine, from + Math.Min(end, lineTo), iLine);
+            void Hide(int start, int end)
+            {
+                if (end > start)
+                    Line(start, end).SetStyle(MdMarkerStyle);
+            }
+            //hides the two delimiters of an inline construct (lead = opener length, trail = closer)
+            void HideDelimiters(Match m, int lead, int trail)
+            {
+                int start = content + m.Index;
+                Hide(start, start + lead);
+                Hide(start + m.Length - trail, start + m.Length);
+            }
+            //hides everything of an inline construct except its label group (links and images)
+            void HideSyntax(Match m, Group label)
+            {
+                int start = content + m.Index;
+                Hide(start, content + label.Index);
+                Hide(content + label.Index + label.Length, start + m.Length);
+            }
 
             //blockquote: the tint and bar cover the markers too, the content is parsed behind them
             var quote = MdQuoteRegex.Match(text, content);
             if (quote.Success && quote.Index == content)
             {
                 Line(content, lineTo).SetStyle(MdBlockquoteStyle);
+                Hide(content, quote.Index + quote.Length);
                 content = SkipIndent(text, quote.Index + quote.Length);
             }
             if (content >= lineTo)
                 return;
 
-            //heading: style the text only, not the #'s and not the optional closing #'s
+            //heading: the text carries the heading style, the #'s and the space around them are hidden
             var heading = MdHeadingRegex.Match(text, content);
             if (heading.Success && heading.Index == content)
             {
-                int end = heading.Index + heading.Length;
+                int headingEnd = content + heading.Length;
+                int end = headingEnd;
                 while (end > content && (text[end - 1] == '#' || text[end - 1] == ' ' || text[end - 1] == '\t'))
                     end--;
                 int level = 0;
@@ -1670,6 +1698,8 @@ namespace FastColoredTextBoxNS.Text
                 };
                 if (end > start)
                     Line(start, end).SetStyle(style);
+                Hide(content, start);
+                Hide(end, headingEnd);
                 return;
             }
 
@@ -1711,6 +1741,44 @@ namespace FastColoredTextBoxNS.Text
             inline.SetStyle(MdItalicStyle, MdItalicRegex);
             inline.SetStyle(MdUnderscoreItalicStyle, MdUnderscoreItalicRegex);
             inline.SetStyle(MdStrikethroughStyle, MdStrikethroughRegex);
+
+            //hide the delimiters of what was just formatted: the styled text is what should show
+            string tail = text.Substring(content, lineTo - content);
+            var codeSpans = new List<Match>();
+            foreach (Match m in MdInlineCodeRegex.Matches(tail))
+                codeSpans.Add(m);
+            //a construct matched inside a code span is literal text there, its markers must stay
+            bool InCode(Match m)
+            {
+                foreach (var span in codeSpans)
+                    if (m.Index >= span.Index && m.Index + m.Length <= span.Index + span.Length)
+                        return true;
+                return false;
+            }
+
+            foreach (var m in codeSpans)
+                HideDelimiters(m, 1, 1);
+            foreach (Match m in MdImageRegex.Matches(tail))
+                if (!InCode(m))
+                    HideSyntax(m, m.Groups["text"]);
+            foreach (Match m in MdLinkRegex.Matches(tail))
+                if (!InCode(m))
+                    HideSyntax(m, m.Groups["text"]);
+            foreach (Match m in MdAutoLinkRegex.Matches(tail))
+                if (!InCode(m))
+                    HideDelimiters(m, 1, 1);
+            foreach (Match m in MdBoldRegex.Matches(tail))
+                if (!InCode(m))
+                    HideDelimiters(m, 2, 2);
+            foreach (Match m in MdItalicRegex.Matches(tail))
+                if (!InCode(m))
+                    HideDelimiters(m, 1, 1);
+            foreach (Match m in MdUnderscoreItalicRegex.Matches(tail))
+                if (!InCode(m))
+                    HideDelimiters(m, 1, 1);
+            foreach (Match m in MdStrikethroughRegex.Matches(tail))
+                if (!InCode(m))
+                    HideDelimiters(m, 2, 2);
         }
 
         /// <summary>
@@ -2062,6 +2130,14 @@ namespace FastColoredTextBoxNS.Text
         /// Markdown task list checkbox style, applied to the [x] of a finished item
         /// </summary>
         public Style MdTaskListDoneStyle { get; set; }
+
+        /// <summary>
+        /// Applied to the source markers of a rendered construct (<c>#</c>, <c>**</c>,
+        /// <c>[text](url)</c>, <c>&gt;</c>): a char carrying it is not painted and takes no width,
+        /// a <see cref="MarkdownMarkerStyle"/>. Kept in one instance so a restyled document never
+        /// piles up generations of it on the chars.
+        /// </summary>
+        public Style MdMarkerStyle { get; } = new MarkdownMarkerStyle();
 
         #endregion Styles
     }

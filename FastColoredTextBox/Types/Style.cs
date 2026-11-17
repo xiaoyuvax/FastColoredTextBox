@@ -14,6 +14,13 @@ namespace FastColoredTextBoxNS.Types
         /// This style is exported to outer formats (HTML for example)
         /// </summary>
         public virtual bool IsExportable { get; set; }
+
+        /// <summary>
+        /// A char carrying a style with this set is neither painted nor given any width, so the text
+        /// it belongs to renders as if the char were not there (markdown source markers).
+        /// </summary>
+        public virtual bool Hidden => false;
+
         /// <summary>
         /// Occurs when user click on StyleVisualMarker joined to this style
         /// </summary>
@@ -45,9 +52,18 @@ namespace FastColoredTextBoxNS.Types
         public static Size GetSizeOfRange(TextSelectionRange range)
         {
             //Original implementation: => new((range.End.iChar - range.Start.iChar) * range.tb.CharWidth, range.tb.CharHeight);
+            //per char, so hidden chars (markdown markers) take no width
+            var tb = range.tb;
             int rangeWidth = 0;
-            foreach (char c in range.Text) rangeWidth += range.tb.GetCharWidth(c);
-
+            int toLine = Math.Min(range.End.iLine, tb.LinesCount - 1);
+            for (int iLine = Math.Max(0, range.Start.iLine); iLine <= toLine; iLine++)
+            {
+                Line line = tb[iLine];
+                int from = iLine == range.Start.iLine ? range.Start.iChar : 0;
+                int to = iLine == range.End.iLine ? Math.Min(range.End.iChar, line.Count) : line.Count;
+                for (int i = Math.Max(0, from); i < to; i++)
+                    rangeWidth += tb.GetCharWidth(line, i);
+            }
             return new(rangeWidth, range.tb.CharHeight);
         }
 
@@ -139,6 +155,10 @@ namespace FastColoredTextBoxNS.Types
                     else
                         renderText = true;
 
+                    //hidden chars (markdown markers) are not painted and take no space
+                    if (range.tb.IsCharHidden(line, i))
+                        continue;
+
                     if (renderText)
                     {
                         char real = line[i].C;
@@ -146,7 +166,7 @@ namespace FastColoredTextBoxNS.Types
                         SizeF size = FastColoredTextBox.GetCharSize(f, c);
                         //advance by the real char so the caret/selection geometry (measured from the
                         //unmasked text) stays aligned
-                        dx = range.tb.GetCharWidth(real);
+                        dx = range.tb.GetCharWidth(line, i);
 
                         var gs = gr.Save();
                         float k = size.Width > range.tb.GetCharWidth(c) + 1 ? range.tb.GetCharWidth(c) / size.Width : 1;
@@ -171,13 +191,17 @@ namespace FastColoredTextBoxNS.Types
                     else
                         renderText = true;
 
+                    //hidden chars (markdown markers) are not painted and take no space
+                    if (range.tb.IsCharHidden(line, i))
+                        continue;
+
                     if (renderText)
                     {
                         //draw char
                         gr.DrawString(Masked(line[i].C, range.tb).ToString(), f, ForeBrush, x, y, stringFormat);
                         //advance by the actual char width (dx is only set in the IME branch;
                         //leaving it 0 here stacked every char of the run on the same x)
-                        x += range.tb.GetCharWidth(line[i].C);
+                        x += range.tb.GetCharWidth(line, i);
                     }
                 }
             }

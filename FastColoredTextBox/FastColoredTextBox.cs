@@ -1126,12 +1126,18 @@ namespace FastColoredTextBoxNS
             get { return language; }
             set
             {
+                bool wasMarkdown = language == Language.Markdown;
                 language = value;
                 if (value == Language.Markdown)
                     //the markdown styles own GDI brushes, the chars must let go of the old ones first
                     ResetMarkdownStyles();
                 else
+                {
+                    //markers hidden by the markdown highlighter must not stay invisible here
+                    if (wasMarkdown && SyntaxHighlighter != null)
+                        Range.ClearStyle(SyntaxHighlighter.MdMarkerStyle);
                     SyntaxHighlighter?.InitStyleSchema(value);
+                }
                 Invalidate();
             }
         }
@@ -3594,8 +3600,7 @@ namespace FastColoredTextBoxNS
             int iChar = measureFrom;
             for (; iChar < line.Count; iChar++)
             {
-                StyledChar sChar = line[iChar];
-                w += GetCharWidth(sChar.C);
+                w += GetCharWidth(line, iChar);
                 yield return new(iChar - measureFrom, w);
             }
             yield return new(iChar - measureFrom, w);
@@ -3677,6 +3682,9 @@ namespace FastColoredTextBoxNS
 
             for (int i = 0; i < line.Count - 1; i++)
             {
+                //a hidden char takes no width and is no place to wrap at (it is not drawn)
+                if (IsCharHidden(line, i))
+                    continue;
                 c = line[i].C;
                 wrapByChar = (UseCJK != CJKMode.Disabled && EncodingDetector.IsCJK(c)) || charWrap;
                 if (wrapByChar
@@ -5851,25 +5859,22 @@ namespace FastColoredTextBoxNS
             //the first rendered char must be positioned at startX + skippedWidth, otherwise the whole text slides
             //left over the line numbers when the horizontal scrollbar is scrolled to the right.
             int skippedWidth = 0;
-            if (UseCJK == CJKMode.Disabled && !AllowProportionalFont)
-            {
-                skippedWidth = firstChar * CharWidth;
-            }
-            else if (minVisibleX > int.MinValue)
+            if (minVisibleX > int.MinValue && (UseCJK != CJKMode.Disabled || AllowProportionalFont))
             {
                 //CJK: char widths vary, so locate by actual measurement the first char starting at/right of
                 //minVisibleX (the CharWidth-based estimate is inaccurate for mixed-width lines)
                 firstChar = 0;
                 while (startX + skippedWidth < minVisibleX && firstChar <= lastChar)
                 {
-                    skippedWidth += GetCharWidth(line[from + firstChar].C);
+                    skippedWidth += GetCharWidth(line, from + firstChar);
                     firstChar++;
                 }
             }
             else
             {
+                //per char: a hidden char (markdown marker) takes no width, so chars * CharWidth is wrong
                 for (int i = 0; i < firstChar && from + i < line.Count; i++)
-                    skippedWidth += GetCharWidth(line[from + i].C);
+                    skippedWidth += GetCharWidth(line, from + i);
             }
 
             gr.SmoothingMode = SmoothingMode.AntiAlias;
@@ -5898,7 +5903,7 @@ namespace FastColoredTextBoxNS
                     iLastFlushedChar = iChar - 1;
                     currentStyles = styles;
                     xLastFlushedChar = x;
-                    x += GetCharWidth(sChar.C);
+                    x += GetCharWidth(line, from + iChar);
                 }
 
                 FlushRendering(gr, currentStyles, new Point(xLastFlushedChar, y),
@@ -5948,6 +5953,28 @@ namespace FastColoredTextBoxNS
                 _ => CharWidth
             };
         }
+
+        /// <summary>
+        /// True when char <paramref name="i"/> of the line carries a style with <see cref="Style.Hidden"/>
+        /// set: such a char is not painted and the layout gives it no width.
+        /// </summary>
+        public bool IsCharHidden(Line line, int i)
+        {
+            if (line == null || i < 0 || i >= line.Count)
+                return false;
+            StyledChar c = line[i];
+            if (c.Styles == null)
+                return false;
+            for (int s = 0; s <= c.LastStyleIndex; s++)
+                if (c.Styles[s]?.Hidden == true)
+                    return true;
+            return false;
+        }
+
+        /// <summary>
+        /// Advance width of char <paramref name="i"/> of the line. A hidden char takes no width.
+        /// </summary>
+        public int GetCharWidth(Line line, int i) => IsCharHidden(line, i) ? 0 : GetCharWidth(line[i].C);
 
         /// <summary>Width of <paramref name="count"/> spaces (proportional spaces are not CharWidth wide).</summary>
         private int GetSpacesWidth(int count) => count <= 0 ? 0 : count * GetCharWidth(' ');
@@ -6488,7 +6515,7 @@ namespace FastColoredTextBoxNS
             for (int j = measureFrom; j < line.Count; j++)
             {
                 if (w >= pointX) break;
-                w += GetCharWidth(line[j].C);
+                w += GetCharWidth(line, j);
                 charIndex++;
             }
             return charIndex;
@@ -6841,9 +6868,10 @@ namespace FastColoredTextBoxNS
             //Due to mixed different char widths, the original line: int x = (place.iChar - LineInfos[place.iLine].GetWordWrapStringStartPosition(iWordWrapIndex)) * CharWidth;
             //must be replaced with:
             int i = LineInfos[place.iLine].GetWordWrapStringStartPosition(iWordWrapIndex);
-            string text = lines[place.iLine].Text;
+            Line line = lines[place.iLine];
+            string text = line.Text;
             int x = 0;
-            if (text.Length > 0) for (; i < place.iChar && i < text.Length; i++) x += GetCharWidth(text[i]);
+            if (text.Length > 0) for (; i < place.iChar && i < text.Length; i++) x += GetCharWidth(line, i);
 
             if (iWordWrapIndex > 0)
                 x += GetSpacesWidth(LineInfos[place.iLine].wordWrapIndent);

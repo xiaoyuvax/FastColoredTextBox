@@ -144,7 +144,7 @@ namespace FastColoredTextBoxNS.Tests
                 var headingStyles = tb.GetStylesOfChar(new Place(3, 0));
                 Assert.Contains(headingStyles,
                     s => s is TextStyle ts && ts.FontStyle.HasFlag(FontStyle.Bold));
-                Assert.Empty(tb.GetStylesOfChar(new Place(0, 0)));
+                Assert.All(tb.GetStylesOfChar(new Place(0, 0)), s => Assert.True(s.Hidden));
             });
         }
 

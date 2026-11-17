@@ -30,6 +30,9 @@ dotnet build FastColoredTextBox.sln -c Release
 - Test projects target older frameworks (.NET 8/9) and have WFO1000 errors on .NET 9+ (suppress with `-p:NoWarn=WFO1000`)
 - Unit tests: `FastColoredTextBox.Tests/` (xUnit, no UI required) - run with `dotnet test FastColoredTextBox.Tests`
 
+## Recent Optimizations (v2.19.0.230)
+- Markdown markers are hidden where a construct is rendered: `Style.Hidden` + `MarkdownMarkerStyle` make a char invisible and zero-width (`FastColoredTextBox.IsCharHidden`/`GetCharWidth(Line,int)`, used by `TextStyle.Draw`, `DrawLineChars`, `XToCharIndex`, `PlaceToPoint`, word wrap and `Style.GetSizeOfRange`), so caret/selection/click/wrap follow the rendered text. Hidden: heading `#`s (leading and closing), `**`/`*`/`_`/`~~`/backtick delimiters, link/image `[]()` and `<>` autolinks, blockquote `>`s. Kept: list bullets, task checkboxes, rules, fences (they are the rendered element) and anything inside a code span or fence. Leaving `Language.Markdown` clears the marker style. Test: `MarkdownHighlightTests` rendered-markers region (101 tests)
+
 ## Recent Optimizations (v2.19.0.229)
 - Folding-marker hit area widened (draw size unchanged): `FindVisualMarkerForPoint` only tested the `DefaultMarkerSize` square (8px), so collapse/expand `+`/`-` reacted only on a dead-on click. `FoldingMarkerHitArea` accepts the full line height vertically and one marker width left / half right; hover cursor and click both use it. Regression test: `FoldingMarkerHitTests.ClickJustOutsideMarker_TogglesFolding` (91 tests)
 

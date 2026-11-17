@@ -10,6 +10,10 @@ It has such settings as foreground color, font style, background color which can
 [中文文档](README_CN.md)
 
 ## Update Logs   
+17-11-2026 (V2.19.0.230)
+- **Markdown rendering**: source markers of a formatted construct are no longer drawn. A heading renders as its title (the leading `#`s and the optional closing ones are hidden), `**bold**`, `*italic*`, `_emphasis_`, `~~strike~~` and `` `code` `` render as the styled text alone, and a link or image keeps only its label (`[text](url)`, `![alt](url)` and `<https://host>` lose their syntax)
+- A hidden marker takes no width, so the caret, selection, click-to-caret mapping and word wrap treat `**bold**` as the four characters it renders as. List bullets, task checkboxes, thematic breaks and code fences stay visible (they are the rendered element), and markdown inside a code span or a fenced block is untouched; switching away from `Language.Markdown` reveals everything again
+
 18-10-2026 (V2.19.0.223)
 - **Word wrap**: the continuation indent is now deducted from the wrap width. With `WordWrapAutoIndent`, continuation lines are drawn shifted right by `LineInfo.wordWrapIndent` chars, but the wrap calculation still used the full available width, so every continuation line of an indented line stuck out past the right edge (visible as soon as a host indents a block). New overload `CalcCutOffsByMaxWidth(..., continuationIndentChars)`: the first segment keeps the full width, later ones reserve the indent
 - A word-wrap recalculation on a near-zero-width control no longer freezes the UI or exhausts memory (`Array dimensions exceeded supported range`): cut-off calculation is skipped while the available width is below `CharWidth * 4` and recalculated once it recovers

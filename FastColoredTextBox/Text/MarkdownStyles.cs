@@ -53,4 +53,18 @@ namespace FastColoredTextBoxNS.Text
             return result;
         }
     }
+
+    /// <summary>
+    /// Marks a markdown source marker (<c>#</c>, <c>**</c>, <c>[text](url)</c>, <c>&gt;</c>): the
+    /// char is neither painted nor given width, so the construct renders as formatted text without
+    /// its markdown syntax.
+    /// </summary>
+    public class MarkdownMarkerStyle : Style
+    {
+        public override bool Hidden => true;
+
+        public override void Draw(Graphics gr, Point position, TextSelectionRange range) { }
+
+        public override string GetCSS() => "display:none;";
+    }
 }

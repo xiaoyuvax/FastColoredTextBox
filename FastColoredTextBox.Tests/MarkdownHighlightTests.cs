@@ -85,6 +85,7 @@ namespace FastColoredTextBoxNS.Tests
                 (h.MdBlockquoteStyle, "Q"),
                 (h.MdListStyle, "LI"),
                 (h.MdTaskListDoneStyle, "DONE"),
+                (h.MdMarkerStyle, "HIDE"),
             };
         }
 
@@ -197,11 +198,11 @@ namespace FastColoredTextBoxNS.Tests
             StaRunner.Run(() =>
             {
                 using var tb = Highlight("## Title ##");
-                Assert.Equal("", Col(tb, 0, 0));
-                Assert.Equal("", Col(tb, 0, 2));
+                Assert.Equal("HIDE", Col(tb, 0, 0));
+                Assert.Equal("HIDE", Col(tb, 0, 2));
                 Assert.Equal("H2", Col(tb, 0, 3));
                 Assert.Equal("H2", Col(tb, 0, 7));
-                Assert.Equal("", Col(tb, 0, 9));
+                Assert.Equal("HIDE", Col(tb, 0, 9));
             });
         }
 
@@ -253,7 +254,8 @@ namespace FastColoredTextBoxNS.Tests
             {
                 //spec example: foo*bar* and 5*6*78 are emphasis
                 using var tb = Highlight("5*6*78");
-                Assert.Equal("I", Col(tb, 0, 1));
+                Assert.Equal("I+HIDE", Col(tb, 0, 1));
+                Assert.Equal("I", Col(tb, 0, 2));
             });
         }
 
@@ -267,7 +269,7 @@ namespace FastColoredTextBoxNS.Tests
                 Assert.Equal("S", Col(tb, 0, 2));
                 Assert.Equal("CODE", Col(tb, 0, 7));
                 Assert.True(HasStyle(tb, 0, 11, h.MdLinkStyle));
-                Assert.Equal("IMG", Col(tb, 0, 22));
+                Assert.Equal("IMG", Col(tb, 0, 19));
                 Assert.True(HasStyle(tb, 0, 25, h.MdAutoLinkStyle));
                 Assert.True(HasStyle(tb, 0, 39, h.MdAutoLinkStyle));
             });
@@ -306,8 +308,9 @@ namespace FastColoredTextBoxNS.Tests
             {
                 //the container style is not a TextStyle, so the nested bold is the one that renders
                 using var tb = Highlight("> quote **bold**");
-                Assert.Equal("Q", Col(tb, 0, 0));
-                Assert.Equal("Q+B", Col(tb, 0, 9));
+                Assert.Equal("Q+HIDE", Col(tb, 0, 0));
+                Assert.Equal("Q", Col(tb, 0, 2));
+                Assert.Equal("Q+B", Col(tb, 0, 10));
             });
         }
 
@@ -317,9 +320,9 @@ namespace FastColoredTextBoxNS.Tests
             StaRunner.Run(() =>
             {
                 using var tb = Highlight(">text\n>>nested\nplain");
-                Assert.Equal("Q", Col(tb, 0, 0));
-                Assert.Equal("Q", Col(tb, 1, 0));
-                Assert.Equal("Q", Col(tb, 1, 1));
+                Assert.Equal("Q+HIDE", Col(tb, 0, 0));
+                Assert.Equal("Q+HIDE", Col(tb, 1, 0));
+                Assert.Equal("Q+HIDE", Col(tb, 1, 1));
                 Assert.Equal("", Col(tb, 2, 0));
             });
         }
@@ -364,6 +367,136 @@ namespace FastColoredTextBoxNS.Tests
                 Assert.Equal("DONE", Col(tb, 0, 4));
                 Assert.Equal("LI", Col(tb, 1, 0));
                 Assert.Equal("", Col(tb, 1, 2));
+            });
+        }
+
+        #endregion
+
+        #region rendered markers
+
+        /// <summary>Text of a line without the chars hidden by the markdown highlighter</summary>
+        private static string Visible(FastColoredTextBox tb, int line)
+        {
+            var sb = new StringBuilder();
+            for (int x = 0; x < tb[line].Count; x++)
+                if (!tb.IsCharHidden(tb[line], x))
+                    sb.Append(tb[line][x].C);
+            return sb.ToString();
+        }
+
+        [Fact]
+        public void Heading_MarkersAreHidden()
+        {
+            StaRunner.Run(() =>
+            {
+                using var tb = Highlight("## 1. 迭代不依赖提交，能回撤但只能部分“按需”\n#### four ####");
+                Assert.Equal("1. 迭代不依赖提交，能回撤但只能部分“按需”", Visible(tb, 0));
+                Assert.Equal("four", Visible(tb, 1));
+                //the text keeps its heading style
+                Assert.Equal("H2", Col(tb, 0, 3));
+            });
+        }
+
+        [Fact]
+        public void Inline_MarkersAreHidden()
+        {
+            StaRunner.Run(() =>
+            {
+                using var tb = Highlight("**bold** *it* _it_ ~~gone~~ `code`");
+                Assert.Equal("bold it it gone code", Visible(tb, 0));
+            });
+        }
+
+        [Fact]
+        public void LinkAndImage_KeepTheirLabelOnly()
+        {
+            StaRunner.Run(() =>
+            {
+                using var tb = Highlight("[text](https://h/p) and ![alt](img.png) and <https://h/p>");
+                Assert.Equal("text and alt and https://h/p", Visible(tb, 0));
+            });
+        }
+
+        [Fact]
+        public void Blockquote_MarkersAreHidden()
+        {
+            StaRunner.Run(() =>
+            {
+                using var tb = Highlight("> quote\n>>nested");
+                Assert.Equal("quote", Visible(tb, 0));
+                Assert.Equal("nested", Visible(tb, 1));
+            });
+        }
+
+        [Fact]
+        public void StructuralMarkersStayVisible()
+        {
+            StaRunner.Run(() =>
+            {
+                //a bullet/checkbox/rule/fence is the rendered element itself, hiding it would delete it
+                using var tb = Highlight("- item\n- [x] done\n---\n```\ncode\n```");
+                Assert.Equal("- item", Visible(tb, 0));
+                Assert.Equal("- [x] done", Visible(tb, 1));
+                Assert.Equal("---", Visible(tb, 2));
+                Assert.Equal("```", Visible(tb, 3));
+                Assert.Equal("code", Visible(tb, 4));
+            });
+        }
+
+        [Fact]
+        public void FencedContentKeepsItsMarkers()
+        {
+            StaRunner.Run(() =>
+            {
+                using var tb = Highlight("```\n## not a heading\n```");
+                Assert.Equal("## not a heading", Visible(tb, 1));
+            });
+        }
+
+        [Fact]
+        public void MarkersInsideCodeSpanStayLiteral()
+        {
+            StaRunner.Run(() =>
+            {
+                using var tb = Highlight("`a **b** [c](d)`");
+                Assert.Equal("a **b** [c](d)", Visible(tb, 0));
+            });
+        }
+
+        [Fact]
+        public void EscapedMarkersAreNotHidden()
+        {
+            StaRunner.Run(() =>
+            {
+                using var tb = Highlight(@"\*not italic\*");
+                Assert.Equal(@"\*not italic\*", Visible(tb, 0));
+            });
+        }
+
+        [Fact]
+        public void SwitchingAwayFromMarkdownRevealsMarkers()
+        {
+            StaRunner.Run(() =>
+            {
+                using var tb = Highlight("## head\n**b**");
+                Assert.Equal("head", Visible(tb, 0));
+                Assert.Equal("b", Visible(tb, 1));
+                tb.Language = Language.CSharp;
+                Assert.Equal("## head", Visible(tb, 0));
+                Assert.Equal("**b**", Visible(tb, 1));
+            });
+        }
+
+        [Fact]
+        public void HiddenMarkersTakeNoLayoutWidth()
+        {
+            StaRunner.Run(() =>
+            {
+                using var tb = Highlight("**ab**");
+                Assert.True(tb.IsCharHidden(tb[0], 0));
+                Assert.False(tb.IsCharHidden(tb[0], 2));
+                var range = new TextSelectionRange(tb, 0, 0, 6, 0);
+                Assert.Equal(tb.GetCharWidth('a') + tb.GetCharWidth('b'), Style.GetSizeOfRange(range).Width);
             });
         }
 
