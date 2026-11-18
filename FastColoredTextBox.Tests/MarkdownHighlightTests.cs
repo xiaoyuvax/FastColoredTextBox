@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.Windows.Forms;
 using FastColoredTextBoxNS.Text;
 using FastColoredTextBoxNS.Types;
 using Xunit;
@@ -231,6 +232,68 @@ namespace FastColoredTextBoxNS.Tests
                 using var tb = Highlight("**a**\n__b__");
                 Assert.Equal("B", Col(tb, 0, 2));
                 Assert.Equal("B", Col(tb, 1, 2));
+            });
+        }
+
+        /// <summary>
+        /// Markdown prose paints no text background: inline code is told apart by its colour, code
+        /// blocks and quotes by their left bar. The old inline code was magenta on a grey chip.
+        /// </summary>
+        [Fact]
+        public void Prose_HasNoTextBackground_AndCodeStaysReadableOnBothThemes()
+        {
+            StaRunner.Run(() =>
+            {
+                foreach (var (back, fore, darker) in new[]
+                {
+                    (Color.WhiteSmoke, Color.FromArgb(27, 38, 51), true),
+                    (Color.FromArgb(0x1F, 0x1F, 0x1F), Color.FromArgb(0xDC, 0xDC, 0xDC), false),
+                })
+                {
+                    using var tb = new FastColoredTextBox { BackColor = back, ForeColor = fore };
+                    tb.Text = "a `code` b";
+                    tb.SyntaxHighlighter.MarkdownBodyHighlight(tb.Range);
+
+                    var h = tb.SyntaxHighlighter;
+                    var code = (TextStyle)h.MdInlineCodeStyle;
+                    Assert.Null(code.BackgroundBrush);
+                    Assert.Null(((MarkdownBlockStyle)h.MdCodeBlockStyle).BackgroundBrush);
+                    Assert.Null(((MarkdownBlockStyle)h.MdBlockquoteStyle).BackgroundBrush);
+
+                    var codeFore = ((SolidBrush)code.ForeBrush).Color;
+                    Assert.Equal(darker, codeFore.GetBrightness() < back.GetBrightness());
+                }
+            });
+        }
+
+        /// <summary>
+        /// The block bar is drawn in the indent gutter, not under the first glyph: a bar at the text
+        /// origin cuts through a CJK character (it fills its cell) and doubles as a stroke.
+        /// </summary>
+        [Fact]
+        public void BlockBar_SitsInTheIndentGutter_NotUnderTheFirstGlyph()
+        {
+            StaRunner.Run(() =>
+            {
+                using var tb = new FastColoredTextBox
+                {
+                    BackColor = Color.White,
+                    ForeColor = Color.FromArgb(27, 38, 51),
+                    LeftPadding = 20,
+                    Paddings = new Padding(2),
+                    Width = 300,
+                    Height = 80,
+                };
+                tb.Text = "> quoted";
+                tb.SyntaxHighlighter.MarkdownBodyHighlight(tb.Range);
+
+                Color bar = ((SolidBrush)((MarkdownBlockStyle)tb.SyntaxHighlighter.MdBlockquoteStyle).BarBrush).Color;
+                using var bmp = new Bitmap(tb.Width, tb.Height);
+                tb.DrawToBitmap(bmp, new Rectangle(0, 0, tb.Width, tb.Height));
+
+                int y = tb.Paddings.Top + tb.CharHeight / 2;
+                Assert.Equal(bar.ToArgb(), bmp.GetPixel(2, y).ToArgb());
+                Assert.NotEqual(bar.ToArgb(), bmp.GetPixel(tb.LeftIndent + tb.Paddings.Left - 1, y).ToArgb());
             });
         }
 

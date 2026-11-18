@@ -38,9 +38,15 @@ namespace FastColoredTextBoxNS.Text
             if (BackgroundBrush != null)
                 gr.FillRectangle(BackgroundBrush, position.X, position.Y, right - position.X, height);
 
-            //the bar marks the start of a line, not of a word-wrapped continuation segment
+            //the bar marks the start of a line, not of a word-wrapped continuation segment.
+            //It must not sit under the first glyph (CJK fills its cell, so a bar at the text origin
+            //cuts through the character): the indent gutter holds it when the control has one,
+            //otherwise it goes just left of the first glyph.
             if (BarBrush != null && BarWidth > 0 && range.Start.iChar == 0)
-                gr.FillRectangle(BarBrush, position.X, position.Y, BarWidth, height);
+            {
+                int barX = tb.LeftIndent >= BarWidth + 2 ? 1 : Math.Max(0, position.X - BarWidth - 1);
+                gr.FillRectangle(BarBrush, barX, position.Y, BarWidth, height);
+            }
         }
 
         public override string GetCSS()

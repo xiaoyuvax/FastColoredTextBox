@@ -772,31 +772,41 @@ namespace FastColoredTextBoxNS.Text
                     //dispose previously created brushes/styles before recreating them,
                     //InitStyleSchema is called every time the Language property changes
                     DisposeMarkdownStyles();
-                    //every background is derived from the control's BackColor so the highlighter
-                    //follows light and dark themes instead of hardcoding a white page
+                    //The palette is the page's own ink plus a single accent hue, so prose reads calmly
+                    //instead of taking a different colour per construct. Everything is derived from
+                    //the control's colours, so light and dark hosts share the same scheme.
                     Color page = currentTb?.BackColor ?? SystemColors.Window;
                     bool darkPage = page.GetBrightness() < 0.5f;
-                    Color blue = ((TextStyle)BlueStyle).ForeBrush is SolidBrush b ? b.Color : Color.Blue;
+                    Color ink = currentTb?.ForeColor ?? SystemColors.WindowText;
+                    Color accent = darkPage ? Color.FromArgb(0x93, 0xB8, 0xE8) : Color.FromArgb(0x2B, 0x5C, 0x8A);
+                    Color dim = MdMix(ink, page, 0.45f);
+                    Color faint = MdMix(ink, page, 0.62f);
                     Color green = ((TextStyle)GreenStyle).ForeBrush is SolidBrush g ? g.Color : Color.Green;
-                    //heading levels are told apart by shade: the control is a fixed-width grid, so a
-                    //scaled font would break caret, selection and word-wrap geometry
-                    MdH1Style = new TextStyle(MdBrush(Shade(blue, 0.35f, darkPage)), null, FontStyle.Bold);
-                    MdH2Style = new TextStyle(MdBrush(Shade(blue, 0.15f, darkPage)), null, FontStyle.Bold);
-                    MdH3Style = new TextStyle(MdBrush(blue), null, FontStyle.Bold);
-                    MdHeadingStyle = new TextStyle(MdBrush(Shade(blue, -0.15f, darkPage)), null, FontStyle.Bold);
-                    MdBoldStyle = BoldStyle;
-                    MdItalicStyle = BrownStyle;
-                    MdUnderscoreItalicStyle = BrownStyle;
-                    MdStrikethroughStyle = GrayStyle;
-                    MdInlineCodeStyle = new TextStyle(((TextStyle)MagentaStyle).ForeBrush, MdBrush(Shade(page, 0.12f, darkPage)), FontStyle.Regular);
-                    MdCodeBlockStyle = new MarkdownBlockStyle(MdBrush(Shade(page, 0.05f, darkPage)), MdBrush(Shade(page, 0.30f, darkPage)));
-                    MdBlockquoteStyle = new MarkdownBlockStyle(MdBrush(Shade(page, 0.07f, darkPage)), MdBrush(Shade(green, 0.10f, darkPage)));
-                    MdLinkStyle = new TextStyle(((TextStyle)BlueStyle).ForeBrush, null, FontStyle.Underline);
+                    //heading levels are told apart by the strength of the accent: the control is a
+                    //fixed-width grid, so a scaled font would break caret, selection and wrap geometry
+                    MdH1Style = new TextStyle(MdBrush(Shade(accent, 0.15f, darkPage)), null, FontStyle.Bold);
+                    MdH2Style = new TextStyle(MdBrush(accent), null, FontStyle.Bold);
+                    MdH3Style = new TextStyle(MdBrush(MdMix(accent, page, 0.25f)), null, FontStyle.Bold);
+                    MdHeadingStyle = new TextStyle(MdBrush(MdMix(accent, page, 0.40f)), null, FontStyle.Bold);
+                    //emphasis is the body colour in another weight: no extra hue for bold / italic
+                    MdBoldStyle = new TextStyle(null, null, FontStyle.Bold);
+                    MdItalicStyle = new TextStyle(null, null, FontStyle.Italic);
+                    MdUnderscoreItalicStyle = MdItalicStyle;
+                    MdStrikethroughStyle = new TextStyle(MdBrush(dim), null, FontStyle.Strikeout);
+                    //nothing paints a text background any more: code is marked by the accent colour
+                    //(a magenta glyph on a grey chip was unreadable), blocks by their left bar only
+                    MdInlineCodeStyle = new TextStyle(MdBrush(accent), null, FontStyle.Regular);
+                    //block bars are the only mark of a block now (no tint), so their width follows the
+                    //screen DPI: 3 device pixels would be a hairline on a 250% display
+                    int bar = Math.Max(3, (int)Math.Round(3 * (currentTb?.DeviceDpi ?? 96) / 96.0));
+                    MdCodeBlockStyle = new MarkdownBlockStyle(null, MdBrush(dim), bar);
+                    MdBlockquoteStyle = new MarkdownBlockStyle(null, MdBrush(dim), Math.Max(2, bar * 2 / 3));
+                    MdLinkStyle = new TextStyle(MdBrush(accent), null, FontStyle.Underline);
                     MdAutoLinkStyle = MdLinkStyle;
-                    MdImageStyle = new TextStyle(((TextStyle)MagentaStyle).ForeBrush, null, FontStyle.Regular);
+                    MdImageStyle = new TextStyle(MdBrush(dim), null, FontStyle.Italic);
                     MdTaskListDoneStyle = new TextStyle(MdBrush(Shade(green, 0.15f, darkPage)), null, FontStyle.Bold);
-                    MdHrStyle = GrayStyle;
-                    MdListStyle = MaroonStyle;
+                    MdHrStyle = new TextStyle(MdBrush(faint), null, FontStyle.Regular);
+                    MdListStyle = new TextStyle(MdBrush(ink), null, FontStyle.Regular);
                     break;
             }
         }
@@ -810,6 +820,19 @@ namespace FastColoredTextBoxNS.Text
             float a = Math.Abs(amount);
             bool lighten = amount > 0 ? darkPage : !darkPage;
             return lighten ? ControlPaint.Light(color, a) : ControlPaint.Dark(color, a);
+        }
+
+        /// <summary>
+        /// Blends <paramref name="color"/> towards <paramref name="towards"/> by 0..1, used to fade
+        /// a colour into the page (secondary text, softer heading levels).
+        /// </summary>
+        private static Color MdMix(Color color, Color towards, float amount)
+        {
+            float t = Math.Clamp(amount, 0f, 1f);
+            return Color.FromArgb(
+                (int)Math.Round(color.R + (towards.R - color.R) * t),
+                (int)Math.Round(color.G + (towards.G - color.G) * t),
+                (int)Math.Round(color.B + (towards.B - color.B) * t));
         }
 
         /// <summary>
