@@ -5979,6 +5979,68 @@ namespace FastColoredTextBoxNS
         /// <summary>Width of <paramref name="count"/> spaces (proportional spaces are not CharWidth wide).</summary>
         private int GetSpacesWidth(int count) => count <= 0 ? 0 : count * GetCharWidth(' ');
 
+        private List<MarkdownLink> markdownLinks;
+        private int markdownLinksVersion = -1;
+
+        /// <summary>
+        /// When true, clicks and the hand cursor test <see cref="MarkdownLinks"/>; the scan reads the
+        /// whole text, so it stays off until the host opts in (see <see cref="ApplyMarkdownBody"/>).
+        /// </summary>
+        public bool MarkdownLinksEnabled { get; set; }
+
+        /// <summary>
+        /// Clickable regions of the current text: <c>[label](url)</c>, <c>&lt;url&gt;</c>, bare urls
+        /// and local paths. A fenced code block has none, and a hidden marker keeps its index, so
+        /// these offsets match <see cref="PointToPlace"/> even where the renderer hides chars.
+        /// </summary>
+        public IReadOnlyList<MarkdownLink> MarkdownLinks
+        {
+            get
+            {
+                if (markdownLinks == null || markdownLinksVersion != TextVersion)
+                {
+                    markdownLinksVersion = TextVersion;
+                    markdownLinks = MarkdownLinkScanner.Collect(Text);
+                }
+                return markdownLinks;
+            }
+        }
+
+        /// <summary>
+        /// Renders the current text as markdown prose: colours the constructs, hides their source
+        /// markers, marks urls and local paths as links (see
+        /// <see cref="SyntaxHighlighter.MarkdownBodyHighlight"/>). Unlike assigning
+        /// <see cref="Language"/>, folding markers and the bracket / auto-indent state stay as the
+        /// host set them, so a markdown body can live beside the host's own styles.
+        /// </summary>
+        /// <param name="alignTables">Pad markdown tables with spaces so their columns line up; this edits the buffer, so pass false for text the host treats as data.</param>
+        public void ApplyMarkdownBody(bool alignTables = true)
+        {
+            MarkdownLinksEnabled = true;
+            SyntaxHighlighter?.MarkdownBodyHighlight(Range, alignTables);
+            markdownLinks = null;
+        }
+
+        /// <summary>The clickable region at a client point, or null.</summary>
+        public MarkdownLink? MarkdownLinkAt(Point point)
+        {
+            if (!MarkdownLinksEnabled)
+                return null;
+            Place place = PointToPlace(point);
+            if (place.iLine < 0 || place.iLine >= LinesCount)
+                return null;
+            foreach (var link in MarkdownLinks)
+                if (link.Line == place.iLine && place.iChar >= link.Start && place.iChar < link.Start + link.Length)
+                    return link;
+            return null;
+        }
+
+        /// <summary>Raised when a click lands on a <see cref="MarkdownLinks"/> region; the host decides where it goes.</summary>
+        public event EventHandler<MarkdownLinkEventArgs> MarkdownLinkClicked;
+
+        /// <summary>Raises <see cref="MarkdownLinkClicked"/>.</summary>
+        protected virtual void OnMarkdownLinkClicked(MarkdownLinkEventArgs e) => MarkdownLinkClicked?.Invoke(this, e);
+
         private void FlushRendering(Graphics gr, IEnumerable<Style> styles, Point pos, TextSelectionRange range)
         {
             if (range.End > range.Start)
@@ -6070,6 +6132,10 @@ namespace FastColoredTextBoxNS
                     OnMarkerClick(e, marker);
                     return;
                 }
+
+                var markdownLink = MarkdownLinkAt(e.Location);
+                if (markdownLink != null)
+                    OnMarkdownLinkClicked(new MarkdownLinkEventArgs(markdownLink.Value));
 
                 mouseIsDrag = true;
                 mouseIsDragDrop = false;
@@ -6374,6 +6440,8 @@ namespace FastColoredTextBoxNS
             {
                 if (e.Location.X < LeftIndentLine || isLineSelect)
                     base.Cursor = Cursors.Arrow;
+                else if (e.Button == MouseButtons.None && MarkdownLinkAt(e.Location) != null)
+                    base.Cursor = Cursors.Hand;
                 else
                     base.Cursor = defaultCursor;
             }

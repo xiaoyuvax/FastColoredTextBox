@@ -1563,43 +1563,11 @@ namespace FastColoredTextBoxNS.Text
             if (MdHeadingRegex == null)
                 InitMarkdownRegex();
 
-            //clear style of changed range
-            range.ClearStyle(MdH1Style, MdH2Style, MdH3Style, MdHeadingStyle,
-                             MdBoldStyle, MdItalicStyle, MdUnderscoreItalicStyle, MdStrikethroughStyle,
-                             MdInlineCodeStyle, MdCodeBlockStyle, MdLinkStyle, MdAutoLinkStyle,
-                             MdImageStyle, MdBlockquoteStyle, MdHrStyle, MdListStyle, MdTaskListDoneStyle,
-                             MdMarkerStyle);
+            ClearMarkdownStyles(range);
 
-            int fromLine = Math.Max(0, range.Start.iLine);
-            int toLine = range.End.iLine;
-
-            var fence = new FenceState();
-            RewindFenceState(tb, fromLine, fence);
             //code blocks seen inside the range, highlighted with their own language afterwards
             var codeBlocks = new List<(int startLine, int endLine, Language language)>();
-
-            for (int iLine = fromLine; iLine <= toLine; iLine++)
-            {
-                Line line = tb[iLine];
-                string text = line.Text;
-                bool isCode = FenceStep(text, fence, iLine, codeBlocks);
-
-                int from = iLine == fromLine ? range.Start.iChar : 0;
-                int to = iLine == toLine ? Math.Min(range.End.iChar, line.Count) : line.Count;
-                if (to <= from)
-                    continue;
-
-                if (isCode)
-                {
-                    new TextSelectionRange(tb, from, iLine, to, iLine).SetStyle(MdCodeBlockStyle);
-                    continue;
-                }
-
-                HighlightMarkdownLine(tb, text, from, to, iLine);
-            }
-            //an unterminated fence runs to the end of the document, as in CommonMark
-            if (fence.Inside)
-                codeBlocks.Add((Math.Max(fence.StartLine, fromLine), toLine, fence.Language));
+            StyleMarkdownLines(tb, range, codeBlocks);
 
             //highlight the content of every fence with the language named in its info string
             foreach (var (startLine, endLine, language) in codeBlocks)
@@ -1628,6 +1596,126 @@ namespace FastColoredTextBoxNS.Text
             range.ClearFoldingMarkers();
             //set folding markers for fenced code blocks
             range.SetFoldingMarkers(@"^(?:`{3,}|~{3,})", RegexOptions.Multiline);
+        }
+
+        /// <summary>
+        /// Styles a document as markdown prose on the character grid: the constructs get their
+        /// colours, their source markers are hidden, and bare urls / local paths become link coloured.
+        /// </summary>
+        /// <remarks>
+        /// This is the reusable half of <see cref="MarkdownSyntaxHighlight"/> for a host that shows a
+        /// markdown body inside a document of its own (a chat transcript, a notes pane): it never
+        /// clears folding markers and never rewrites the bracket / auto-indent state, so the host
+        /// keeps its own styles and folding. Fenced blocks are painted as code but not highlighted
+        /// with their language (the host does that), and the cell padding of tables - the only way a
+        /// character grid can line columns up - is an edit, so it only runs when asked for.
+        /// </remarks>
+        /// <param name="range">Range to style</param>
+        /// <param name="alignTables">Pad markdown tables with spaces so their columns line up</param>
+        public virtual void MarkdownBodyHighlight(TextSelectionRange range, bool alignTables = true)
+        {
+            if (range == null)
+                return;
+            var tb = range.tb;
+            if (MdHeadingRegex == null)
+                InitMarkdownRegex();
+            if (MdH1Style == null)
+                InitStyleSchema(Language.Markdown);
+
+            //padding the cells rewrites the buffer, so the old range now describes text that is gone
+            if (alignTables && AlignMarkdownTables(range) > 0)
+                range = tb.Range;
+            range.Normalize();
+
+            ClearMarkdownStyles(range);
+            StyleMarkdownLines(tb, range, new List<(int, int, Language)>());
+            StyleBareLinks(tb, range);
+        }
+
+        private void ClearMarkdownStyles(TextSelectionRange range)
+            => range.ClearStyle(MdH1Style, MdH2Style, MdH3Style, MdHeadingStyle,
+                                MdBoldStyle, MdItalicStyle, MdUnderscoreItalicStyle, MdStrikethroughStyle,
+                                MdInlineCodeStyle, MdCodeBlockStyle, MdLinkStyle, MdAutoLinkStyle,
+                                MdImageStyle, MdBlockquoteStyle, MdHrStyle, MdListStyle, MdTaskListDoneStyle,
+                                MdMarkerStyle);
+
+        /// <summary>
+        /// The line pass shared by the document and the body entry; code blocks are reported to the
+        /// caller, which alone knows whether it wants to highlight their language.
+        /// </summary>
+        private void StyleMarkdownLines(FastColoredTextBox tb, TextSelectionRange range,
+                                        List<(int startLine, int endLine, Language language)> codeBlocks)
+        {
+            int fromLine = Math.Max(0, range.Start.iLine);
+            int toLine = Math.Min(range.End.iLine, tb.LinesCount - 1);
+
+            var fence = new FenceState();
+            RewindFenceState(tb, fromLine, fence);
+
+            for (int iLine = fromLine; iLine <= toLine; iLine++)
+            {
+                Line line = tb[iLine];
+                string text = line.Text;
+                bool isCode = FenceStep(text, fence, iLine, codeBlocks);
+
+                int from = iLine == fromLine ? range.Start.iChar : 0;
+                int to = iLine == toLine ? Math.Min(range.End.iChar, line.Count) : line.Count;
+                if (to <= from)
+                    continue;
+
+                if (isCode)
+                {
+                    new TextSelectionRange(tb, from, iLine, to, iLine).SetStyle(MdCodeBlockStyle);
+                    continue;
+                }
+
+                HighlightMarkdownLine(tb, text, from, to, iLine);
+            }
+            //an unterminated fence runs to the end of the document, as in CommonMark
+            if (fence.Inside)
+                codeBlocks.Add((Math.Max(fence.StartLine, fromLine), toLine, fence.Language));
+        }
+
+        /// <summary>
+        /// Gives bare urls and local paths the link style. The syntax forms (<c>[label](url)</c>,
+        /// <c>&lt;url&gt;</c>) already carry it from the inline pass, and text inside an inline code
+        /// span is literal, so it keeps the code style there.
+        /// </summary>
+        private void StyleBareLinks(FastColoredTextBox tb, TextSelectionRange range)
+        {
+            if (MdLinkStyle == null)
+                return;
+            int fromLine = Math.Max(0, range.Start.iLine);
+            int toLine = Math.Min(range.End.iLine, tb.LinesCount - 1);
+
+            foreach (var link in MarkdownLinkScanner.Collect(tb.Text))
+            {
+                if (link.FromSyntax || link.Line < fromLine || link.Line > toLine)
+                    continue;
+                Line line = tb[link.Line];
+                if (link.Start + link.Length > line.Count)
+                    continue;
+                var span = new TextSelectionRange(tb, link.Start, link.Line, link.Start + link.Length, link.Line);
+                if (ContainsStyle(span, MdInlineCodeStyle))
+                    continue;
+                span.SetStyle(MdLinkStyle);
+            }
+        }
+
+        private static bool ContainsStyle(TextSelectionRange range, Style style)
+        {
+            if (style == null)
+                return false;
+            for (int iLine = range.Start.iLine; iLine <= range.End.iLine; iLine++)
+            {
+                Line line = range.tb[iLine];
+                int from = iLine == range.Start.iLine ? range.Start.iChar : 0;
+                int to = iLine == range.End.iLine ? range.End.iChar : line.Count;
+                for (int i = from; i < to && i < line.Count; i++)
+                    if (line[i].HasStyle(style))
+                        return true;
+            }
+            return false;
         }
 
         /// <summary>
