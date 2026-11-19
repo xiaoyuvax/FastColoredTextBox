@@ -15,6 +15,7 @@
 	<PropertyGroup>
 		<AssemblyOriginatorKeyFile>FCTB_key.snk</AssemblyOriginatorKeyFile>
 		<RepositoryUrl>https://github.com/xiaoyuvax/FastColoredTextBox/</RepositoryUrl>    <PackageReleaseNotes>
+      - 2026/11/18 The markdown prose palette is now the page's own ink plus one accent hue, so prose reads calmly instead of taking a different colour per construct, and no text carries a background any more: inline code used to be MagentaStyle's glyph on a grey chip (unreadable on both themes), an image label and a list bullet shared it. Headings are accent shades told apart by strength (the control is a fixed-width grid, so sizes cannot differ), bold / italic keep the body colour in another weight, links and inline code take the accent, strikethrough / image / rule go dim. A block's only mark is now its left bar, so the bar moved from the indent gutter to just left of the first glyph and a blockquote is styled from column 0 (a quote used to render as ordinary prose). Regression tests: MarkdownHighlightTests (120 total)
       - 2026/11/18 The markdown renderer is reusable outside Language.Markdown: FastColoredTextBox.ApplyMarkdownBody / SyntaxHighlighter.MarkdownBodyHighlight(range, alignTables) style a range as markdown prose (colours, hidden source markers, link-coloured bare urls and local paths, optional table padding) without clearing folding markers or rewriting the bracket / auto-indent state, so a host can show a markdown body beside its own styles. Clickable regions are data now: MarkdownLinks, MarkdownLinkAt(Point), the MarkdownLinkClicked event and a hand cursor (MarkdownLinksEnabled), backed by MarkdownLinkScanner which knows [label](url), ![alt](src), &lt;url&gt;, bare urls and local paths and skips fenced code. Tests: MarkdownBodyTests (131 total)
       - 2026/11/17 Markdown marker hiding is now complete. An inline construct inside a heading (## **bold**, ## `code`, ## [text](url)) keeps its markers hidden too: the heading branch used to return before the inline pass, so the bold/code/link delimiters of a heading stayed on screen. HTML export, RTF export and therefore Print no longer emit hidden markers either (they wrote every char of the line, so a printed or exported markdown document still carried its #'s and **'s). Verified by rendering: drawing a line with its hidden markers produces exactly the bitmap of the visible text (new test MarkersAreNotPainted). Tests: MarkdownHighlightTests (116 total)
       - 2026/11/17 Markdown tables can be aligned: new SyntaxHighlighter.AlignMarkdownTables(range) rewrites every table whose header lies in the range so its columns line up, and returns how many tables it formatted. Alignment happens in the text (the control renders on a character grid), so cells are padded with spaces: a column is as wide as its widest cell (at least 3, a CJK char counting as two columns), contents follow the :-- / :--: / --: markers of the delimiter row, a missing leading or trailing pipe is added, escaped (\|) and code-span pipes stay inside their cell, and a row with more cells widens the table instead of losing text. The whole table is replaced in one edit (one undo restores it), the selection is kept, and formatting twice changes nothing. Tests: MarkdownTableAlignTests (112 total)
@@ -83,9 +84,9 @@
 		<PackageIcon>icon.png</PackageIcon>
 		<Title>FastColoredTextBox</Title>
 		<PackageTags>winform;control;C#;VB;TextBox;Editor;Colored;CJK</PackageTags>
-		<AssemblyVersion>2.19.0.233</AssemblyVersion>
-		<FileVersion>2.19.0.233</FileVersion>
-		<Version>2.19.0.233</Version>
+		<AssemblyVersion>2.19.0.234</AssemblyVersion>
+		<FileVersion>2.19.0.234</FileVersion>
+		<Version>2.19.0.234</Version>
 		<PackageOutputPath>D:\PUB\Nuget Packages</PackageOutputPath>
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 	</PropertyGroup>

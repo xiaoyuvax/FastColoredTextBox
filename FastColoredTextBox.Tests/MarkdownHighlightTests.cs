@@ -267,11 +267,13 @@ namespace FastColoredTextBoxNS.Tests
         }
 
         /// <summary>
-        /// The block bar is drawn in the indent gutter, not under the first glyph: a bar at the text
-        /// origin cuts through a CJK character (it fills its cell) and doubles as a stroke.
+        /// The block bar sits just left of the first glyph: without a tint it is the only mark of
+        /// the block, so it has to read as the block's left edge (it used to hide in the gutter,
+        /// which left a quote looking like ordinary prose). A bar at the text origin would cut
+        /// through a CJK character, which fills its cell.
         /// </summary>
         [Fact]
-        public void BlockBar_SitsInTheIndentGutter_NotUnderTheFirstGlyph()
+        public void BlockBar_SitsJustLeftOfTheFirstGlyph()
         {
             StaRunner.Run(() =>
             {
@@ -287,13 +289,16 @@ namespace FastColoredTextBoxNS.Tests
                 tb.Text = "> quoted";
                 tb.SyntaxHighlighter.MarkdownBodyHighlight(tb.Range);
 
-                Color bar = ((SolidBrush)((MarkdownBlockStyle)tb.SyntaxHighlighter.MdBlockquoteStyle).BarBrush).Color;
+                var style = (MarkdownBlockStyle)tb.SyntaxHighlighter.MdBlockquoteStyle;
+                Color bar = ((SolidBrush)style.BarBrush).Color;
                 using var bmp = new Bitmap(tb.Width, tb.Height);
                 tb.DrawToBitmap(bmp, new Rectangle(0, 0, tb.Width, tb.Height));
 
                 int y = tb.Paddings.Top + tb.CharHeight / 2;
-                Assert.Equal(bar.ToArgb(), bmp.GetPixel(2, y).ToArgb());
-                Assert.NotEqual(bar.ToArgb(), bmp.GetPixel(tb.LeftIndent + tb.Paddings.Left - 1, y).ToArgb());
+                int textX = tb.LeftIndent + tb.Paddings.Left;
+                int barX = textX - style.BarWidth - 2 + style.BarWidth / 2;
+                Assert.Equal(bar.ToArgb(), bmp.GetPixel(barX, y).ToArgb());
+                Assert.NotEqual(bar.ToArgb(), bmp.GetPixel(textX, y).ToArgb());
             });
         }
 

@@ -1780,11 +1780,12 @@ namespace FastColoredTextBoxNS.Text
                 Hide(content + label.Index + label.Length, start + m.Length);
             }
 
-            //blockquote: the tint and bar cover the markers too, the content is parsed behind them
+            //blockquote: the bar covers the marker too, the content is parsed behind it. The style
+            //starts at column 0 so the bar is drawn on every quoted line, not only on unindented ones
             var quote = MdQuoteRegex.Match(text, content);
             if (quote.Success && quote.Index == content)
             {
-                Line(content, lineTo).SetStyle(MdBlockquoteStyle);
+                Line(0, lineTo).SetStyle(MdBlockquoteStyle);
                 Hide(content, quote.Index + quote.Length);
                 content = SkipIndent(text, quote.Index + quote.Length);
             }
