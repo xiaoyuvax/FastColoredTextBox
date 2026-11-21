@@ -54,6 +54,27 @@ namespace FastColoredTextBoxNS.Tests
             });
         }
 
+        /// <summary>
+        /// GDI 的 TextRenderer 默认把 '&amp;' 当助记符前缀：不画 &amp;，改为给后一个字符加下划线。
+        /// 逐字测宽因此只得到约 1px，而绘制走 GDI+ 会画完整字形，于是 &amp; 会压到下一个字符上
+        /// （现场：ChatFlow 思维链里的 <c>2&gt;&amp;1</c>、<c>&amp; $env:…</c> 叠在一起）。
+        /// </summary>
+        [Fact]
+        public void Ampersand_advance_is_its_glyph_width()
+        {
+            StaRunner.Run(() =>
+            {
+                using var box = new FastColoredTextBox { AllowProportionalFont = true };
+                box.Font = new Font("Microsoft YaHei UI", 12F);
+
+                int Measure(string s) => TextRenderer.MeasureText(s, box.Font,
+                    new Size(int.MaxValue, int.MaxValue), TextFormatFlags.NoPrefix).Width;
+                int expected = Measure("<&>") - Measure("<>");
+
+                Assert.InRange(box.GetCharWidth('&'), expected - 2, expected + 1);
+            });
+        }
+
         [Fact]
         public void Proportional_cjk_width_follows_mode()
         {

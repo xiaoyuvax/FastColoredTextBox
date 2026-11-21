@@ -46,8 +46,11 @@
             }
 
             // 测量放在锁外：一次 MeasureText 可能几百微秒，别让别的线程排队等
-            Size sz2 = TextRenderer.MeasureText(dc, $"<{c}>", font);
-            Size sz3 = TextRenderer.MeasureText(dc, "<>", font);
+            // 必须带 NoPrefix：GDI 默认把 '&' 当助记符前缀（吞掉 & 并给下一字符加下划线），
+            // 量出来只有约 1px，而绘制用 GDI+ 画整个字形，& 会叠到下一个字符上。
+            const TextFormatFlags flags = TextFormatFlags.NoPrefix;
+            Size sz2 = TextRenderer.MeasureText(dc, $"<{c}>", font, Size.Empty, flags);
+            Size sz3 = TextRenderer.MeasureText(dc, "<>", font, Size.Empty, flags);
             // 行高也取自同一 DC：Font.Height 用的是主屏 DPI，副屏上会偏小/偏大
             var measured = new SizeF(sz2.Width - sz3.Width + 1, sz2.Height);
             lock (cache) cache[key] = measured;

@@ -51,8 +51,9 @@ namespace FastColoredTextBoxNS.Tests
                 };
                 _ = tb.Handle;
 
-                //narrow and wide glyphs mixed, like an inline-code span in a message
-                const string text = "code-review.md Path.Combine";
+                //narrow and wide glyphs mixed, like an inline-code span in a message;
+                //'&' also guards the GDI mnemonic-prefix measurement trap (advance would be 1px)
+                const string text = "code-review.md 2>&1 & $env:TEMP";
                 const int originX = 20;
 
                 tb.Text = text;
