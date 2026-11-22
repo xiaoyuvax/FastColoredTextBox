@@ -1765,20 +1765,6 @@ namespace FastColoredTextBoxNS.Text
                 if (end > start)
                     Line(start, end).SetStyle(MdMarkerStyle);
             }
-            //hides the two delimiters of an inline construct (lead = opener length, trail = closer)
-            void HideDelimiters(Match m, int lead, int trail)
-            {
-                int start = content + m.Index;
-                Hide(start, start + lead);
-                Hide(start + m.Length - trail, start + m.Length);
-            }
-            //hides everything of an inline construct except its label group (links and images)
-            void HideSyntax(Match m, Group label)
-            {
-                int start = content + m.Index;
-                Hide(start, content + label.Index);
-                Hide(content + label.Index + label.Length, start + m.Length);
-            }
 
             //blockquote: the bar covers the marker too, the content is parsed behind it. The style
             //starts at column 0 so the bar is drawn on every quoted line, not only on unindented ones
@@ -1866,10 +1852,24 @@ namespace FastColoredTextBoxNS.Text
 
             //hide the delimiters of what was just formatted: the styled text is what should show
             string tail = text.Substring(content, lineTo - content);
+            HideInlineMarkers(tail, (start, end) => Hide(content + start, content + end));
+        }
+
+        /// <summary>
+        /// Reports the chars of a prose fragment that the inline pass hides: the delimiters of an
+        /// inline code span, bold / italic / strikethrough, the angle brackets of an autolink, and
+        /// the syntax around the label of a link or image (the label itself stays visible).
+        /// </summary>
+        /// <remarks>
+        /// Shared with the table formatter, which pads a column to the width the cell renders at:
+        /// counting the source markers would misplace every pipe once they disappear. A construct
+        /// matched inside a code span is literal text there, so its markers stay.
+        /// </remarks>
+        private void HideInlineMarkers(string text, Action<int, int> hide)
+        {
             var codeSpans = new List<Match>();
-            foreach (Match m in MdInlineCodeRegex.Matches(tail))
+            foreach (Match m in MdInlineCodeRegex.Matches(text))
                 codeSpans.Add(m);
-            //a construct matched inside a code span is literal text there, its markers must stay
             bool InCode(Match m)
             {
                 foreach (var span in codeSpans)
@@ -1877,28 +1877,40 @@ namespace FastColoredTextBoxNS.Text
                         return true;
                 return false;
             }
+            //the two delimiters of an inline construct (lead = opener length, trail = closer)
+            void HideDelimiters(Match m, int lead, int trail)
+            {
+                hide(m.Index, m.Index + lead);
+                hide(m.Index + m.Length - trail, m.Index + m.Length);
+            }
+            //everything of an inline construct except its label group (links and images)
+            void HideSyntax(Match m, Group label)
+            {
+                hide(m.Index, label.Index);
+                hide(label.Index + label.Length, m.Index + m.Length);
+            }
 
             foreach (var m in codeSpans)
                 HideDelimiters(m, 1, 1);
-            foreach (Match m in MdImageRegex.Matches(tail))
+            foreach (Match m in MdImageRegex.Matches(text))
                 if (!InCode(m))
                     HideSyntax(m, m.Groups["text"]);
-            foreach (Match m in MdLinkRegex.Matches(tail))
+            foreach (Match m in MdLinkRegex.Matches(text))
                 if (!InCode(m))
                     HideSyntax(m, m.Groups["text"]);
-            foreach (Match m in MdAutoLinkRegex.Matches(tail))
+            foreach (Match m in MdAutoLinkRegex.Matches(text))
                 if (!InCode(m))
                     HideDelimiters(m, 1, 1);
-            foreach (Match m in MdBoldRegex.Matches(tail))
+            foreach (Match m in MdBoldRegex.Matches(text))
                 if (!InCode(m))
                     HideDelimiters(m, 2, 2);
-            foreach (Match m in MdItalicRegex.Matches(tail))
+            foreach (Match m in MdItalicRegex.Matches(text))
                 if (!InCode(m))
                     HideDelimiters(m, 1, 1);
-            foreach (Match m in MdUnderscoreItalicRegex.Matches(tail))
+            foreach (Match m in MdUnderscoreItalicRegex.Matches(text))
                 if (!InCode(m))
                     HideDelimiters(m, 1, 1);
-            foreach (Match m in MdStrikethroughRegex.Matches(tail))
+            foreach (Match m in MdStrikethroughRegex.Matches(text))
                 if (!InCode(m))
                     HideDelimiters(m, 2, 2);
         }
@@ -2062,7 +2074,12 @@ namespace FastColoredTextBoxNS.Text
         /// taken whole and replaced in one edit (one undo restores it); formatting an already
         /// formatted table changes nothing. Each column is aligned the way its delimiter cell says
         /// (<c>:--</c> left, <c>:--:</c> center, <c>--:</c> right), and a CJK char counts as two
-        /// columns wide so Chinese and latin cells line up.
+        /// columns wide so Chinese and latin cells line up. A cell is measured as it renders, so
+        /// the inline markers the highlighter hides (<c>**bold**</c>, a code span, link syntax)
+        /// take no room and the padding stays right once they disappear. A control with
+        /// <see cref="FastColoredTextBox.AllowProportionalFont"/> has no character grid, so there the
+        /// cells are measured with the control's own char metrics and padded in space widths: the
+        /// columns line up as closely as whole spaces allow.
         /// </remarks>
         /// <param name="range">Range holding the tables to format</param>
         /// <returns>Number of tables formatted</returns>
@@ -2133,20 +2150,26 @@ namespace FastColoredTextBoxNS.Text
 
             //the delimiter needs room for at least "---"
             var widths = new int[columns];
+            var cellWidths = new int[rowCount][];
             var alignment = new int[columns];
-            for (int c = 0; c < columns; c++)
-            {
-                widths[c] = 3;
-                foreach (var row in rows)
-                    if (c < row.Length)
-                        widths[c] = Math.Max(widths[c], DisplayWidth(row[c]));
-            }
             for (int c = 0; c < rows[1].Length && c < columns; c++)
             {
                 string cell = rows[1][c];
                 bool left = cell.StartsWith(":");
                 bool right = cell.EndsWith(":");
                 alignment[c] = left && right ? 2 : right ? 3 : left ? 1 : 0;
+            }
+            for (int r = 0; r < rowCount; r++)
+            {
+                cellWidths[r] = new int[columns];
+                for (int c = 0; c < rows[r].Length && c < columns; c++)
+                    cellWidths[r][c] = CellWidth(tb, rows[r][c]);
+            }
+            for (int c = 0; c < columns; c++)
+            {
+                widths[c] = MinColumnWidth(tb, alignment[c]);
+                for (int r = 0; r < rowCount; r++)
+                    widths[c] = Math.Max(widths[c], cellWidths[r][c]);
             }
 
             var sb = new StringBuilder();
@@ -2158,8 +2181,8 @@ namespace FastColoredTextBoxNS.Text
                 for (int c = 0; c < columns; c++)
                 {
                     string cell = c < rows[r].Length ? rows[r][c] : "";
-                    sb.Append(r == 1 ? SeparatorCell(widths[c], alignment[c])
-                                     : ContentCell(cell, widths[c], alignment[c]));
+                    sb.Append(r == 1 ? SeparatorCell(tb, widths[c], alignment[c])
+                                     : ContentCell(cell, widths[c], alignment[c], cellWidths[r][c]));
                     sb.Append('|');
                 }
             }
@@ -2242,10 +2265,74 @@ namespace FastColoredTextBoxNS.Text
             return width;
         }
 
-        /// <summary>Cell of a content row, padded to the column width and placed by its alignment</summary>
-        private static string ContentCell(string text, int width, int alignment)
+        /// <summary>
+        /// Narrowest column that still holds the delimiter row: "---" plus the colons of its
+        /// alignment. In a proportional font that is wider than three spaces, so the column grows.
+        /// </summary>
+        private static int MinColumnWidth(FastColoredTextBox tb, int alignment)
         {
-            int pad = Math.Max(0, width - DisplayWidth(text));
+            if (!tb.AllowProportionalFont)
+                return 3;
+            int colon = alignment is 1 or 2 or 3 ? tb.GetCharWidth(':') : 0;
+            int dash = Math.Max(1, tb.GetCharWidth('-'));
+            int room = 3 * dash + (alignment is 1 or 2 ? colon : 0) + (alignment is 2 or 3 ? colon : 0);
+            return Math.Max(3, (int)Math.Ceiling(room / (double)PaddingWidth(tb)));
+        }
+
+        /// <summary>
+        /// Width of a cell in padding units: character cells for a monospaced font, spaces for a
+        /// proportional one. Measured on what the cell renders as: the inline markers the
+        /// highlighter hides take no room, so counting them would leave every pipe of the column
+        /// one marker width off.
+        /// </summary>
+        private int CellWidth(FastColoredTextBox tb, string text)
+        {
+            string visible = VisibleCellText(text);
+            if (!tb.AllowProportionalFont)
+                return DisplayWidth(visible);
+            int unit = PaddingWidth(tb);
+            return (int)Math.Round(MeasuredWidth(tb, visible) / (double)unit);
+        }
+
+        /// <summary>The text a cell renders as: the inline markers the highlighter hides are dropped</summary>
+        private string VisibleCellText(string text)
+        {
+            if (text.Length == 0)
+                return text;
+            var hidden = new bool[text.Length];
+            HideInlineMarkers(text, (start, end) =>
+            {
+                for (int i = Math.Max(0, start); i < Math.Min(end, hidden.Length); i++)
+                    hidden[i] = true;
+            });
+            var sb = new StringBuilder(text.Length);
+            for (int i = 0; i < text.Length; i++)
+                if (!hidden[i])
+                    sb.Append(text[i]);
+            return sb.ToString();
+        }
+
+        /// <summary>Pixel width of a cell as the control draws it: an escape pair renders as one char</summary>
+        private static int MeasuredWidth(FastColoredTextBox tb, string text)
+        {
+            int width = 0;
+            for (int i = 0; i < text.Length; i++)
+            {
+                char c = text[i];
+                if (c == '\\' && i + 1 < text.Length)
+                    c = text[++i];
+                width += tb.GetCharWidth(c);
+            }
+            return width;
+        }
+
+        /// <summary>Pixel width of one padding space</summary>
+        private static int PaddingWidth(FastColoredTextBox tb) => Math.Max(1, tb.GetCharWidth(' '));
+
+        /// <summary>Cell of a content row, padded to the column width and placed by its alignment</summary>
+        private static string ContentCell(string text, int width, int alignment, int cellWidth)
+        {
+            int pad = Math.Max(0, width - cellWidth);
             int left = alignment == 2 ? pad / 2 : alignment == 3 ? pad : 0;
             return " " + new string(' ', left) + text + new string(' ', pad - left) + " ";
         }
@@ -2253,13 +2340,27 @@ namespace FastColoredTextBoxNS.Text
         /// <summary>
         /// Delimiter cell (<c>---</c>, <c>:--</c>, <c>:--:</c>, <c>--:</c>) padded like a content cell
         /// </summary>
-        private static string SeparatorCell(int width, int alignment) => alignment switch
+        private static string SeparatorCell(FastColoredTextBox tb, int width, int alignment)
         {
-            1 => " :" + new string('-', width - 1) + " ",
-            2 => " :" + new string('-', width - 2) + ": ",
-            3 => " " + new string('-', width - 1) + ": ",
-            _ => " " + new string('-', width) + " ",
-        };
+            if (!tb.AllowProportionalFont)
+                return alignment switch
+                {
+                    1 => " :" + new string('-', width - 1) + " ",
+                    2 => " :" + new string('-', width - 2) + ": ",
+                    3 => " " + new string('-', width - 1) + ": ",
+                    _ => " " + new string('-', width) + " ",
+                };
+
+            //proportional: a dash is not a space wide, so the count comes from the pixels the column
+            //has to fill, otherwise the delimiter row drifts away from the pipes above it
+            bool left = alignment is 1 or 2;
+            bool right = alignment is 2 or 3;
+            int colon = tb.GetCharWidth(':');
+            int dash = Math.Max(1, tb.GetCharWidth('-'));
+            int room = width * PaddingWidth(tb) - (left ? colon : 0) - (right ? colon : 0);
+            int dashes = Math.Max(3, (int)Math.Round(room / (double)dash));
+            return " " + (left ? ":" : "") + new string('-', dashes) + (right ? ":" : "") + " ";
+        }
 
         /// <summary>
         /// Replaces a range and puts the selection back where it was, shifted by the length change.

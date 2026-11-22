@@ -1,3 +1,6 @@
+using System;
+using System.Collections.Generic;
+using System.Drawing;
 using FastColoredTextBoxNS.Text;
 using FastColoredTextBoxNS.Types;
 using Xunit;
@@ -90,7 +93,8 @@ namespace FastColoredTextBoxNS.Tests
                 Assert.Equal(1, Align(tb));
 
                 Assert.Equal("| a \\| b | `c|d` |", tb[0].Text);
-                Assert.Equal("| e     | f     |", tb[2].Text);
+                //the code span renders as "c|d": its backticks are hidden, so they take no column
+                Assert.Equal("| e     | f   |", tb[2].Text);
             });
         }
 
@@ -182,6 +186,73 @@ namespace FastColoredTextBoxNS.Tests
 
                 Assert.Equal("| a | b |", tb[0].Text);
                 Assert.Equal("| x   | y   |", tb[4].Text);
+            });
+        }
+
+        [Fact]
+        public void HiddenMarkers_DoNotCountTowardsColumnWidth()
+        {
+            StaRunner.Run(() =>
+            {
+                //"**a**" renders as "a" and "`x`" as "x": the column is padded to the rendered
+                //width, otherwise the pipes would drift once the markers disappear
+                using var tb = Markdown("| **a** | `x` |\n| --- | --- |\n| bbbb | yyy |");
+
+                Assert.Equal(1, Align(tb));
+
+                Assert.Equal("| **a**    | `x`   |", tb[0].Text);
+                Assert.Equal("| ---- | --- |", tb[1].Text);
+                Assert.Equal("| bbbb | yyy |", tb[2].Text);
+                Assert.Equal(0, Align(tb));
+            });
+        }
+
+        /// <summary>
+        /// X offset of every visible '|' of a line, accumulated with the control's own char widths
+        /// (a hidden markdown marker takes no room, so it does not shift the pipes)
+        /// </summary>
+        private static int[] PipeOffsets(FastColoredTextBox tb, int iLine)
+        {
+            var offsets = new List<int>();
+            int x = 0;
+            for (int i = 0; i < tb[iLine].Count; i++)
+            {
+                if (tb[iLine][i].C == '|')
+                    offsets.Add(x);
+                x += tb.GetCharWidth(tb[iLine], i);
+            }
+            return offsets.ToArray();
+        }
+
+        [Fact]
+        public void ProportionalFont_PipesLineUpInPixels()
+        {
+            StaRunner.Run(() =>
+            {
+                //a proportional font has no character grid: padding in columns would leave the pipes
+                //of a CJK-heavy column far away from those of a latin one, so the cell widths have to
+                //come from the control's own metrics
+                using var tb = new FastColoredTextBox
+                {
+                    Language = Language.Markdown,
+                    AllowProportionalFont = true,
+                    Font = new Font("Microsoft YaHei UI", 9F),
+                };
+                tb.Text = "| 名称 | **value** |\n| --- | --- |\n| 长 | `x` |\n| abcdef | 中文内容 |";
+
+                Assert.Equal(1, Align(tb));
+                //measure the rendered line: the inline markers are hidden, so they take no room
+                tb.SyntaxHighlighter.MarkdownBodyHighlight(tb.Range, alignTables: false);
+
+                int tolerance = 2 * tb.GetCharWidth(' ');
+                int[] first = PipeOffsets(tb, 0);
+                for (int iLine = 1; iLine < tb.LinesCount; iLine++)
+                {
+                    int[] pipes = PipeOffsets(tb, iLine);
+                    Assert.Equal(first.Length, pipes.Length);
+                    for (int c = 0; c < pipes.Length; c++)
+                        Assert.InRange(Math.Abs(pipes[c] - first[c]), 0, tolerance);
+                }
             });
         }
     }

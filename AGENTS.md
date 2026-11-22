@@ -30,6 +30,9 @@ dotnet build FastColoredTextBox.sln -c Release
 - Test projects target older frameworks (.NET 8/9) and have WFO1000 errors on .NET 9+ (suppress with `-p:NoWarn=WFO1000`)
 - Unit tests: `FastColoredTextBox.Tests/` (xUnit, no UI required) - run with `dotnet test FastColoredTextBox.Tests`
 
+## Recent Optimizations (v2.19.0.235)
+- Markdown table alignment is font aware: with `AllowProportionalFont` there is no char grid, so `FormatTable` measures each cell with `GetCharWidth` and pads it in whole space widths (the delimiter row's dash count comes from the pixels it fills) instead of counting columns; monospaced controls keep the old column grid and output. Cells are measured as they render, so the inline markers the highlighter hides (`**bold**`, code span, link syntax) take no room: `HideInlineMarkers` is the single source of the hiding rules for both the highlighter and `VisibleCellText`. Tests: `MarkdownTableAlignTests.ProportionalFont_PipesLineUpInPixels`, `HiddenMarkers_DoNotCountTowardsColumnWidth`
+
 ## Recent Optimizations (v2.19.0.232)
 - Marker hiding completed: the heading branch of `HighlightMarkdownLine` returned before the inline pass, so inline constructs inside a heading (`## **bold**`, code span, link) kept their delimiters; it now falls through with `content`/`lineTo` limited to the heading text. `ExportToHTML`/`ExportToRTF` (and `Print`, which goes through HTML) skip `IsCharHidden` chars — they used to write every char. Test: `MarkdownHighlightTests.MarkersAreNotPainted` draws the line with `MdH2Style` and asserts the bitmap equals the one of the visible text only (116 tests)
 
