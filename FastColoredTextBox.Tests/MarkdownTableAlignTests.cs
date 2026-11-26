@@ -260,6 +260,89 @@ namespace FastColoredTextBoxNS.Tests
         }
 
         /// <summary>
+        /// X offset of every cell's first visible char, measured with the control's own char widths
+        /// (hidden chars take no room, so the pipes the highlighter hides do not shift anything).
+        /// </summary>
+        private static int[] CellOffsets(FastColoredTextBox tb, int iLine)
+        {
+            Line line = tb[iLine];
+            var offsets = new List<int>();
+            int x = 0;
+            int cellStart = -1;
+            bool inCode = false;
+            for (int i = 0; i < line.Count; i++)
+            {
+                char c = line[i].C;
+                if (c == '\\' && i + 1 < line.Count)
+                {
+                    if (cellStart < 0) cellStart = x;
+                    x += tb.GetCharWidth(line, i) + tb.GetCharWidth(line, i + 1);
+                    i++;
+                    continue;
+                }
+                if (c == '`')
+                    inCode = !inCode;
+                if (c == '|' && !inCode)
+                {
+                    if (cellStart >= 0) offsets.Add(cellStart);
+                    cellStart = -1;
+                    x += tb.GetCharWidth(line, i);
+                    continue;
+                }
+                if (cellStart < 0 && !char.IsWhiteSpace(c))
+                    cellStart = x;
+                x += tb.GetCharWidth(line, i);
+            }
+            if (cellStart >= 0) offsets.Add(cellStart);
+            return offsets.ToArray();
+        }
+
+        [Fact]
+        public void HiddenPipes_KeepTheColumnsLinedUp()
+        {
+            StaRunner.Run(() =>
+            {
+                using var tb = new FastColoredTextBox
+                {
+                    AllowProportionalFont = true,
+                    Font = new Font("Microsoft YaHei UI", 9F),
+                };
+                tb.Text = "| 名称 | value |\n| --- | --- |\n| 长 | x |\n| abcdef | 中文内容 |";
+
+                tb.SyntaxHighlighter.MarkdownBodyHighlight(tb.Range);
+
+                for (int iLine = 0; iLine < tb.LinesCount; iLine++)
+                    Assert.Empty(VisiblePipes(tb, iLine));
+
+                //the pipes take no width, so every row must start its cells at the same x
+                int[] first = CellOffsets(tb, 0);
+                Assert.Equal(2, first.Length);
+                for (int iLine = 1; iLine < tb.LinesCount; iLine++)
+                {
+                    int[] cells = CellOffsets(tb, iLine);
+                    Assert.Equal(first.Length, cells.Length);
+                    for (int c = 0; c < cells.Length; c++)
+                        Assert.InRange(Math.Abs(cells[c] - first[c]), 0, 2 * tb.GetCharWidth(' '));
+                }
+            });
+        }
+
+        [Fact]
+        public void HiddenPipes_AreNotExported()
+        {
+            StaRunner.Run(() =>
+            {
+                using var tb = Markdown("| a | b |\n| --- | --- |\n| 1 | 2 |");
+
+                tb.SyntaxHighlighter.MarkdownBodyHighlight(tb.Range);
+
+                string html = new ExportToHTML().GetHtml(tb.Range);
+                Assert.DoesNotContain("|", html);
+                Assert.Contains("a", html);
+            });
+        }
+
+        /// <summary>
         /// X offset of every visible '|' of a line, accumulated with the control's own char widths
         /// (a hidden markdown marker takes no room, so it does not shift the pipes)
         /// </summary>

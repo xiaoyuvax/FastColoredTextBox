@@ -88,7 +88,7 @@
 		<PackageTags>winform;control;C#;VB;TextBox;Editor;Colored;CJK</PackageTags>
 		<AssemblyVersion>2.19.0.234</AssemblyVersion>
 		<FileVersion>2.19.0.234</FileVersion>
-		<Version>2.19.3</Version>
+		<Version>2.19.4</Version>
 		<PackageOutputPath>D:\PUB\Nuget Packages</PackageOutputPath>
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 	</PropertyGroup>
