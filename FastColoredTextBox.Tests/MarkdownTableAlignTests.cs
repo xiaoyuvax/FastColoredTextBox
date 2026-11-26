@@ -207,6 +207,58 @@ namespace FastColoredTextBoxNS.Tests
             });
         }
 
+        /// <summary>Indexes of the pipes the renderer still paints on a line</summary>
+        private static List<int> VisiblePipes(FastColoredTextBox tb, int iLine)
+        {
+            var pipes = new List<int>();
+            for (int i = 0; i < tb[iLine].Count; i++)
+                if (tb[iLine][i].C == '|' && !tb.IsCharHidden(tb[iLine], i))
+                    pipes.Add(i);
+            return pipes;
+        }
+
+        [Fact]
+        public void TableSeparators_AreAllHidden()
+        {
+            StaRunner.Run(() =>
+            {
+                using var tb = Markdown("| a | b |\n| --- | --- |\n| ccc | d |");
+
+                tb.SyntaxHighlighter.MarkdownBodyHighlight(tb.Range);
+
+                for (int iLine = 0; iLine < tb.LinesCount; iLine++)
+                    Assert.Empty(VisiblePipes(tb, iLine));
+            });
+        }
+
+        [Fact]
+        public void EscapedAndCodeSpanPipes_StayVisible()
+        {
+            StaRunner.Run(() =>
+            {
+                using var tb = Markdown("| a \\| b | `c|d` |\n| --- | --- |\n| e | f |");
+
+                tb.SyntaxHighlighter.MarkdownBodyHighlight(tb.Range);
+
+                //the escaped pipe and the one inside the code span; every cell separator is hidden
+                Assert.Equal(2, VisiblePipes(tb, 0).Count);
+            });
+        }
+
+        [Fact]
+        public void TableInsideFence_KeepsItsPipes()
+        {
+            StaRunner.Run(() =>
+            {
+                using var tb = Markdown("```\n| a | b |\n| --- | --- |\n```");
+
+                tb.SyntaxHighlighter.MarkdownBodyHighlight(tb.Range);
+
+                //a table inside a fence is code: its pipes are not table syntax
+                Assert.Equal(3, VisiblePipes(tb, 1).Count);
+            });
+        }
+
         /// <summary>
         /// X offset of every visible '|' of a line, accumulated with the control's own char widths
         /// (a hidden markdown marker takes no room, so it does not shift the pipes)

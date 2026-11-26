@@ -1634,7 +1634,7 @@ namespace FastColoredTextBoxNS.Text
         /// character grid can line columns up - is an edit, so it only runs when asked for.
         /// </remarks>
         /// <param name="range">Range to style</param>
-        /// <param name="alignTables">Pad markdown tables with spaces so their columns line up</param>
+        /// <param name="alignTables">Pad markdown tables with spaces so their columns line up, and hide their cell separators</param>
         public virtual void MarkdownBodyHighlight(TextSelectionRange range, bool alignTables = true)
         {
             if (range == null)
@@ -1653,6 +1653,10 @@ namespace FastColoredTextBoxNS.Text
             ClearMarkdownStyles(range);
             StyleMarkdownLines(tb, range, new List<(int, int, Language)>());
             StyleBareLinks(tb, range);
+            //the padding is what aligns the columns; the cell separators are source syntax, so
+            //they are hidden like the other markers and the rows read as plain aligned columns
+            if (alignTables)
+                HideTableSeparators(tb, range);
         }
 
         private void ClearMarkdownStyles(TextSelectionRange range)
@@ -2130,6 +2134,53 @@ namespace FastColoredTextBoxNS.Text
 
         /// <summary>True when the line can be a row of a table that is already open</summary>
         private static bool IsTableRow(string text) => text.Trim().Length > 0 && text.IndexOf('|') >= 0;
+
+        /// <summary>
+        /// Hides every cell separator of the tables in the range, leading pipe included: with the
+        /// padding in place the rows read as plain aligned columns, and the text stays a valid
+        /// markdown table (so a later pass can align it again).
+        /// </summary>
+        private void HideTableSeparators(FastColoredTextBox tb, TextSelectionRange range)
+        {
+            int fromLine = Math.Max(0, range.Start.iLine);
+            int toLine = Math.Min(range.End.iLine, tb.LinesCount - 1);
+
+            for (int iLine = fromLine; iLine <= toLine; iLine++)
+            {
+                if (!IsTableStart(tb, iLine))
+                    continue;
+                //a table inside a fence is code: its pipes are not table syntax
+                if (ContainsStyle(new TextSelectionRange(tb, 0, iLine, tb[iLine].Count, iLine), MdCodeBlockStyle))
+                    continue;
+                int lastLine = iLine + 1;
+                while (lastLine + 1 < tb.LinesCount && IsTableRow(tb[lastLine + 1].Text))
+                    lastLine++;
+                for (int r = iLine; r <= lastLine; r++)
+                    HideRowSeparators(tb, r);
+                iLine = lastLine;
+            }
+        }
+
+        /// <summary>Hides every pipe of the row; an escaped or code-span pipe is cell content.</summary>
+        private void HideRowSeparators(FastColoredTextBox tb, int iLine)
+        {
+            Line line = tb[iLine];
+            bool inCode = false;
+            for (int i = 0; i < line.Count; i++)
+            {
+                char c = line[i].C;
+                if (c == '\\')
+                {
+                    i++;
+                    continue;
+                }
+                if (c == '`')
+                    inCode = !inCode;
+                if (c != '|' || inCode)
+                    continue;
+                new TextSelectionRange(tb, i, iLine, i + 1, iLine).SetStyle(MdMarkerStyle);
+            }
+        }
 
         /// <summary>
         /// Rewrites one table. Returns false when it already was aligned, so a command that opens a
